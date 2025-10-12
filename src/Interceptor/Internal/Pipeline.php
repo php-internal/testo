@@ -40,7 +40,7 @@ final class Pipeline
         array $interceptors,
     ) {
         // Reset keys
-        $this->interceptors[] = \array_values($interceptors);
+        $this->interceptors = \array_values($interceptors);
     }
 
     /**
@@ -82,9 +82,8 @@ final class Pipeline
         }
 
         $next = $this->next();
-        $input[] = $next;
 
-        return $interceptor->{$this->method}($input);
+        return $interceptor->{$this->method}($input, $next);
     }
 
     private function next(): self

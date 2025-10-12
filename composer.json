@@ -32,6 +32,7 @@
     "require-dev": {
         "buggregator/trap": "^1.10",
         "internal/dload": "^1.6",
+        "phpunit/phpunit": "^10.5",
         "spiral/code-style": "^2.2.2",
         "vimeo/psalm": "^6.10"
     },
@@ -45,7 +46,10 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "tests/Fixture/functions.php"
+        ]
     },
     "bin": [
         "bin/testo"
