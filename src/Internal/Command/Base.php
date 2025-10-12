@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Testo\Internal\Bootstrap;
-use Testo\Internal\Service\Container;
+use Testo\Internal\Container;
 use Yiisoft\Injector\Injector;
 
 /**

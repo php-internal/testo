@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Testo\Internal;
 
-use Testo\Internal\Service\Container;
+use Testo\Internal\Service\ObjectContainer;
 
 /**
  * Bootstraps the application by configuring the dependency container.
@@ -26,7 +26,7 @@ final class Bootstrap
      * @param Container $container Dependency injection container
      * @return self Bootstrap instance
      */
-    public static function init(Container $container = new Container()): self
+    public static function init(Container $container = new ObjectContainer()): self
     {
         return new self($container);
     }
