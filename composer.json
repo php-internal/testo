@@ -1,0 +1,79 @@
+{
+    "name": "testo/testo",
+    "description": "A lightweight PHP testing framework.",
+    "license": "BSD-3-Clause",
+    "type": "library",
+    "keywords": [
+        "tests"
+    ],
+    "authors": [
+        {
+            "name": "Aleksei Gagarin (roxblnfk)",
+            "homepage": "https://github.com/roxblnfk"
+        }
+    ],
+    "funding": [
+        {
+            "type": "patreon",
+            "url": "https://patreon.com/roxblnfk"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "internal/destroy": "^1.0",
+        "psr/container": "1 - 2",
+        "react/async": "^3.2 || ^4.3",
+        "react/promise": "^2.10 || ^3.2",
+        "symfony/console": "^6.4 || ^7",
+        "symfony/process": "^6.4 || ^7",
+        "webmozart/assert": "^1.11",
+        "yiisoft/injector": "^1.2"
+    },
+    "require-dev": {
+        "buggregator/trap": "^1.10",
+        "infection/infection": "^0.31",
+        "internal/dload": "^1.6",
+        "spiral/code-style": "^2.2.2",
+        "vimeo/psalm": "^6.10"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Testo\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "bin": [
+        "bin/testo"
+    ],
+    "config": {
+        "allow-plugins": {
+            "infection/extension-installer": true
+        },
+        "audit": {
+            "abandoned": "report"
+        },
+        "sort-packages": true
+    },
+    "scripts": {
+        "post-update-cmd": "dload get --no-interaction -v || \"echo can't dload binaries\"",
+        "cs:diff": "php-cs-fixer fix --dry-run -v --diff",
+        "cs:fix": "php-cs-fixer fix -v",
+        "infect": [
+            "@putenv XDEBUG_MODE=coverage",
+            "roave-infection-static-analysis-plugin --configuration=infection.json.dist"
+        ],
+        "infect:ci": [
+            "@putenv XDEBUG_MODE=coverage",
+            "roave-infection-static-analysis-plugin --ansi --configuration=infection.json.dist --logger-github --ignore-msi-with-no-mutations --only-covered"
+        ],
+        "psalm": "psalm",
+        "psalm:baseline": "psalm --set-baseline=psalm-baseline.xml",
+        "psalm:ci": "psalm --output-format=github --shepherd --show-info=false --stats --threads=4"
+    }
+}

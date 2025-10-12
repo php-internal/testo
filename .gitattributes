@@ -1,0 +1,19 @@
+* text=auto
+
+.github                export-ignore
+.phive                 export-ignore
+.*                     export-ignore
+*.dist                 export-ignore
+*.yaml                 export-ignore
+*.xml                  export-ignore
+composer.lock          export-ignore
+composer-require-*     export-ignore
+Makefile               export-ignore
+Dockerfile             export-ignore
+infection.*            export-ignore
+tests                  export-ignore
+docs                   export-ignore
+resources/mock         export-ignore
+
+*.http binary
+*.gpg binary

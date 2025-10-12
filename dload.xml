@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!-- Example -->
+<dload
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="vendor/internal/dload/dload.xsd"
+    temp-dir="./runtime"
+>
+    <actions>
+        <download type="binary" software="mago" extract-path="bin" version="1.0@dev" />
+    </actions>
+</dload>
