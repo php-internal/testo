@@ -1,0 +1,56 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\CommandLoader\FactoryCommandLoader;
+use Testo\Internal\Command;
+use Testo\Internal\Info;
+
+// Set timeout to 0 to prevent script from timing out
+\set_time_limit(0);
+\ini_set('memory_limit', '2G');
+\error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
+
+(static function (): void {
+    $cwd = \getcwd();
+
+    $possibleAutoloadPaths = [
+        // local dev repository
+        \dirname(__DIR__) . '/vendor/autoload.php',
+        // running from project root
+        $cwd . '/vendor/autoload.php',
+        // running from project bin
+        \dirname($cwd) . '/autoload.php',
+        // dependency
+        \dirname(__DIR__, 4) . '/vendor/autoload.php',
+    ];
+    $autoloadPath = null;
+    foreach ($possibleAutoloadPaths as $possibleAutoloadPath) {
+        if (\file_exists($possibleAutoloadPath)) {
+            $autoloadPath = $possibleAutoloadPath;
+            break;
+        }
+    }
+
+    if ($autoloadPath === null) {
+        $message = "Unable to find `vendor/autoload.php` in the following paths:\n\n";
+        $message .= '- ' . \implode("\n- ", $possibleAutoloadPaths) . "\n\n";
+        \fwrite(STDERR, $message);
+        exit(1);
+    }
+
+    require_once $autoloadPath;
+
+    $application = new Application();
+    $application->setCommandLoader(
+        new FactoryCommandLoader([
+            Command\Run::getDefaultName() => static fn() => new Command\Run(),
+        ]),
+    );
+    $application->setDefaultCommand(Command\Run::getDefaultName(), false);
+    $application->setVersion(Info::version());
+    $application->setName(Info::NAME);
+    $application->run();
+})();
