@@ -13,7 +13,7 @@ Dockerfile             export-ignore
 infection.*            export-ignore
 tests                  export-ignore
 docs                   export-ignore
-resources/mock         export-ignore
+CLAUDE.local.md        export-ignore
 
 *.http binary
 *.gpg binary
