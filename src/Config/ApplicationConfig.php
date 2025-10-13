@@ -9,6 +9,7 @@ namespace Testo\Config;
  */
 final class ApplicationConfig
 {
+
     public function __construct(
         /**
          * Source code location.
@@ -26,6 +27,11 @@ final class ApplicationConfig
                 location: new FinderConfig('tests'),
             ),
         ],
+
+        /**
+         * Services bindings configuration.
+         */
+        public readonly ServicesConfig $services = new ServicesConfig(),
     ) {
         $suites === [] and throw new \InvalidArgumentException('At least one test suite must be defined.');
     }

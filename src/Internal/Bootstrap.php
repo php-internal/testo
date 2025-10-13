@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Testo\Internal;
 
+use Testo\Config\ServicesConfig;
 use Testo\Internal\Service\ObjectContainer;
 
 /**
@@ -45,17 +46,17 @@ final class Bootstrap
     }
 
     /**
-     * Configures the container with XML configuration and input values.
+     * Configures the container with the provided application services configuration.
      *
-     * Registers core services and bindings for system architecture, OS detection,
-     * and stability settings.
-     *
-     * @return self Configured bootstrap instance
-     * @throws \InvalidArgumentException When config file is not found
-     * @throws \RuntimeException When config file cannot be read
+     * Registers core services and bindings.
      */
     public function withConfig(
+        ServicesConfig $config,
     ): self {
+        foreach ($config as $id => $service) {
+            $this->container->bind($id, $service);
+        }
+
         return $this;
     }
 }
