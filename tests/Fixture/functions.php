@@ -8,7 +8,7 @@ use Testo\Attribute\RetryPolicy;
 use Testo\Attribute\Test;
 
 #[Test]
-#[RetryPolicy(maxAttempts: 3)]
+#[RetryPolicy(maxAttempts: 3, markFlaky: false)]
 function withRetryPolicy(): int
 {
     static $runs = 0;

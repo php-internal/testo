@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Testo\Dto\Case;
+namespace Testo\Test\Dto;
 
 final class CaseDefinition
 {

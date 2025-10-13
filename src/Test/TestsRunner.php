@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Testo\Test;
 
 use Testo\Attribute\Interceptable;
-use Testo\Dto\Case\CaseDefinition;
-use Testo\Dto\Test\TestDefinition;
-use Testo\Dto\Test\TestResult;
 use Testo\Interceptor\InterceptorProvider;
 use Testo\Interceptor\Internal\Pipeline;
-use Testo\Interceptor\RunTest\Input;
 use Testo\Interceptor\RunTestInterceptor;
+use Testo\Test\Dto\Status;
+use Testo\Test\Dto\TestInfo;
+use Testo\Test\Dto\TestResult;
 
 final class TestsRunner
 {
@@ -19,45 +18,41 @@ final class TestsRunner
         private readonly InterceptorProvider $interceptorProvider,
     ) {}
 
-    public function run(CaseDefinition $case, TestDefinition $definition): TestResult
+    public function runTest(TestInfo $info): TestResult
     {
-        # Instantiate test case
-        # TODO autowire dependencies
-        $instance = $case->reflection?->newInstance();
-
         # Build interceptors pipeline
-        $interceptors = $this->prepareInterceptors($definition);
+        $interceptors = $this->prepareInterceptors($info);
         return Pipeline::prepare(...$interceptors)->with(
-            static function (Input $input): TestResult {
+            static function (TestInfo $info): TestResult {
                 # TODO resolve arguments
-                $result = $input->instance === null
-                    ? $input->definition->reflection->invoke()
-                    : $input->definition->reflection->invoke($input->instance);
+                $result = $info->instance === null
+                    ? $info->testDefinition->reflection->invoke()
+                    : $info->testDefinition->reflection->invoke($info->instance);
 
                 return new TestResult(
-                    $input->definition,
+                    $info,
                     $result,
+                    Status::Passed,
                 );
             },
             /** @see RunTestInterceptor::runTest() */
             'runTest',
-        )(new Input(
-            definition: $definition,
-            instance: $instance,
-        ));
+        )($info);
     }
 
     /**
      * @return list<RunTestInterceptor>
      */
-    private function prepareInterceptors(TestDefinition $test)
+    private function prepareInterceptors(TestInfo $info): array
     {
-        $classAttributes = $test->reflection instanceof \ReflectionMethod
-            ? $test->reflection->getDeclaringClass()
-                ->getAttributes(Interceptable::class, \ReflectionAttribute::IS_INSTANCEOF)
-            : [];
-        $methodAttributes = $test->reflection
-            ->getAttributes(Interceptable::class, \ReflectionAttribute::IS_INSTANCEOF);
+        $classAttributes = $info->caseInfo->definition->reflection?->getAttributes(
+            Interceptable::class,
+            \ReflectionAttribute::IS_INSTANCEOF,
+        ) ?? [];
+        $methodAttributes = $info->testDefinition->reflection->getAttributes(
+            Interceptable::class,
+            \ReflectionAttribute::IS_INSTANCEOF,
+        );
 
         # Merge and instantiate attributes
         $attrs = \array_map(

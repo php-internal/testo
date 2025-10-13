@@ -14,7 +14,7 @@ final class TestInterceptors
     public function withRetryPolicy(): int
     {
         static $runs = 0;
-        ++$runs < 3 and throw new \RuntimeException('Failed attempt ' . $runs);
+        ++$runs < 3 and throw new \RuntimeException("Failed attempt $runs.");
         return $runs;
     }
 }

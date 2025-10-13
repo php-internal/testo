@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Testo\Dto\Test;
+namespace Testo\Test\Dto;
 
 final class TestDefinition
 {

@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Testo\Interceptor\Implementation;
 
 use Testo\Attribute\RetryPolicy;
-use Testo\Dto\Test\TestResult;
-use Testo\Interceptor\RunTest\Input;
 use Testo\Interceptor\RunTestInterceptor;
+use Testo\Test\Dto\Status;
+use Testo\Test\Dto\TestInfo;
+use Testo\Test\Dto\TestResult;
 
 /**
  * Interceptor that retries a test execution based on the provided retry policy.
@@ -20,10 +21,8 @@ final class RetryPolicyInterceptor implements RunTestInterceptor
         private readonly RetryPolicy $options,
     ) {}
 
-    /**
-     * @throws \Throwable If all retry attempts fail, the last exception is thrown.
-     */
-    public function runTest(Input $dto, callable $next): TestResult
+    #[\Override]
+    public function runTest(TestInfo $dto, callable $next): TestResult
     {
         $attempts = $this->options->maxAttempts;
         $isFlaky = false;
@@ -32,8 +31,9 @@ final class RetryPolicyInterceptor implements RunTestInterceptor
         --$attempts;
         try {
             $result = $next($dto);
-            # TODO set flaky status on result if $isFlaky is true
-            return $isFlaky ? $result : $result;
+            return $isFlaky && $this->options->markFlaky
+                ? $result->with(status: Status::Flaky)
+                : $result;
         } catch (\Throwable $e) {
             # No more attempts left, rethrow the exception
             $attempts > 0 or throw $e;
