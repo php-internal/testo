@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Testo\Finder;
 
+use Symfony\Component\Finder\SplFileInfo;
 use Testo\Config\FinderConfig;
 use Symfony\Component\Finder\Finder as SymfonyFinder;
 
+/**
+ * @implements \IteratorAggregate<string, SplFileInfo>
+ */
 final class Finder implements \Countable, \IteratorAggregate
 {
     private SymfonyFinder $finder;

@@ -9,7 +9,6 @@ namespace Testo\Config;
  */
 final class ApplicationConfig
 {
-
     public function __construct(
         /**
          * Source code location.
@@ -24,7 +23,7 @@ final class ApplicationConfig
         public readonly array $suites = [
             new SuiteConfig(
                 name: 'default',
-                location: new FinderConfig('tests'),
+                location: new FinderConfig(['tests']),
             ),
         ],
 
@@ -33,6 +32,13 @@ final class ApplicationConfig
          */
         public readonly ServicesConfig $services = new ServicesConfig(),
     ) {
+        # Validate suite configs
         $suites === [] and throw new \InvalidArgumentException('At least one test suite must be defined.');
+        \array_walk(
+            $suites,
+            static fn(mixed $suite) => $suite instanceof SuiteConfig or throw new \InvalidArgumentException(
+                'Each suite must be an instance of SuiteConfig.',
+            ),
+        );
     }
 }

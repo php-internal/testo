@@ -11,8 +11,6 @@ use Testo\Dto\Filter;
  */
 final class TestInfo
 {
-    public readonly Filter $filter;
-
     public function __construct(
         public readonly CaseInfo $caseInfo,
         public readonly TestDefinition $testDefinition,
@@ -21,8 +19,6 @@ final class TestInfo
          * Test Case class instance if class is defined, null otherwise.
          */
         public readonly ?object $instance = null,
-        ?Filter $filter = null,
-    ) {
-        $this->filter = $filter ?? Filter::new();
-    }
+        private readonly Filter $filter = new Filter(),
+    ) {}
 }

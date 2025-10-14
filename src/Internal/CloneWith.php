@@ -14,7 +14,11 @@ trait CloneWith
      */
     private function with(string $key, mixed $value): static
     {
-        $new = (new \ReflectionClass($this))->newInstanceWithoutConstructor();
+        # Reflection caching
+        static $cache = [];
+        $reflection = $cache[static::class] ??= (new \ReflectionClass(static::class));
+
+        $new = $reflection->newInstanceWithoutConstructor();
         $new->{$key} = $value;
         /** @psalm-suppress RawObjectIteration */
         foreach ($this as $k => $v) {

@@ -15,29 +15,31 @@ final class FinderConfig
      * @var non-empty-string[]
      * @readonly
      */
-    public array $includeDirs;
+    public array $includeDirs = [];
 
     /**
      * @var non-empty-string[]
      * @readonly
      */
-    public array $excludeDirs;
+    public array $excludeDirs = [];
 
     /**
      * @var non-empty-string[]
      * @readonly
      */
-    public array $includeFiles;
+    public array $includeFiles = [];
 
     /**
      * @var non-empty-string[]
      * @readonly
      */
-    public array $excludeFiles;
+    public array $excludeFiles = [];
 
     /**
      * @param iterable<non-empty-string|Path> $include Include directories or files to the scope
      * @param iterable<non-empty-string|Path> $exclude Exclude directories or files from the scope
+     *
+     * @note Glob and regex patterns are not supported
      */
     public function __construct(
         iterable $include = [],

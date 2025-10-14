@@ -4,20 +4,46 @@ declare(strict_types=1);
 
 namespace Testo\Suite;
 
+use Testo\Config\ApplicationConfig;
+use Testo\Config\SuiteConfig;
 use Testo\Dto\Filter;
 use Testo\Dto\Suite\SuiteInfo;
+use Testo\Internal\CloneWith;
 
 /**
  * Provides test suites.
  */
 final class SuiteProvider
 {
+    use CloneWith;
+
+    /** @var list<SuiteConfig> */
+    private readonly array $configs;
+
+    public function __construct(
+        ApplicationConfig $applicationConfig,
+        private readonly SuiteCollector $collector,
+    ) {
+        $this->configs = $applicationConfig->suites;
+    }
+
     /**
      * @psalm-immutable
      */
     public function withFilter(Filter $filter): self
     {
-        return $this;
+        # Apply suite name filter if exists
+        if ($filter->testSuites === []) {
+            return $this;
+        }
+
+        $suites = \array_filter(
+            $this->configs,
+            static fn(SuiteConfig $suite) => \in_array($suite->name, $filter->testSuites, true),
+        );
+
+        /** @see self::$suites */
+        return $this->with('suites', $suites);
     }
 
     /**
@@ -25,10 +51,13 @@ final class SuiteProvider
      *
      * @return array<SuiteInfo>
      */
-    public function getSuites(): array
+    public function getConfigs(): array
     {
-        return [
-            new SuiteInfo(null),
-        ];
+        $result = [];
+        foreach ($this->configs as $config) {
+            $result[] = $this->collector->getOrCreate($config);
+        }
+
+        return $result;
     }
 }

@@ -18,6 +18,7 @@ final class Run extends Base
         InputInterface $input,
         OutputInterface $output,
     ): int {
+        $result = $this->application->run();
         return Command::SUCCESS;
     }
 }

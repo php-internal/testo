@@ -12,6 +12,8 @@ use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Testo\Application;
 use Testo\Config\ApplicationConfig;
+use Testo\Config\FinderConfig;
+use Testo\Config\SuiteConfig;
 use Testo\Internal\Container;
 use Yiisoft\Injector\Injector;
 
@@ -70,7 +72,15 @@ abstract class Base extends Command
         InputInterface $input,
         OutputInterface $output,
     ): int {
-        $cfg = new ApplicationConfig();
+        $cfg = new ApplicationConfig(
+            src: new FinderConfig(['src']),
+            suites: [
+                new SuiteConfig(
+                    name: 'default',
+                    location: new FinderConfig(['tests/Testo']),
+                ),
+            ],
+        );
 
         $this->application = Application::create($cfg);
         $this->container = $this->application->container;

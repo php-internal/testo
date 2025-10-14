@@ -15,17 +15,12 @@ final class Filter
 {
     use CloneWith;
 
-    private function __construct(
+    public function __construct(
         /**
          * @var list<non-empty-string> Names of the test suites to filter by.
          */
         public readonly array $testSuites = [],
     ) {}
-
-    public static function new(): self
-    {
-        return new self();
-    }
 
     /**
      * Filter tests by Suite names.
