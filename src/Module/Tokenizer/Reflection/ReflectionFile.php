@@ -39,12 +39,17 @@ final class ReflectionFile
      */
     public const N_USES = 2;
 
-    public readonly Path $filename;
+    public readonly Path $path;
 
     /**
      * Indication that file contains require/include statements
      */
     public readonly bool $hasIncludes;
+
+    /**
+     * Get list of parsed tokens associated with given file.
+     */
+    public readonly array $tokens;
 
     /**
      * Set of tokens required to detect classes, traits, interfaces and function declarations. We
@@ -70,11 +75,6 @@ final class ReflectionFile
         T_USE,
         T_AS,
     ];
-
-    /**
-     * Get list of parsed tokens associated with given file.
-     */
-    public readonly array $tokens;
 
     /**
      * Total tokens count.
@@ -116,8 +116,8 @@ final class ReflectionFile
         public readonly \SplFileInfo $file,
         string|Path $path,
     ) {
-        $this->filename = Path::create($path);
-        $this->tokens = self::fetchTokens($this->filename);
+        $this->path = Path::create($path);
+        $this->tokens = self::fetchTokens($this->path);
         $this->countTokens = \count($this->tokens);
 
         //Looking for declarations
@@ -592,7 +592,7 @@ final class ReflectionFile
         }
 
         $this->invocations[] = new ReflectionInvocation(
-            $this->filename,
+            $this->path,
             $this->lineNumber($invocationID),
             $class,
             $operator,
