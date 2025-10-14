@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Testo\Interceptor\Implementation;
 
 use Testo\Attribute\RetryPolicy;
-use Testo\Interceptor\RunTestInterceptor;
+use Testo\Interceptor\TestCallInterceptor;
 use Testo\Test\Dto\Status;
 use Testo\Test\Dto\TestInfo;
 use Testo\Test\Dto\TestResult;
@@ -15,14 +15,14 @@ use Testo\Test\Dto\TestResult;
  *
  * @see RetryPolicy
  */
-final class RetryPolicyInterceptor implements RunTestInterceptor
+final class RetryPolicyCallInterceptor implements TestCallInterceptor
 {
     public function __construct(
         private readonly RetryPolicy $options,
     ) {}
 
     #[\Override]
-    public function runTest(TestInfo $dto, callable $next): TestResult
+    public function runTest(TestInfo $info, callable $next): TestResult
     {
         $attempts = $this->options->maxAttempts;
         $isFlaky = false;
@@ -30,7 +30,7 @@ final class RetryPolicyInterceptor implements RunTestInterceptor
         run:
         --$attempts;
         try {
-            $result = $next($dto);
+            $result = $next($info);
             return $isFlaky && $this->options->markFlaky
                 ? $result->with(status: Status::Flaky)
                 : $result;

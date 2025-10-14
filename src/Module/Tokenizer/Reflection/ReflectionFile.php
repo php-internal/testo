@@ -42,6 +42,11 @@ final class ReflectionFile
     public readonly Path $filename;
 
     /**
+     * Indication that file contains require/include statements
+     */
+    public readonly bool $hasIncludes;
+
+    /**
      * Set of tokens required to detect classes, traits, interfaces and function declarations. We
      * don't need any other token for that.
      */
@@ -67,11 +72,9 @@ final class ReflectionFile
     ];
 
     /**
-     * Parsed tokens array.
-     *
-     * @internal
+     * Get list of parsed tokens associated with given file.
      */
-    private array $tokens = [];
+    public readonly array $tokens;
 
     /**
      * Total tokens count.
@@ -79,11 +82,6 @@ final class ReflectionFile
      * @internal
      */
     private int $countTokens = 0;
-
-    /**
-     * Indication that file contains require/include statements
-     */
-    public readonly bool $hasIncludes;
 
     /**
      * Namespaces used in file and their token positions.
@@ -115,9 +113,10 @@ final class ReflectionFile
     private array $invocations = [];
 
     public function __construct(
-        string|Path $filename,
+        public readonly \SplFileInfo $file,
+        string|Path $path,
     ) {
-        $this->filename = Path::create($filename);
+        $this->filename = Path::create($path);
         $this->tokens = self::fetchTokens($this->filename);
         $this->countTokens = \count($this->tokens);
 
@@ -182,14 +181,6 @@ final class ReflectionFile
     }
 
     /**
-     * Get list of tokens associated with given file.
-     */
-    public function getTokens(): array
-    {
-        return $this->tokens;
-    }
-
-    /**
      * Locate and return list of every method or function call in specified file. Only static and
      * $this calls will be indexed
      *
@@ -198,7 +189,7 @@ final class ReflectionFile
     public function getInvocations(): array
     {
         if (empty($this->invocations)) {
-            $this->locateInvocations($this->getTokens());
+            $this->locateInvocations($this->tokens);
         }
 
         return $this->invocations;
@@ -225,7 +216,8 @@ final class ReflectionFile
      */
     protected function locateDeclarations(): void
     {
-        foreach ($this->getTokens() as $tokenID => $token) {
+        $hasIncludes = false;
+        foreach ($this->tokens as $tokenID => $token) {
             if (!\in_array($token[self::TOKEN_TYPE], self::$processTokens)) {
                 continue;
             }
@@ -269,9 +261,11 @@ final class ReflectionFile
                 case T_INCLUDE_ONCE:
                 case T_REQUIRE:
                 case T_REQUIRE_ONCE:
-                    $this->hasIncludes = true;
+                    $hasIncludes = true;
             }
         }
+
+        $this->hasIncludes = $hasIncludes;
 
         //Dropping empty namespace
         if (isset($this->namespaces[''])) {
@@ -285,7 +279,6 @@ final class ReflectionFile
      */
     private static function fetchTokens(Path $filename): array
     {
-        dump($filename);
         $tokens = \token_get_all(\file_get_contents((string) $filename));
 
         $line = 0;

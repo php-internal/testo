@@ -35,21 +35,7 @@ final class FileLocator implements \IteratorAggregate
     public function getIterator(): \Generator
     {
         foreach ($this->finder->getIterator() as $file) {
-            $reflection = new ReflectionFile((string) $file);
-
-            if ($reflection->hasIncludes) {
-                // // We are not analyzing files which has includes, it's not safe to require such reflections
-                // if ($this->debug) {
-                //     $this->getLogger()->warning(
-                //         \sprintf('File `%s` has includes and excluded from analysis', (string) $file),
-                //         ['file' => $file],
-                //     );
-                // }
-
-                continue;
-            }
-
-            yield $reflection;
+            yield new ReflectionFile($file, (string) $file);
         }
     }
 

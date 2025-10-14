@@ -11,12 +11,11 @@ use Testo\Test\Dto\TestResult;
 /**
  * Interceptor for running tests.
  */
-interface RunTestInterceptor extends InterceptorMarker
+interface TestCallInterceptor extends InterceptorMarker
 {
     /**
-     * @param TestInfo $dto Information about the test to be run.
+     * @param TestInfo $info Information about the test to be run.
      * @param callable(TestInfo): TestResult $next Next interceptor or core logic to run the test.
-     * @return TestResult
      */
-    public function runTest(TestInfo $dto, callable $next): TestResult;
+    public function runTest(TestInfo $info, callable $next): TestResult;
 }

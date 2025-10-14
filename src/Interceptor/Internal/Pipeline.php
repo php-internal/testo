@@ -10,10 +10,7 @@ use Testo\Interceptor\Internal\InterceptorMarker as TInterceptor;
  * Processor for interceptors chain.
  *
  * @template TInterceptor of TInterceptor
- * @template TReturn of mixed
- *
- * @psalm-type TLast = \Closure(mixed ...): mixed
- * @psalm-type TCallable = callable(mixed ...): mixed
+ * @template-covariant TReturn of mixed
  *
  * @psalm-immutable
  *
@@ -54,7 +51,7 @@ final class Pipeline
     /**
      * @param non-empty-string $method Method name of the all interceptors.
      *
-     * @return TCallable
+     * @return callable(object): TReturn
      */
     public function with(\Closure $last, string $method): callable
     {
@@ -73,7 +70,7 @@ final class Pipeline
      *
      * @return TReturn
      */
-    public function __invoke(object $input): object
+    public function __invoke(object $input): mixed
     {
         $interceptor = $this->interceptors[$this->current] ?? null;
 

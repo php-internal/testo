@@ -6,7 +6,7 @@ namespace Testo\Interceptor;
 
 use Testo\Attribute\Interceptable;
 use Testo\Attribute\RetryPolicy;
-use Testo\Interceptor\Implementation\RetryPolicyInterceptor;
+use Testo\Interceptor\Implementation\RetryPolicyCallInterceptor;
 use Testo\Interceptor\Internal\InterceptorMarker;
 
 final class InterceptorProvider
@@ -25,9 +25,25 @@ final class InterceptorProvider
     {
         $self = new self();
         $self->map = [
-            RetryPolicy::class => RetryPolicyInterceptor::class,
+            RetryPolicy::class => RetryPolicyCallInterceptor::class,
         ];
         return $self;
+    }
+
+    /**
+     * Get interceptors for
+     *
+     * @template-covariant T of InterceptorMarker
+     *
+     * @param class-string<T> $class The target interceptor class.
+     * @param class-string<InterceptorMarker>|InterceptorMarker ...$interceptors Interceptor classes or instances
+     *        to filter by the given class.
+     *
+     * @return list<T> Interceptor instances of the given class.
+     */
+    public function fromClasses(string $class, string|InterceptorMarker ...$interceptors): array
+    {
+        return [];
     }
 
     /**
@@ -35,7 +51,7 @@ final class InterceptorProvider
      *
      * @template-covariant T of InterceptorMarker
      *
-     * @param class-string<T> $class The interceptor class.
+     * @param class-string<T> $class The target interceptor class.
      * @param Interceptable ...$attributes Attributes to get interceptors for.
      *
      * @return list<T> Interceptors for the given attributes.
