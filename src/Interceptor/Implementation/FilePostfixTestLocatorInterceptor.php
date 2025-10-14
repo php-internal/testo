@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Testo\Interceptor\Implementation;
 
-use Testo\Interceptor\LocatorInterceptor;
+use Testo\Interceptor\FileLocatorInterceptor;
 use Testo\Module\Tokenizer\Reflection\ReflectionFile;
 
 /**
@@ -12,7 +12,7 @@ use Testo\Module\Tokenizer\Reflection\ReflectionFile;
  *
  * E.g. "MyClassTest.php" will be accepted, while "MyClass.php" will not.
  */
-final class FilePostfixTestLocatorInterceptor implements LocatorInterceptor
+final class FilePostfixTestLocatorInterceptor implements FileLocatorInterceptor
 {
     public function locateFile(ReflectionFile $file, callable $next): ?bool
     {

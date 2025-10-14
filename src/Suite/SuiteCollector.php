@@ -54,8 +54,9 @@ final class SuiteCollector
         $locator = new FileLocator(new Finder($config->location));
 
         # Prepare interceptors pipeline
-        $interceptors = $this->interceptorProvider->fromClasses(LocatorInterceptor::class);
-        /** @see LocatorInterceptor::locateFile() */
+        $interceptors = $this->interceptorProvider->fromClasses(FileLocatorInterceptor::class);
+
+        /** @see FileLocatorInterceptor::locateFile() */
         $pipeline = Pipeline::prepare(...$interceptors)
             ->with(static fn(ReflectionFile $file): ?bool => null, 'locateFile');
 

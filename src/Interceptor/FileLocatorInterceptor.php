@@ -8,9 +8,9 @@ use Testo\Interceptor\Internal\InterceptorMarker;
 use Testo\Module\Tokenizer\Reflection\ReflectionFile;
 
 /**
- * Intercept locating test files and test cases.
+ * Intercept locating test files.
  */
-interface LocatorInterceptor extends InterceptorMarker
+interface FileLocatorInterceptor extends InterceptorMarker
 {
     /**
      * Return true if the file might be interesting as a test file.
