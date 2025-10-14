@@ -11,7 +11,7 @@ use Testo\Test\Dto\CaseInfo;
 use Testo\Test\Dto\Status;
 use Testo\Test\Dto\TestInfo;
 use Testo\Test\Dto\TestDefinition;
-use Testo\Test\TestsRunner;
+use Testo\Test\TestRunner;
 use Tests\Fixture\TestInterceptors;
 
 final class TestsRunnerTest extends TestCase
@@ -47,11 +47,7 @@ final class TestsRunnerTest extends TestCase
     {
         $instance = self::createInstance();
         $info = new TestInfo(
-            caseInfo: new CaseInfo(
-                definition: new CaseDefinition(
-                    reflection: null,
-                ),
-            ),
+            caseInfo: new CaseInfo(),
             testDefinition: new TestDefinition(
                 reflection: new \ReflectionFunction(\Tests\Fixture\withRetryPolicy(...)),
             ),
@@ -64,8 +60,8 @@ final class TestsRunnerTest extends TestCase
         self::assertSame(Status::Passed, $result->status);
     }
 
-    private static function createInstance(): TestsRunner
+    private static function createInstance(): TestRunner
     {
-        return new TestsRunner(InterceptorProvider::createDefault());
+        return new TestRunner(InterceptorProvider::createDefault());
     }
 }

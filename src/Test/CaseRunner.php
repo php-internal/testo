@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Testo\Test;
 
 use Testo\Dto\Filter;
+use Testo\Interceptor\InterceptorProvider;
 use Testo\Test\Dto\CaseResult;
 use Testo\Test\Dto\CaseInfo;
 use Testo\Test\Dto\TestInfo;
@@ -12,8 +13,9 @@ use Testo\Test\Dto\TestInfo;
 final class CaseRunner
 {
     public function __construct(
-        private readonly TestsRunner $testRunner,
+        private readonly TestRunner $testRunner,
         private readonly TestsProvider $testsProvider,
+        private readonly InterceptorProvider $interceptorProvider,
     ) {}
 
     public function runCase(CaseInfo $info, Filter $filter): CaseResult

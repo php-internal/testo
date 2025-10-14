@@ -25,6 +25,7 @@
         "react/async": "^3.2 || ^4.3",
         "react/promise": "^2.10 || ^3.2",
         "symfony/console": "^6.4 || ^7",
+        "symfony/finder": "^6.4 || ^7",
         "symfony/process": "^6.4 || ^7",
         "webmozart/assert": "^1.11",
         "yiisoft/injector": "^1.2"

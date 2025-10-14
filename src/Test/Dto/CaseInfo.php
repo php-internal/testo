@@ -10,6 +10,6 @@ namespace Testo\Test\Dto;
 final class CaseInfo
 {
     public function __construct(
-        public readonly CaseDefinition $definition,
+        public readonly CaseDefinition $definition = new CaseDefinition(),
     ) {}
 }

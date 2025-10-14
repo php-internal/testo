@@ -10,7 +10,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Testo\Internal\Bootstrap;
+use Testo\Application;
+use Testo\Config\ApplicationConfig;
 use Testo\Internal\Container;
 use Yiisoft\Injector\Injector;
 
@@ -20,17 +21,19 @@ use Yiisoft\Injector\Injector;
  * Provides common functionality for command initialization, container setup,
  * and configuration handling.
  *
- * ```php
- * // Extend to create a custom command
- * final class CustomCommand extends Base
- * {
- *     protected function execute(InputInterface $input, OutputInterface $output): int
- *     {
- *         parent::execute($input, $output);
- *         // Command implementation
- *         return Command::SUCCESS;
- *     }
- * }
+ * ```
+ *  // Extend to create a custom command
+ *  final class CustomCommand extends Base
+ *  {
+ *      protected function __invoke(
+ *          InputInterface $input,
+ *          OutputInterface $output,
+ *          ClassName $anyParam): int
+ *      {
+ *          // Return a Command code
+ *          return Command::SUCCESS;
+ *      }
+ *  }
  * ```
  *
  * @internal
@@ -39,6 +42,8 @@ abstract class Base extends Command
 {
     /** @var Container IoC container with services */
     protected Container $container;
+
+    protected Application $application;
 
     /**
      * Configures command options.
@@ -65,12 +70,15 @@ abstract class Base extends Command
         InputInterface $input,
         OutputInterface $output,
     ): int {
-        $this->container = $container = Bootstrap::init()->withConfig()->finish();
+        $cfg = new ApplicationConfig();
 
-        $container->set($input, InputInterface::class);
-        $container->set($output, OutputInterface::class);
-        $container->set(new SymfonyStyle($input, $output), StyleInterface::class);
+        $this->application = Application::create($cfg);
+        $this->container = $this->application->container;
 
-        return (new Injector($container))->invoke($this) ?? Command::SUCCESS;
+        $this->container->set($input, InputInterface::class);
+        $this->container->set($output, OutputInterface::class);
+        $this->container->set(new SymfonyStyle($input, $output), StyleInterface::class);
+
+        return $this->container->get(Injector::class)->invoke($this) ?? Command::SUCCESS;
     }
 }
