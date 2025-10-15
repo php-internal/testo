@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Testo\Suite;
 
 use Testo\Dto\Filter;
-use Testo\Dto\Suite\SuiteInfo;
-use Testo\Dto\Suite\SuiteResult;
+use Testo\Suite\Dto\SuiteInfo;
+use Testo\Suite\Dto\SuiteResult;
 use Testo\Test\CaseRunner;
 use Testo\Test\TestsProvider;
 

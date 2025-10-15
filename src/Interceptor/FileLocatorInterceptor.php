@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Testo\Interceptor;
 
 use Testo\Interceptor\Internal\InterceptorMarker;
-use Testo\Module\Tokenizer\Reflection\ReflectionFile;
+use Testo\Module\Tokenizer\Reflection\TokenizedFile;
 
 /**
  * Intercept locating test files.
+ *
+ * @extends InterceptorMarker<TokenizedFile, null|bool>
  */
 interface FileLocatorInterceptor extends InterceptorMarker
 {
@@ -19,10 +21,11 @@ interface FileLocatorInterceptor extends InterceptorMarker
      * Try to use only the file path, class name, doc comments, function names,
      * or other parsed tokens to determine if the file is interesting or dangerous to load.
      *
-     * @param ReflectionFile $file Information about the test to be run.
-     * @param callable(ReflectionFile): (null|bool) $next Next interceptor or core logic to run the test.
+     * @param TokenizedFile $file Information about the test to be run.
+     * @param callable(TokenizedFile): (null|bool) $next Next interceptor or core logic
+     *        to determine possible test file.
      * @return null|bool True if the file might be interesting as a test file,
      *         false if dangerous to load, null to other interceptors.
      */
-    public function locateFile(ReflectionFile $file, callable $next): ?bool;
+    public function locateFile(TokenizedFile $file, callable $next): ?bool;
 }

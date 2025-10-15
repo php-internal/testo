@@ -9,8 +9,9 @@ use Testo\Interceptor\Internal\InterceptorMarker as TInterceptor;
 /**
  * Processor for interceptors chain.
  *
- * @template TInterceptor of TInterceptor
- * @template-covariant TReturn of mixed
+ * @template-covariant TClass of TInterceptor
+ * @template TInput
+ * @template-covariant TOutput of mixed
  *
  * @psalm-immutable
  *
@@ -24,14 +25,14 @@ final class Pipeline
 
     private \Closure $last;
 
-    /** @var list<TInterceptor> */
+    /** @var list<TClass> */
     private array $interceptors = [];
 
     /** @var int<0, max> Current interceptor key */
     private int $current = 0;
 
     /**
-     * @param array<TInterceptor> $interceptors
+     * @param array<TClass> $interceptors
      */
     private function __construct(
         array $interceptors,
@@ -42,6 +43,11 @@ final class Pipeline
 
     /**
      * Make sure that interceptors implement the same interface.
+     * @template-covariant TInt of TInterceptor
+     * @template TIn
+     * @template-covariant TOut
+     * @param TInt<TIn, TOut> ...$interceptors
+     * @return self<TInt, TIn, TOut>
      */
     public static function prepare(TInterceptor ...$interceptors): self
     {
@@ -51,7 +57,7 @@ final class Pipeline
     /**
      * @param non-empty-string $method Method name of the all interceptors.
      *
-     * @return callable(object): TReturn
+     * @return callable(object): TOutput
      */
     public function with(\Closure $last, string $method): callable
     {
@@ -66,9 +72,9 @@ final class Pipeline
     /**
      * Must be used after {@see self::with()} method.
      *
-     * @param object $input Input value for the first interceptor.
+     * @param TInput $input Input value for the first interceptor.
      *
-     * @return TReturn
+     * @return TOutput
      */
     public function __invoke(object $input): mixed
     {

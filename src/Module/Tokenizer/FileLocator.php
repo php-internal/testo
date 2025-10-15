@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Testo\Module\Tokenizer;
 
 use Testo\Finder\Finder;
-use Testo\Module\Tokenizer\Reflection\ReflectionFile;
+use Testo\Module\Tokenizer\Reflection\TokenizedFile;
 
 /**
  * Locates and tokenizes PHP files within a given FS scope.
  *
  * Reads files discovered by {@see Finder}, tokenizes their contents,
- * and creates {@see ReflectionFile} objects.
+ * and creates {@see TokenizedFile} objects.
  *
- * @implements \IteratorAggregate<int, ReflectionFile>
+ * @implements \IteratorAggregate<int, TokenizedFile>
  */
 final class FileLocator implements \IteratorAggregate
 {
@@ -29,13 +29,13 @@ final class FileLocator implements \IteratorAggregate
     /**
      * Available file reflections. Generator.
      *
-     * @return \Generator<int, ReflectionFile, mixed, void>
+     * @return \Generator<int, TokenizedFile, mixed, void>
      * @throws \Exception
      */
     public function getIterator(): \Generator
     {
         foreach ($this->finder->getIterator() as $file) {
-            yield new ReflectionFile($file, (string) $file);
+            yield new TokenizedFile($file, (string) $file);
         }
     }
 }

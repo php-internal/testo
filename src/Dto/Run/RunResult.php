@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Testo\Dto\Run;
 
-use Testo\Dto\Suite\SuiteResult;
+use Testo\Suite\Dto\SuiteResult;
 
 /**
  * Result of running tests.

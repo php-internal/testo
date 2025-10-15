@@ -12,13 +12,13 @@ use Testo\Module\Tokenizer\Exception\ReflectionException;
  * This reflection is very useful for static analysis and mainly used in Translator component to
  * index translation function usages.
  */
-final class ReflectionInvocation
+final class TokenizedInvocation
 {
     /**
      * New call reflection.
      *
      * @param class-string $class
-     * @param ReflectionArgument[] $arguments
+     * @param TokenizedArgument[] $arguments
      * @param int $level Was a function used inside another function call?
      */
     public function __construct(
@@ -48,7 +48,7 @@ final class ReflectionInvocation
         /**
          * All parsed function arguments.
          *
-         * @var ReflectionArgument[]
+         * @var TokenizedArgument[]
          */
         public readonly array $arguments,
         /**
@@ -72,7 +72,7 @@ final class ReflectionInvocation
     /**
      * Get call argument by it position.
      */
-    public function getArgument(int $index): ReflectionArgument
+    public function getArgument(int $index): TokenizedArgument
     {
         if (!isset($this->arguments[$index])) {
             throw new ReflectionException(\sprintf("No such argument with index '%d'", $index));

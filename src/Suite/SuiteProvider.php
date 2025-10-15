@@ -7,8 +7,8 @@ namespace Testo\Suite;
 use Testo\Config\ApplicationConfig;
 use Testo\Config\SuiteConfig;
 use Testo\Dto\Filter;
-use Testo\Dto\Suite\SuiteInfo;
 use Testo\Internal\CloneWith;
+use Testo\Suite\Dto\SuiteInfo;
 
 /**
  * Provides test suites.

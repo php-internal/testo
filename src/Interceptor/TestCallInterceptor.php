@@ -10,6 +10,8 @@ use Testo\Test\Dto\TestResult;
 
 /**
  * Interceptor for running tests.
+ *
+ * @extends InterceptorMarker<TestInfo, TestResult>
  */
 interface TestCallInterceptor extends InterceptorMarker
 {

@@ -9,7 +9,7 @@ use Testo\Module\Tokenizer\Exception\ReflectionException;
 /**
  * Represent argument using in method or function invocation with it's type and value.
  */
-final class ReflectionArgument
+final class TokenizedArgument
 {
     /**
      * Argument types.
@@ -43,7 +43,7 @@ final class ReflectionArgument
 
         $result = [];
         foreach ($tokens as $token) {
-            if ($token[ReflectionFile::TOKEN_TYPE] === T_WHITESPACE) {
+            if ($token[TokenizedFile::TOKEN_TYPE] === T_WHITESPACE) {
                 continue;
             }
 
@@ -51,31 +51,31 @@ final class ReflectionArgument
                 $definition = ['type' => self::EXPRESSION, 'value' => '', 'tokens' => []];
             }
 
-            if ($token[ReflectionFile::TOKEN_TYPE] === '(' || $token[ReflectionFile::TOKEN_TYPE] === '[') {
+            if ($token[TokenizedFile::TOKEN_TYPE] === '(' || $token[TokenizedFile::TOKEN_TYPE] === '[') {
                 ++$level;
-                $definition['value'] .= $token[ReflectionFile::TOKEN_CODE];
+                $definition['value'] .= $token[TokenizedFile::TOKEN_CODE];
                 continue;
             }
 
-            if ($token[ReflectionFile::TOKEN_TYPE] === ')' || $token[ReflectionFile::TOKEN_TYPE] === ']') {
+            if ($token[TokenizedFile::TOKEN_TYPE] === ')' || $token[TokenizedFile::TOKEN_TYPE] === ']') {
                 --$level;
-                $definition['value'] .= $token[ReflectionFile::TOKEN_CODE];
+                $definition['value'] .= $token[TokenizedFile::TOKEN_CODE];
                 continue;
             }
 
             if ($level) {
-                $definition['value'] .= $token[ReflectionFile::TOKEN_CODE];
+                $definition['value'] .= $token[TokenizedFile::TOKEN_CODE];
                 continue;
             }
 
-            if ($token[ReflectionFile::TOKEN_TYPE] === ',') {
+            if ($token[TokenizedFile::TOKEN_TYPE] === ',') {
                 $result[] = self::createArgument($definition);
                 $definition = null;
                 continue;
             }
 
             $definition['tokens'][] = $token;
-            $definition['value'] .= $token[ReflectionFile::TOKEN_CODE];
+            $definition['value'] .= $token[TokenizedFile::TOKEN_CODE];
         }
 
         //Last argument
@@ -122,7 +122,7 @@ final class ReflectionArgument
      * @param array{value: string, tokens: array, type: string} $definition
      * @see locateArguments
      */
-    private static function createArgument(array $definition): ReflectionArgument
+    private static function createArgument(array $definition): TokenizedArgument
     {
         $result = new self(self::EXPRESSION, $definition['value']);
 

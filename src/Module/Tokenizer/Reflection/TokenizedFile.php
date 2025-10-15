@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Testo\Module\Tokenizer\Reflection;
 
 use Testo\Finder\Path;
-use Testo\Module\Tokenizer\Tokenizer;
 
 /**
  * File reflections can fetch information about classes, interfaces, functions and traits declared
  * in file. In addition file reflection provides ability to fetch and describe every method/function
  * call.
  */
-final class ReflectionFile
+final class TokenizedFile
 {
     /**
      * Namespace separator.
@@ -22,10 +21,9 @@ final class ReflectionFile
     /**
      * Constants for convenience.
      */
-    public const TOKEN_TYPE = Tokenizer::TYPE;
-
-    public const TOKEN_CODE = Tokenizer::CODE;
-    public const TOKEN_LINE = Tokenizer::LINE;
+    public const TOKEN_TYPE = 0;
+    public const TOKEN_CODE = 1;
+    public const TOKEN_LINE = 2;
 
     /**
      * Opening and closing token ids.
@@ -108,7 +106,7 @@ final class ReflectionFile
      * Every found method/function invocation.
      *
      * @internal
-     * @var ReflectionInvocation[]
+     * @var TokenizedInvocation[]
      */
     private array $invocations = [];
 
@@ -184,7 +182,7 @@ final class ReflectionFile
      * Locate and return list of every method or function call in specified file. Only static and
      * $this calls will be indexed
      *
-     * @return ReflectionInvocation[]
+     * @return TokenizedInvocation[]
      */
     public function getInvocations(): array
     {
@@ -591,13 +589,13 @@ final class ReflectionFile
             return;
         }
 
-        $this->invocations[] = new ReflectionInvocation(
+        $this->invocations[] = new TokenizedInvocation(
             $this->path,
             $this->lineNumber($invocationID),
             $class,
             $operator,
             $name,
-            ReflectionArgument::locateArguments($arguments),
+            TokenizedArgument::locateArguments($arguments),
             $this->getSource($invocationID, $endID),
             $invocationLevel,
         );
