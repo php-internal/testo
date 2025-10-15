@@ -25,14 +25,15 @@
         "react/async": "^3.2 || ^4.3",
         "react/promise": "^2.10 || ^3.2",
         "symfony/console": "^6.4 || ^7",
+        "symfony/finder": "^6.4 || ^7",
         "symfony/process": "^6.4 || ^7",
         "webmozart/assert": "^1.11",
         "yiisoft/injector": "^1.2"
     },
     "require-dev": {
         "buggregator/trap": "^1.10",
-        "infection/infection": "^0.31",
         "internal/dload": "^1.6",
+        "phpunit/phpunit": "^10.5",
         "spiral/code-style": "^2.2.2",
         "vimeo/psalm": "^6.10"
     },
@@ -46,7 +47,10 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "tests/Fixture/functions.php"
+        ]
     },
     "bin": [
         "bin/testo"
@@ -74,6 +78,7 @@
         ],
         "psalm": "psalm",
         "psalm:baseline": "psalm --set-baseline=psalm-baseline.xml",
-        "psalm:ci": "psalm --output-format=github --shepherd --show-info=false --stats --threads=4"
+        "psalm:ci": "psalm --output-format=github --shepherd --show-info=false --stats --threads=4",
+        "test": "bin/testo"
     }
 }

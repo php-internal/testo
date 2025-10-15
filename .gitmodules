@@ -1,0 +1,3 @@
+[submodule "docs/guidelines"]
+	path = docs/guidelines
+	url = https://github.com/php-internal/guidelines
