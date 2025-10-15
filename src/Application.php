@@ -27,6 +27,7 @@ final class Application
         $container = Bootstrap::init()
             ->withConfig($config->services)
             ->finish();
+        $container->set($config);
         return new self($container);
     }
 
@@ -38,7 +39,7 @@ final class Application
         $suiteRunner = $this->container->get(SuiteRunner::class);
 
         # Iterate Test Suites
-        foreach ($suiteProvider->withFilter($filter)->getConfigs() as $suite) {
+        foreach ($suiteProvider->withFilter($filter)->getSuites() as $suite) {
             $suiteResults[] = $suiteRunner->run($suite, $filter);
         }
 

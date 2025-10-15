@@ -10,6 +10,41 @@ namespace Testo\Module\Tokenizer;
 final class Reflection
 {
     /**
+     * Fetch all attributes for a given function or method.
+     *
+     * @param \ReflectionFunctionAbstract $function The function or method to fetch attributes from.
+     * @param bool $includeParents Whether to include attributes from parent methods (only applicable for methods).
+     * @param class-string|null $attributeClass If provided, only attributes of this class will be returned.
+     * @param int $flags Flags to pass to {@see ReflectionFunctionAbstract::getAttributes()}.
+     *
+     * @return \ReflectionAttribute[]
+     */
+    public static function fetchFunctionAttributes(
+        \ReflectionFunctionAbstract $function,
+        bool $includeParents = true,
+        ?string $attributeClass = null,
+        int $flags = 0,
+    ): array {
+        $attributes = [];
+
+        do {
+            $attributes = \array_merge($attributes, $function->getAttributes($attributeClass, $flags));
+
+            if ($includeParents && $function instanceof \ReflectionMethod) {
+                $parentClass = $function->getDeclaringClass()->getParentClass();
+                if ($parentClass !== false && $parentClass->hasMethod($function->getName())) {
+                    $function = $parentClass->getMethod($function->getName());
+                    continue;
+                }
+            }
+
+            break;
+        } while (true);
+
+        return $attributes;
+    }
+
+    /**
      * Fetch all attributes for a given class.
      *
      * @param class-string $class
@@ -21,7 +56,7 @@ final class Reflection
      * @return \ReflectionAttribute[]
      */
     public static function fetchClassAttributes(
-        string $class,
+        \ReflectionClass|string $class,
         bool $includeParents = true,
         bool $includeTraits = true,
         ?string $attributeClass = null,
@@ -30,14 +65,14 @@ final class Reflection
         $attributes = [];
 
         do {
-            $reflection = new \ReflectionClass($class);
+            \is_string($class) and $reflection = new \ReflectionClass($class);
             $attributes = \array_merge(
                 $attributes,
                 $reflection->getAttributes($attributeClass, $flags),
             );
 
             if ($includeTraits) {
-                foreach (self::fetchTraits($class, includeParents: false) as $trait) {
+                foreach (self::fetchTraits($class->getName(), includeParents: false) as $trait) {
                     $traitReflection = new \ReflectionClass($trait);
                     $attributes = \array_merge(
                         $attributes,
@@ -46,7 +81,7 @@ final class Reflection
                 }
             }
 
-            $class = $includeParents ? $reflection->getParentClass()?->getName() : null;
+            $class = $includeParents ? $reflection->getParentClass() : null;
         } while ($class !== null);
 
         return $attributes;

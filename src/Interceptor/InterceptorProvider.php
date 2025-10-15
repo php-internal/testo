@@ -6,7 +6,7 @@ namespace Testo\Interceptor;
 
 use Testo\Attribute\Interceptable;
 use Testo\Attribute\RetryPolicy;
-use Testo\Interceptor\Implementation\RetryPolicyCallInterceptor;
+use Testo\Interceptor\TestCallInterceptor\RetryPolicyCallInterceptor;
 use Testo\Interceptor\Internal\InterceptorMarker;
 
 final class InterceptorProvider

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Testo\Interceptor\Implementation;
+namespace Testo\Interceptor\Locator;
 
 use Testo\Interceptor\FileLocatorInterceptor;
 use Testo\Module\Tokenizer\Reflection\TokenizedFile;

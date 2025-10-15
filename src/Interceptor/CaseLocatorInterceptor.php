@@ -6,12 +6,12 @@ namespace Testo\Interceptor;
 
 use Testo\Interceptor\Internal\InterceptorMarker;
 use Testo\Module\Tokenizer\Reflection\FileDefinitions;
-use Testo\Suite\Dto\CasesCollection;
+use Testo\Suite\Dto\CaseDefinitions;
 
 /**
  * Intercept locating test files and test cases.TokenizedFile
  *
- * @extends InterceptorMarker<FileDefinitions, CasesCollection>
+ * @extends InterceptorMarker<FileDefinitions, CaseDefinitions>
  */
 interface CaseLocatorInterceptor extends InterceptorMarker
 {
@@ -21,7 +21,7 @@ interface CaseLocatorInterceptor extends InterceptorMarker
      * Class and function reflections are available there.
      *
      * @param FileDefinitions $file File to locate test cases in.
-     * @param callable(FileDefinitions): CasesCollection $next Next interceptor or core logic to locate test cases.
+     * @param callable(FileDefinitions): CaseDefinitions $next Next interceptor or core logic to locate test cases.
      */
-    public function locateTestCases(FileDefinitions $file, callable $next): CasesCollection;
+    public function locateTestCases(FileDefinitions $file, callable $next): CaseDefinitions;
 }

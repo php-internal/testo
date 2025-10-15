@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Testo\Module\Tokenizer\Reflection;
 
 use Testo\Module\Tokenizer\DefinitionLocator;
-use Testo\Suite\Dto\CasesCollection;
+use Testo\Suite\Dto\CaseDefinitions;
 
 final class FileDefinitions
 {
@@ -41,12 +41,16 @@ final class FileDefinitions
 
     public function __construct(
         public readonly TokenizedFile $tokenizedFile,
-        public readonly CasesCollection $cases = new CasesCollection(),
+        public readonly CaseDefinitions $cases = new CaseDefinitions(),
     ) {
         $this->classes = DefinitionLocator::getClasses($tokenizedFile);
+        $this->enums = [];
         // $this->enums = DefinitionLocator::getEnums($tokenizedFile);
+        $this->functions = [];
         // $this->functions = DefinitionLocator::getFunctions($tokenizedFile);
+        $this->interfaces = [];
         // $this->interfaces = DefinitionLocator::getInterfaces($tokenizedFile);
+        $this->traits = [];
         // $this->traits = DefinitionLocator::getTraits($tokenizedFile);
     }
 }

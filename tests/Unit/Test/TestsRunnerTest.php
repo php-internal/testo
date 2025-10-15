@@ -27,11 +27,11 @@ final class TestsRunnerTest extends TestCase
                 definition: new CaseDefinition(
                     reflection: new \ReflectionClass(TestInterceptors::class),
                 ),
+                instance: new TestInterceptors(),
             ),
             testDefinition: new TestDefinition(
                 reflection: new \ReflectionMethod(TestInterceptors::class, 'withRetryPolicy'),
             ),
-            instance: new TestInterceptors(),
         );
 
         $result = $instance->runTest($info);
@@ -47,11 +47,12 @@ final class TestsRunnerTest extends TestCase
     {
         $instance = self::createInstance();
         $info = new TestInfo(
-            caseInfo: new CaseInfo(),
+            caseInfo: new CaseInfo(
+                instance: new TestInterceptors(),
+            ),
             testDefinition: new TestDefinition(
                 reflection: new \ReflectionFunction(\Tests\Fixture\withRetryPolicy(...)),
             ),
-            instance: new TestInterceptors(),
         );
 
         $result = $instance->runTest($info);

@@ -15,6 +15,9 @@ final class Finder implements \Countable, \IteratorAggregate
 {
     private SymfonyFinder $finder;
 
+    /**
+     * @param FinderConfig $config Configuration for finder with absolute paths.
+     */
     public function __construct(FinderConfig $config)
     {
         $this->finder = (new SymfonyFinder());

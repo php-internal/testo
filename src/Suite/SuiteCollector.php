@@ -8,14 +8,14 @@ use Testo\Config\SuiteConfig;
 use Testo\Finder\Finder;
 use Testo\Interceptor\CaseLocatorInterceptor;
 use Testo\Interceptor\FileLocatorInterceptor;
-use Testo\Interceptor\Implementation\FilePostfixTestLocatorInterceptor;
 use Testo\Interceptor\InterceptorProvider;
 use Testo\Interceptor\Internal\Pipeline;
-use Testo\Module\Tokenizer\DefinitionLocator;
+use Testo\Interceptor\Locator\FilePostfixTestLocatorInterceptor;
+use Testo\Interceptor\Locator\TestoAttributesLocatorInterceptor;
 use Testo\Module\Tokenizer\FileLocator;
 use Testo\Module\Tokenizer\Reflection\FileDefinitions;
 use Testo\Module\Tokenizer\Reflection\TokenizedFile;
-use Testo\Suite\Dto\CasesCollection;
+use Testo\Suite\Dto\CaseDefinitions;
 use Testo\Suite\Dto\SuiteInfo;
 use Testo\Test\Dto\CaseDefinition;
 
@@ -48,18 +48,19 @@ final class SuiteCollector
         $files = $this->getFilesIterator($config);
         $definitions = $this->getCaseDefinitions($config, $files);
 
-        $result = [];
+        $cases = [];
         foreach ($definitions as $definition) {
             # Skip empty test cases
             if ($definition->tests === []) {
                 continue;
             }
 
-            $result[] = $definition;
+            $cases[] = $definition;
         }
 
         return new SuiteInfo(
             name: $config->name,
+            testCases: CaseDefinitions::fromArray(...$cases),
         );
     }
 
@@ -74,6 +75,10 @@ final class SuiteCollector
 
         # Prepare interceptors pipeline
         $interceptors = $this->interceptorProvider->fromClasses(FileLocatorInterceptor::class);
+
+        # todo remove:
+        // $interceptors[] = new FilePostfixTestLocatorInterceptor();
+        $interceptors[] = new TestoAttributesLocatorInterceptor();
 
         /**
          * @see FileLocatorInterceptor::locateFile()
@@ -103,13 +108,16 @@ final class SuiteCollector
         # Prepare interceptors pipeline
         $interceptors = $this->interceptorProvider->fromClasses(CaseLocatorInterceptor::class);
 
+        // todo remove:
+        $interceptors[] = new FilePostfixTestLocatorInterceptor();
+
         /**
          * @see CaseLocatorInterceptor::locateTestCases()
-         * @var callable(FileDefinitions): CasesCollection $pipeline
+         * @var callable(FileDefinitions): CaseDefinitions $pipeline
          */
         $pipeline = Pipeline::prepare(...$interceptors)
             ->with(
-                static fn(FileDefinitions $definitions): CasesCollection => $definitions->cases,
+                static fn(FileDefinitions $definitions): CaseDefinitions => $definitions->cases,
                 'locateTestCases',
             );
 

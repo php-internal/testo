@@ -9,7 +9,7 @@ use Testo\Test\Dto\CaseDefinition;
 /**
  * Collection of test cases located in a file.
  */
-final class CasesCollection
+final class CaseDefinitions
 {
     /**
      * Located test cases.
@@ -17,7 +17,14 @@ final class CasesCollection
      */
     private array $cases = [];
 
-    public function declareCase(?\ReflectionClass $reflection): CaseDefinition
+    public static function fromArray(CaseDefinition ...$values): self
+    {
+        $self = new self();
+        $self->cases = \array_values($values);
+        return $self;
+    }
+
+    public function define(?\ReflectionClass $reflection): CaseDefinition
     {
         foreach ($this->cases as $case) {
             if ($case->reflection === $reflection) {

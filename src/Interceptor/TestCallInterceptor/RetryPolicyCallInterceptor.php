@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Testo\Interceptor\Implementation;
+namespace Testo\Interceptor\TestCallInterceptor;
 
 use Testo\Attribute\RetryPolicy;
 use Testo\Interceptor\TestCallInterceptor;

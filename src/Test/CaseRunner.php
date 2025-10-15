@@ -6,6 +6,8 @@ namespace Testo\Test;
 
 use Testo\Dto\Filter;
 use Testo\Interceptor\InterceptorProvider;
+use Testo\Interceptor\Internal\Pipeline;
+use Testo\Interceptor\TestCaseCallInterceptor;
 use Testo\Test\Dto\CaseResult;
 use Testo\Test\Dto\CaseInfo;
 use Testo\Test\Dto\TestInfo;
@@ -20,21 +22,39 @@ final class CaseRunner
 
     public function runCase(CaseInfo $info, Filter $filter): CaseResult
     {
-        $results = [];
-
         # TODO handle async tests
+        # TODO handle random order
 
-        # Instantiate test case
-        # TODO autowire dependencies
-        $instance = $info->definition->reflection?->newInstance();
+        /**
+         * Prepare interceptors pipeline
+         *
+         * @see TestCaseCallInterceptor::runTestCase()
+         * @var list<TestCaseCallInterceptor> $interceptors
+         * @var callable(CaseInfo): CaseResult $pipeline
+         */
+        $interceptors = $this->interceptorProvider->fromClasses(TestCaseCallInterceptor::class);
 
-        $tests = $this->testsProvider->withFilter($filter)->getTests();
-        foreach ($tests as $testDefinition) {
+        // todo remove
+        $interceptors[] = new TestCaseCallInterceptor\InstantiateTestCase();
+
+        $pipeline = Pipeline::prepare(...$interceptors)
+            ->with(
+                fn(CaseInfo $info): CaseResult => $this->run($info),
+                'runTestCase',
+            );
+
+        return $pipeline($info);
+    }
+
+    public function run(CaseInfo $info): CaseResult
+    {
+        $results = [];
+        foreach ($info->definition->tests->getTests() as $testDefinition) {
             $testInfo = new TestInfo(
                 caseInfo: $info,
                 testDefinition: $testDefinition,
-                instance: $instance,
             );
+
             $results[] = $this->testRunner->runTest($testInfo);
         }
 

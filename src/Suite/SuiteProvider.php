@@ -51,7 +51,7 @@ final class SuiteProvider
      *
      * @return array<SuiteInfo>
      */
-    public function getConfigs(): array
+    public function getSuites(): array
     {
         $result = [];
         foreach ($this->configs as $config) {
