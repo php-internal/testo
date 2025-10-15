@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace Testo\Interceptor;
 
 use Testo\Attribute\Interceptable;
-use Testo\Attribute\RetryPolicy;
-use Testo\Interceptor\TestCallInterceptor\RetryPolicyCallInterceptor;
 use Testo\Interceptor\Internal\InterceptorMarker;
+use Testo\Module\Tokenizer\Reflection;
 
 final class InterceptorProvider
 {
     /**
      * Map of interceptable attributes to their interceptors.
-     * @var array<class-string<Interceptable>, class-string<InterceptorMarker>>
+     * @var array<class-string<Interceptable>, null|class-string<InterceptorMarker>>
      */
     private array $map = [];
 
@@ -24,9 +23,7 @@ final class InterceptorProvider
     public static function createDefault(): self
     {
         $self = new self();
-        $self->map = [
-            RetryPolicy::class => RetryPolicyCallInterceptor::class,
-        ];
+        $self->map = [];
         return $self;
     }
 
@@ -80,14 +77,21 @@ final class InterceptorProvider
      */
     private function resolveAlias(string $class): ?string
     {
+        $c = $class;
         do {
-            if (\array_key_exists($class, $this->map)) {
-                return $this->map[$class];
+            if (\array_key_exists($c, $this->map)) {
+                return $this->map[$c];
             }
 
-            $class = \get_parent_class($class);
-        } while ($class);
+            $c = \get_parent_class($c);
+        } while ($c);
 
-        return null;
+        /**
+         * Resolve fallback handler from the {@see FallbackInterceptor} attribute
+         * @var list<\ReflectionAttribute<FallbackInterceptor>> $attrs
+         */
+        $attrs = Reflection::fetchClassAttributes($class, attributeClass: FallbackInterceptor::class);
+
+        return $this->map[$class] ??= $attrs === [] ? null : tr($attrs[0]->newInstance()->class);
     }
 }

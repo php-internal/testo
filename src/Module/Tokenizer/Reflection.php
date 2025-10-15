@@ -47,13 +47,15 @@ final class Reflection
     /**
      * Fetch all attributes for a given class.
      *
+     * @template T
+     *
      * @param class-string $class
      * @param bool $includeParents Whether to include attributes from parent classes.
      * @param bool $includeTraits Whether to include attributes from traits.
-     * @param class-string|null $attributeClass If provided, only attributes of this class will be returned.
+     * @param class-string<T>|null $attributeClass If provided, only attributes of this class will be returned.
      * @param int $flags Flags to pass to {@see ReflectionClass::getAttributes()}.
      *
-     * @return \ReflectionAttribute[]
+     * @return ($attributeClass is null ? list<\ReflectionAttribute> : list<\ReflectionAttribute<T>>)
      */
     public static function fetchClassAttributes(
         \ReflectionClass|string $class,
@@ -65,10 +67,11 @@ final class Reflection
         $attributes = [];
 
         do {
-            \is_string($class) and $reflection = new \ReflectionClass($class);
+            \is_string($class) and $class = new \ReflectionClass($class);
+
             $attributes = \array_merge(
                 $attributes,
-                $reflection->getAttributes($attributeClass, $flags),
+                $class->getAttributes($attributeClass, $flags),
             );
 
             if ($includeTraits) {
@@ -81,8 +84,8 @@ final class Reflection
                 }
             }
 
-            $class = $includeParents ? $reflection->getParentClass() : null;
-        } while ($class !== null);
+            $class = $includeParents ? $class->getParentClass() : false;
+        } while ($class !== false);
 
         return $attributes;
     }
