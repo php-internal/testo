@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Testo\Interceptor;
 
 use Testo\Interceptor\Internal\InterceptorMarker;
-use Testo\Module\Tokenizer\Reflection\FileDefinitions;
-use Testo\Suite\Dto\CaseDefinitions;
 use Testo\Test\Dto\CaseInfo;
 use Testo\Test\Dto\CaseResult;
 

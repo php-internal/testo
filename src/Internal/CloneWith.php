@@ -12,7 +12,7 @@ trait CloneWith
     /**
      * Return a new immutable instance with the specified property value.
      */
-    private function with(string $key, mixed $value): static
+    private function cloneWith(string $key, mixed $value): static
     {
         # Reflection caching
         static $cache = [];
