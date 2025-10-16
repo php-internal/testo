@@ -23,7 +23,10 @@ final class Assert
         StaticState::pass(__FUNCTION__);
     }
 
-    protected static function stringify($value): string
+    /**
+     * Convert a value to a string for error messages.
+     */
+    protected static function stringify(mixed $value): string
     {
         return match (true) {
             $value === null => 'null',

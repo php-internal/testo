@@ -10,6 +10,11 @@ use Testo\Test\Dto\TestResult;
 
 /**
  * Collects assertions.
+ *
+ * Creates a new {@see AssertCollector} instance for each test and assigns it to the {@see StaticState}.
+ * After the test is executed, the collector is attached to the {@see TestResult} attributes.
+ *
+ * Supports both synchronous and asynchronous (Fiber-based) environments.
  */
 final class AssertCollectorInterceptor implements TestCallInterceptor
 {
@@ -21,6 +26,7 @@ final class AssertCollectorInterceptor implements TestCallInterceptor
             $previous = StaticState::swap($collector);
 
             if (\Fiber::getCurrent() === null) {
+                # No Fiber, run the test directly
                 $result = $next($info);
             } else {
                 # Create a Fiber scope to run the test
