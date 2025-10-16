@@ -13,5 +13,6 @@ final class Test
     public function testFirst(): void
     {
         Assert::same(1, 1);
+        Assert::same(1, 2);
     }
 }

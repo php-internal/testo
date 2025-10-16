@@ -24,9 +24,6 @@ final class FilePostfixTestLocatorInterceptor implements FileLocatorInterceptor,
         return \str_ends_with($file->path->stem(), 'Test') ? true : $next($file);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function locateTestCases(FileDefinitions $file, callable $next): CaseDefinitions
     {
         foreach ($file->classes as $class) {

@@ -13,7 +13,6 @@ final class CaseInfo
 {
     use CloneWith;
 
-
     public function __construct(
         public readonly CaseDefinition $definition = new CaseDefinition(),
         /**

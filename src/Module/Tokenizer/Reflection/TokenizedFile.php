@@ -22,6 +22,7 @@ final class TokenizedFile
      * Constants for convenience.
      */
     public const TOKEN_TYPE = 0;
+
     public const TOKEN_CODE = 1;
     public const TOKEN_LINE = 2;
 

@@ -30,16 +30,25 @@ final class TestRunner
         return Pipeline::prepare(...$interceptors)->with(
             static function (TestInfo $info): TestResult {
                 # TODO resolve arguments
+                # TODO don't instantiate if the method is static
                 $instance = $info->caseInfo->instance;
-                $result = $instance === null
-                    ? $info->testDefinition->reflection->invoke()
-                    : $info->testDefinition->reflection->invoke($instance);
+                try {
+                    $result = $instance === null
+                        ? $info->testDefinition->reflection->invoke()
+                        : $info->testDefinition->reflection->invoke($instance);
 
-                return new TestResult(
-                    $info,
-                    $result,
-                    Status::Passed,
-                );
+                    return new TestResult(
+                        $info,
+                        $result,
+                        Status::Passed,
+                    );
+                } catch (\Throwable $throwable) {
+                    return new TestResult(
+                        $info,
+                        $throwable,
+                        Status::Failed,
+                    );
+                }
             },
             /** @see TestCallInterceptor::runTest() */
             'runTest',
