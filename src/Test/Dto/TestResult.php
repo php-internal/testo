@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace Testo\Test\Dto;
 
+use Testo\Internal\AttributedTrait;
+
 final class TestResult
 {
+    use AttributedTrait;
+
     public function __construct(
         public readonly TestInfo $info,
         public readonly mixed $result,
         public readonly Status $status,
+        public readonly array $attributes = [],
     ) {}
 
     public function with(
