@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Testo\Test;
 
+use Testo\Assert\AssertCollectorInterceptor;
 use Testo\Attribute\Interceptable;
 use Testo\Interceptor\InterceptorProvider;
 use Testo\Interceptor\Internal\Pipeline;
@@ -22,6 +23,10 @@ final class TestRunner
     {
         # Build interceptors pipeline
         $interceptors = $this->prepareInterceptors($info);
+
+        // todo remove
+        $interceptors[] = new AssertCollectorInterceptor();
+
         return Pipeline::prepare(...$interceptors)->with(
             static function (TestInfo $info): TestResult {
                 # TODO resolve arguments
