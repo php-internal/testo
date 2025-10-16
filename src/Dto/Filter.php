@@ -31,7 +31,7 @@ final class Filter
      */
     public function withTestSuites(string ...$names): self
     {
-        return $this->with('testSuites', \array_unique(\array_merge($this->testSuites, $names)));
+        return $this->cloneWith('testSuites', \array_unique(\array_merge($this->testSuites, $names)));
     }
 
     public function withTestCases($name): self

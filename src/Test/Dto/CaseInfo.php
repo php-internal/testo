@@ -25,6 +25,6 @@ final class CaseInfo
     public function withInstance(?object $instance): self
     {
         /** @see self::$instance */
-        return $this->with('instance', $instance);
+        return $this->cloneWith('instance', $instance);
     }
 }

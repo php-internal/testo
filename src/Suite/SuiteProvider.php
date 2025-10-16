@@ -43,7 +43,7 @@ final class SuiteProvider
         );
 
         /** @see self::$suites */
-        return $this->with('suites', $suites);
+        return $this->cloneWith('suites', $suites);
     }
 
     /**
