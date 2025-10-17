@@ -92,6 +92,6 @@ final class InterceptorProvider
          */
         $attrs = Reflection::fetchClassAttributes($class, attributeClass: FallbackInterceptor::class);
 
-        return $this->map[$class] ??= $attrs === [] ? null : tr($attrs[0]->newInstance()->class);
+        return $this->map[$class] ??= $attrs === [] ? null : $attrs[0]->newInstance()->class;
     }
 }

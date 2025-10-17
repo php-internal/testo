@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Testo\Test;
 
-use Testo\Assert\AssertCollectorInterceptor;
+use Testo\Assert\Interceptor\AssertCollectorInterceptor;
+use Testo\Assert\Interceptor\ExpectExceptionInterceptor;
 use Testo\Attribute\Interceptable;
+use Testo\Interceptor\Exception\PipelineException;
 use Testo\Interceptor\InterceptorProvider;
 use Testo\Interceptor\Internal\Pipeline;
 use Testo\Interceptor\TestCallInterceptor;
@@ -21,38 +23,47 @@ final class TestRunner
 
     public function runTest(TestInfo $info): TestResult
     {
-        # Build interceptors pipeline
-        $interceptors = $this->prepareInterceptors($info);
+        try {
+            # Build interceptors pipeline
+            $interceptors = [
+                new AssertCollectorInterceptor(), // todo remove
+                new ExpectExceptionInterceptor(), // todo remove
+                ...$this->prepareInterceptors($info),
+            ];
 
-        // todo remove
-        $interceptors[] = new AssertCollectorInterceptor();
+            return Pipeline::prepare(...$interceptors)->with(
+                static function (TestInfo $info): TestResult {
+                    # TODO resolve arguments
+                    # TODO don't instantiate if the method is static
+                    $instance = $info->caseInfo->instance;
+                    try {
+                        $result = $instance === null
+                            ? $info->testDefinition->reflection->invoke()
+                            : $info->testDefinition->reflection->invoke($instance);
 
-        return Pipeline::prepare(...$interceptors)->with(
-            static function (TestInfo $info): TestResult {
-                # TODO resolve arguments
-                # TODO don't instantiate if the method is static
-                $instance = $info->caseInfo->instance;
-                try {
-                    $result = $instance === null
-                        ? $info->testDefinition->reflection->invoke()
-                        : $info->testDefinition->reflection->invoke($instance);
-
-                    return new TestResult(
-                        $info,
-                        $result,
-                        Status::Passed,
-                    );
-                } catch (\Throwable $throwable) {
-                    return new TestResult(
-                        $info,
-                        $throwable,
-                        Status::Failed,
-                    );
-                }
-            },
-            /** @see TestCallInterceptor::runTest() */
-            'runTest',
-        )($info);
+                        return new TestResult(
+                            info: $info,
+                            status: Status::Passed,
+                            result: $result,
+                        );
+                    } catch (\Throwable $throwable) {
+                        return new TestResult(
+                            info: $info,
+                            status: Status::Error,
+                            failure: $throwable,
+                        );
+                    }
+                },
+                /** @see TestCallInterceptor::runTest() */
+                'runTest',
+            )($info);
+        } catch (\Throwable $e) {
+            return new TestResult(
+                info: $info,
+                status: Status::Skipped,
+                failure: new PipelineException('Error during test execution pipeline.', previous: $e),
+            );
+        }
     }
 
     /**

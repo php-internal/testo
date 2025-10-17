@@ -77,7 +77,7 @@ final class SuiteCollector
         $interceptors = $this->interceptorProvider->fromClasses(FileLocatorInterceptor::class);
 
         # todo remove:
-        // $interceptors[] = new FilePostfixTestLocatorInterceptor();
+        $interceptors[] = new FilePostfixTestLocatorInterceptor();
         $interceptors[] = new TestoAttributesLocatorInterceptor();
 
         /**
@@ -110,6 +110,7 @@ final class SuiteCollector
 
         // todo remove:
         $interceptors[] = new FilePostfixTestLocatorInterceptor();
+        $interceptors[] = new TestoAttributesLocatorInterceptor();
 
         /**
          * @see CaseLocatorInterceptor::locateTestCases()
