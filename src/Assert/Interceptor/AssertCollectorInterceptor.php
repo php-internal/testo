@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Testo\Assert;
+namespace Testo\Assert\Interceptor;
 
+use Testo\Assert\StaticState;
+use Testo\Assert\TestState;
 use Testo\Interceptor\TestCallInterceptor;
 use Testo\Test\Dto\TestInfo;
 use Testo\Test\Dto\TestResult;

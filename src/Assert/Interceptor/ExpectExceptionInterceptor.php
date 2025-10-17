@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Testo\Assert;
+namespace Testo\Assert\Interceptor;
 
+use Testo\Assert\State;
 use Testo\Assert\State\AssertException;
 use Testo\Assert\State\Record;
 use Testo\Assert\State\Success;
+use Testo\Assert\StaticState;
 use Testo\Interceptor\TestCallInterceptor;
 use Testo\Test\Dto\Status;
 use Testo\Test\Dto\TestInfo;
@@ -58,7 +60,9 @@ final class ExpectExceptionInterceptor implements TestCallInterceptor
         }
 
         return new Success(
-            assertion: 'Throw exception: `' . $expected->class . '`.',
+            assertion: $expected->class === $actual::class
+                ? 'Throw exception: `' . $expected->class . '`.'
+                : 'Throw exception: `' . $actual::class . '` (got `' . $expected->class . '`).',
         );
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Testo;
 
+use Testo\Assert\Interceptor\ExpectExceptionInterceptor;
 use Testo\Assert\State\AssertException;
 use Testo\Assert\StaticState;
 use Testo\Assert\Support;
