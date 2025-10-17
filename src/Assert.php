@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Testo;
 
-use Testo\Assert\Cases\AssertException;
+use Testo\Assert\State\AssertException;
 use Testo\Assert\StaticState;
 use Testo\Assert\Support;
 
@@ -42,5 +42,18 @@ final class Assert
         $actual === null
             ? StaticState::log('Assert null', $message)
             : StaticState::fail(AssertException::same(null, $actual, $message));
+    }
+
+    /**
+     * Expects that the test will throw an exception of the given class.
+     *
+     * @param class-string $class The expected exception class or interface.
+     *
+     * @note Requires {@see ExpectExceptionInterceptor} to be registered.
+     */
+    public static function exception(
+        string $class,
+    ): void {
+        StaticState::expectException($class);
     }
 }

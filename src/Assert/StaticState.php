@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Testo\Assert;
 
-use Testo\Assert\Cases\AssertException;
-use Testo\Assert\Cases\Success;
+use Testo\Assert\State\AssertException;
+use Testo\Assert\State\ExpectedException;
+use Testo\Assert\State\Success;
 
 /**
  * Holds the current assertion collector.
@@ -15,17 +16,25 @@ use Testo\Assert\Cases\Success;
  */
 final class StaticState
 {
-    public static ?AssertCollector $collector = null;
+    public static ?TestState $state = null;
 
     /**
-     * Swaps the current collector with the given one.
+     * Swap the current collector with the given one.
      *
-     * @return AssertCollector|null The previous collector.
+     * @return TestState|null The previous collector.
      */
-    public static function swap(?AssertCollector $collector): ?AssertCollector
+    public static function swap(?TestState $collector): ?TestState
     {
-        [self::$collector, $collector] = [$collector, self::$collector];
+        [self::$state, $collector] = [$collector, self::$state];
         return $collector;
+    }
+
+    /**
+     * Get the current collector.
+     */
+    public static function current(): ?TestState
+    {
+        return self::$state;
     }
 
     /**
@@ -34,7 +43,7 @@ final class StaticState
      */
     public static function log(string $assertion, string $context): void
     {
-        self::$collector === null or self::$collector->history[] = new Success(
+        self::$state === null or self::$state->history[] = new Success(
             assertion: $assertion,
             context: $context,
         );
@@ -49,7 +58,24 @@ final class StaticState
      */
     public static function fail(AssertException $failure): never
     {
-        self::$collector === null or self::$collector->history[] = $failure;
+        self::$state === null or self::$state->history[] = $failure;
         throw $failure;
+    }
+
+    /**
+     * Set the expected exception for the current test.
+     *
+     * @param class-string<\Throwable> $class The expected exception class or interface.
+     *
+     * @throws \RuntimeException when there is no current {@see TestState}.
+     */
+    public static function expectException(
+        string $class,
+    ): void {
+        # todo make the exception friendlier
+        self::$state === null and throw new \RuntimeException(
+            'No current AssertState to set expected exception on.',
+        );
+        self::$state->expectException = new ExpectedException($class);
     }
 }

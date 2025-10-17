@@ -16,7 +16,6 @@ final class CaseRunner
 {
     public function __construct(
         private readonly TestRunner $testRunner,
-        private readonly TestsProvider $testsProvider,
         private readonly InterceptorProvider $interceptorProvider,
     ) {}
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Testo\Assert;
+namespace Testo\Assert\State;
 
 /**
  * Assertion record.

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Testo\Test;
 
 use Testo\Assert\AssertCollectorInterceptor;
+use Testo\Assert\ExpectExceptionInterceptor;
 use Testo\Attribute\Interceptable;
 use Testo\Interceptor\InterceptorProvider;
 use Testo\Interceptor\Internal\Pipeline;
@@ -26,6 +27,7 @@ final class TestRunner
 
         // todo remove
         $interceptors[] = new AssertCollectorInterceptor();
+        $interceptors[] = new ExpectExceptionInterceptor();
 
         return Pipeline::prepare(...$interceptors)->with(
             static function (TestInfo $info): TestResult {
@@ -38,15 +40,15 @@ final class TestRunner
                         : $info->testDefinition->reflection->invoke($instance);
 
                     return new TestResult(
-                        $info,
-                        $result,
-                        Status::Passed,
+                        info: $info,
+                        status: Status::Passed,
+                        result: $result,
                     );
                 } catch (\Throwable $throwable) {
                     return new TestResult(
-                        $info,
-                        $throwable,
-                        Status::Failed,
+                        info: $info,
+                        status: Status::Error,
+                        failure: $throwable,
                     );
                 }
             },

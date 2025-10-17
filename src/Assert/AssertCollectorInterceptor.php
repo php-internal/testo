@@ -11,7 +11,7 @@ use Testo\Test\Dto\TestResult;
 /**
  * Collects assertions.
  *
- * Creates a new {@see AssertCollector} instance for each test and assigns it to the {@see StaticState}.
+ * Creates a new {@see TestState} instance for each test and assigns it to the {@see StaticState}.
  * After the test is executed, the collector is attached to the {@see TestResult} attributes.
  *
  * Supports both synchronous and asynchronous (Fiber-based) environments.
@@ -21,9 +21,9 @@ final class AssertCollectorInterceptor implements TestCallInterceptor
     #[\Override]
     public function runTest(TestInfo $info, callable $next): TestResult
     {
-        $collector = new AssertCollector();
+        $state = new TestState();
         try {
-            $previous = StaticState::swap($collector);
+            $previous = StaticState::swap($state);
 
             if (\Fiber::getCurrent() === null) {
                 # No Fiber, run the test directly
@@ -38,12 +38,12 @@ final class AssertCollectorInterceptor implements TestCallInterceptor
                     try {
                         $resume = \Fiber::suspend($value);
                     } catch (\Throwable $e) {
-                        $previous = StaticState::swap($collector);
+                        $previous = StaticState::swap($state);
                         $value = $fiber->throw($e);
                         continue;
                     }
 
-                    $previous = StaticState::swap($collector);
+                    $previous = StaticState::swap($state);
                     $value = $fiber->resume($resume);
                 }
 
@@ -51,7 +51,7 @@ final class AssertCollectorInterceptor implements TestCallInterceptor
                 $result = $fiber->getReturn();
             }
 
-            return $result->withAttribute(AssertCollector::class, $collector);
+            return $result->withAttribute(TestState::class, $state);
         } finally {
             StaticState::swap($previous);
         }

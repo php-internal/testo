@@ -12,8 +12,9 @@ final class TestResult
 
     public function __construct(
         public readonly TestInfo $info,
-        public readonly mixed $result,
         public readonly Status $status,
+        public readonly mixed $result = null,
+        public readonly ?\Throwable $failure = null,
         public readonly array $attributes = [],
     ) {}
 
@@ -22,17 +23,20 @@ final class TestResult
     ): self {
         return new self(
             info: $this->info,
-            result: $this->result,
             status: $status ?? $this->status,
+            result: $this->result,
+            failure: $this->failure,
+            attributes: $this->attributes,
         );
     }
 
     public function withResult(mixed $result): self
     {
-        return new self(
-            info: $this->info,
-            result: $result,
-            status: $this->status,
-        );
+        return $this->cloneWith('result', $result);
+    }
+
+    public function withFailure(?\Throwable $failure): self
+    {
+        return $this->cloneWith('failure', $failure);
     }
 }
