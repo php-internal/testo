@@ -7,11 +7,10 @@ namespace Testo\Assert;
 /**
  * Assertion record.
  */
-final class Record
+interface Record
 {
-    public function __construct(
-        public readonly bool $passed,
-        public readonly string $method,
-        public readonly string $message = '',
-    ) {}
+    /**
+     * Indicates whether the assertion was successful.
+     */
+    public function isSuccess(): bool;
 }

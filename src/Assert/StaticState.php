@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Testo\Assert;
 
+use Testo\Assert\Cases\AssertException;
+use Testo\Assert\Cases\Success;
+
 /**
  * Holds the current assertion collector.
  *
@@ -25,19 +28,28 @@ final class StaticState
         return $collector;
     }
 
-    public static function pass(string $name): void
+    /**
+     * @param non-empty-string $assertion The assertion result (e.g., "Same: 42", "Assert `true`").
+     * @param non-empty-string $context Optional user-provided context describing what is being asserted.
+     */
+    public static function log(string $assertion, string $context): void
     {
-        self::$collector === null or self::$collector->history[] = new Record(
-            passed: true,
-            method: $name,
+        self::$collector === null or self::$collector->history[] = new Success(
+            assertion: $assertion,
+            context: $context,
         );
     }
 
-    public static function fail(string $name): void
+    /**
+     * Log a failed assertion and throw the given exception.
+     *
+     * @template T of AssertException
+     * @param T $failure The assertion failure.
+     * @throws T
+     */
+    public static function fail(AssertException $failure): never
     {
-        self::$collector === null or self::$collector->history[] = new Record(
-            passed: false,
-            method: $name,
-        );
+        self::$collector === null or self::$collector->history[] = $failure;
+        throw $failure;
     }
 }
