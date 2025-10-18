@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Testo\Module\Tokenizer\Reflection;
 
 use Testo\Module\Tokenizer\DefinitionLocator;
-use Testo\Suite\Dto\CaseDefinitions;
+use Testo\Test\Definition\CaseDefinitions;
 
 final class FileDefinitions
 {

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Testo\Attribute;
 
-use Testo\Interceptor\FallbackInterceptor;
 use Testo\Interceptor\TestCallInterceptor\RetryPolicyCallInterceptor;
+use Testo\Module\Interceptor\FallbackInterceptor;
 
 /**
  * Retry test on failure.

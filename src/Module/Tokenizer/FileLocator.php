@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Testo\Module\Tokenizer;
 
-use Testo\Finder\Finder;
+use Testo\Module\Finder\Finder;
 use Testo\Module\Tokenizer\Reflection\TokenizedFile;
 
 /**

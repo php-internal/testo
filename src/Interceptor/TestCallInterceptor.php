@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Testo\Interceptor;
 
 use Testo\Interceptor\Exception\PipelineFailure;
-use Testo\Interceptor\Internal\InterceptorMarker;
+use Testo\Module\Interceptor\Internal\InterceptorMarker;
 use Testo\Test\Dto\Status;
 use Testo\Test\Dto\TestInfo;
 use Testo\Test\Dto\TestResult;
-use Testo\Test\TestRunner;
+use Testo\Test\Runner\TestRunner;
 
 /**
  * Interceptor for running tests.

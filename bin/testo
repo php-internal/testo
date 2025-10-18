@@ -5,8 +5,8 @@ declare(strict_types=1);
 
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\CommandLoader\FactoryCommandLoader;
-use Testo\Internal\Command;
-use Testo\Internal\Info;
+use Testo\Common\Info;
+use Testo\Common\Command;
 
 // Set timeout to 0 to prevent script from timing out
 \set_time_limit(0);

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Testo;
 
+use Testo\Common\Container;
+use Testo\Common\Filter;
+use Testo\Common\Internal\Bootstrap;
 use Testo\Config\ApplicationConfig;
-use Testo\Dto\Filter;
-use Testo\Dto\Run\RunResult;
-use Testo\Internal\Bootstrap;
-use Testo\Internal\Container;
-use Testo\Suite\SuiteProvider;
-use Testo\Suite\SuiteRunner;
+use Testo\Test\Dto\RunResult;
+use Testo\Test\Runner\SuiteRunner;
+use Testo\Test\SuiteProvider;
 
 final class Application
 {

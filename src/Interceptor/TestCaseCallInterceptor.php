@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Testo\Interceptor;
 
-use Testo\Interceptor\Internal\InterceptorMarker;
+use Testo\Module\Interceptor\Internal\InterceptorMarker;
 use Testo\Test\Dto\CaseInfo;
 use Testo\Test\Dto\CaseResult;
 

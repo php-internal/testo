@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Testo\Test;
 
-use Testo\Dto\Filter;
-use Testo\Test\Dto\CaseDefinition;
-use Testo\Test\Dto\TestDefinition;
+use Testo\Common\Filter;
+use Testo\Test\Definition\CaseDefinition;
+use Testo\Test\Definition\TestDefinition;
 
 final class TestsProvider
 {

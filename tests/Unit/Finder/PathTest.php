@@ -7,7 +7,7 @@ namespace Tests\Unit\Finder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Testo\Finder\Path;
+use Testo\Common\Path;
 
 #[CoversClass(Path::class)]
 final class PathTest extends TestCase

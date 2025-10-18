@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Testo\Test\Dto;
 
+use Testo\Test\Definition\TestDefinition;
+
 /**
  * Collection of test definitions located in a Test Case
  */

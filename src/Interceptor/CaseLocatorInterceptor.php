@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Testo\Interceptor;
 
-use Testo\Interceptor\Internal\InterceptorMarker;
+use Testo\Module\Interceptor\Internal\InterceptorMarker;
 use Testo\Module\Tokenizer\Reflection\FileDefinitions;
-use Testo\Suite\Dto\CaseDefinitions;
+use Testo\Test\Definition\CaseDefinitions;
 
 /**
  * Intercept locating test files and test cases.TokenizedFile

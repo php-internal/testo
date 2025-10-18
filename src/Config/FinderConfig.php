@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Testo\Config;
 
-use Testo\Finder\Path;
+use Testo\Common\Path;
 
 /**
  * File system scope configuration.

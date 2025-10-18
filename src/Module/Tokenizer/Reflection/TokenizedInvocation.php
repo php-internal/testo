@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Testo\Module\Tokenizer\Reflection;
 
-use Testo\Finder\Path;
+use Testo\Common\Path;
 use Testo\Module\Tokenizer\Exception\ReflectionException;
 
 /**

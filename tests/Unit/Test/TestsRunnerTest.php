@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tests\Unit\Test;
 
 use PHPUnit\Framework\TestCase;
-use Testo\Interceptor\InterceptorProvider;
-use Testo\Test\Dto\CaseDefinition;
+use Testo\Module\Interceptor\InterceptorProvider;
+use Testo\Test\Definition\CaseDefinition;
+use Testo\Test\Definition\TestDefinition;
 use Testo\Test\Dto\CaseInfo;
 use Testo\Test\Dto\Status;
 use Testo\Test\Dto\TestInfo;
-use Testo\Test\Dto\TestDefinition;
-use Testo\Test\TestRunner;
+use Testo\Test\Runner\TestRunner;
 use Tests\Fixture\TestInterceptors;
 
 final class TestsRunnerTest extends TestCase

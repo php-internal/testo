@@ -8,7 +8,7 @@ use Testo\Interceptor\CaseLocatorInterceptor;
 use Testo\Interceptor\FileLocatorInterceptor;
 use Testo\Module\Tokenizer\Reflection\FileDefinitions;
 use Testo\Module\Tokenizer\Reflection\TokenizedFile;
-use Testo\Suite\Dto\CaseDefinitions;
+use Testo\Test\Definition\CaseDefinitions;
 
 /**
  * Accepts files with the postfix "Test" and fetches test cases from them.

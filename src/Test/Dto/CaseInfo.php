@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Testo\Test\Dto;
 
-use Testo\Internal\CloneWith;
+use Testo\Common\CloneWith;
+use Testo\Test\Definition\CaseDefinition;
 
 /**
  * Information about run test case.

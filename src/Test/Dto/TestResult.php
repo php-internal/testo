@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Testo\Test\Dto;
 
-use Testo\Internal\AttributedTrait;
+use Testo\Common\AttributedTrait;
 
 final class TestResult
 {
