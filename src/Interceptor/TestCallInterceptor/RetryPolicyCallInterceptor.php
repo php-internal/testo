@@ -29,18 +29,17 @@ final class RetryPolicyCallInterceptor implements TestCallInterceptor
 
         run:
         --$attempts;
-        try {
-            $result = $next($info);
-            return $isFlaky && $this->options->markFlaky
-                ? $result->with(status: Status::Flaky)
-                : $result;
-        } catch (\Throwable $e) {
-            # No more attempts left, rethrow the exception
-            $attempts > 0 or throw $e;
+        /** @var TestResult $result */
+        $result = $next($info);
 
+        if ($result->status->isFailure() && $attempts > 0) {
+            # Test failed, check if we can retry
             $isFlaky = true;
-            unset($e);
             goto run;
         }
+
+        return $isFlaky && $this->options->markFlaky
+            ? $result->with(status: Status::Flaky)
+            : $result;
     }
 }
