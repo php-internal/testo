@@ -48,13 +48,13 @@ final class Assert
     /**
      * Expects that the test will throw an exception of the given class.
      *
-     * @param class-string $class The expected exception class or interface.
+     * @param class-string|\Throwable $classOrObject The expected exception class, interface, or an exception object.
      *
      * @note Requires {@see ExpectExceptionInterceptor} to be registered.
      */
     public static function exception(
-        string $class,
+        string|\Throwable $classOrObject,
     ): void {
-        StaticState::expectException($class);
+        StaticState::expectException($classOrObject);
     }
 }

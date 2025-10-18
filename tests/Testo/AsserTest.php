@@ -32,6 +32,16 @@ final class AsserTest
     }
 
     #[Test]
+    public function expectExceptionObject(): never
+    {
+        $e = new \RuntimeException('This is an expected exception.');
+
+        Assert::exception($e);
+
+        throw $e;
+    }
+
+    #[Test]
     #[ExpectException(\RuntimeException::class)]
     public function expectExceptionAttribute(): never
     {

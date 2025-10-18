@@ -10,9 +10,9 @@ namespace Testo\Assert\State;
 final class ExpectedException
 {
     /**
-     * @param class-string $class Expected exception class.
+     * @param class-string|\Throwable $classOrObject Expected exception class, interface, or an object.
      */
     public function __construct(
-        public readonly string $class,
+        public readonly string|\Throwable $classOrObject,
     ) {}
 }

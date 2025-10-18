@@ -26,7 +26,7 @@ final class ExpectExceptionConfigurator implements TestCallInterceptor
         ));
 
         $context->expectException = new ExpectedException(
-            class: $this->options->class,
+            classOrObject: $this->options->class,
         );
 
         return $next($info);
