@@ -11,6 +11,7 @@ use Testo\Interceptor\Exception\PipelineFailure;
 use Testo\Interceptor\TestCallInterceptor;
 use Testo\Module\Interceptor\InterceptorProvider;
 use Testo\Module\Interceptor\Internal\Pipeline;
+use Testo\Render\StdoutRenderer;
 use Testo\Test\Dto\Status;
 use Testo\Test\Dto\TestInfo;
 use Testo\Test\Dto\TestResult;
@@ -26,9 +27,10 @@ final class TestRunner
         try {
             # Build interceptors pipeline
             $interceptors = [
+                ...$this->interceptorProvider->fromClasses(TestCallInterceptor::class, StdoutRenderer::class), // todo remove
                 new AssertCollectorInterceptor(), // todo remove
-                new ExpectExceptionInterceptor(), // todo remove
                 ...$this->prepareInterceptors($info),
+                new ExpectExceptionInterceptor(), // todo remove
             ];
 
             return Pipeline::prepare(...$interceptors)->with(

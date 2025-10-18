@@ -8,6 +8,7 @@ use Testo\Common\Filter;
 use Testo\Interceptor\TestCaseCallInterceptor;
 use Testo\Module\Interceptor\InterceptorProvider;
 use Testo\Module\Interceptor\Internal\Pipeline;
+use Testo\Render\StdoutRenderer;
 use Testo\Test\Dto\CaseInfo;
 use Testo\Test\Dto\CaseResult;
 use Testo\Test\Dto\TestInfo;
@@ -31,10 +32,11 @@ final class CaseRunner
          * @var list<TestCaseCallInterceptor> $interceptors
          * @var callable(CaseInfo): CaseResult $pipeline
          */
-        $interceptors = $this->interceptorProvider->fromClasses(TestCaseCallInterceptor::class);
-
-        // todo remove
-        $interceptors[] = new TestCaseCallInterceptor\InstantiateTestCase();
+        $interceptors = [
+            ...$this->interceptorProvider->fromClasses(TestCaseCallInterceptor::class, StdoutRenderer::class), // todo remove
+            ...$this->interceptorProvider->fromClasses(TestCaseCallInterceptor::class),
+            new TestCaseCallInterceptor\InstantiateTestCase(),// todo remove
+        ];
 
         $pipeline = Pipeline::prepare(...$interceptors)
             ->with(
@@ -48,8 +50,9 @@ final class CaseRunner
     public function run(CaseInfo $info): CaseResult
     {
         $results = [];
-        foreach ($info->definition->tests->getTests() as $testDefinition) {
+        foreach ($info->definition->tests->getTests() as $name => $testDefinition) {
             $testInfo = new TestInfo(
+                name: $name,
                 caseInfo: $info,
                 testDefinition: $testDefinition,
             );
