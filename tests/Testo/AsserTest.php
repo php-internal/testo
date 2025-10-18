@@ -6,6 +6,7 @@ namespace Tests\Testo;
 
 use Testo\Assert;
 use Testo\Attribute\ExpectException;
+use Testo\Attribute\RetryPolicy;
 use Testo\Attribute\Test;
 
 final class AsserTest
@@ -18,9 +19,24 @@ final class AsserTest
     }
 
     #[Test]
-    public function notSame(): void
+    public function failed(): void
     {
+        Assert::same(0, null);
+    }
+
+    #[Test]
+    #[RetryPolicy(maxAttempts: 2)]
+    public function flaky(): void
+    {
+        static $attempt = 0;
+        ++$attempt;
         Assert::same(1, 2);
+    }
+
+    #[Test]
+    public function risky(): void
+    {
+        // No assertions here
     }
 
     #[Test]
