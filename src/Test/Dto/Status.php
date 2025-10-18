@@ -54,13 +54,20 @@ enum Status
     case Cancelled;
 
     /**
+     * Test execution was ABORTED due to a critical interceptor failure.
+     * This occurs when an interceptor throws an exception, halting the pipeline.
+     */
+    case Aborted;
+
+    /**
      * Successfully or not, the test has reached a terminal state.
      */
     public function isCompleted(): bool
     {
         return match ($this) {
             self::Cancelled,
-            self::Skipped => false,
+            self::Skipped,
+            self::Aborted => false,
             default => true,
         };
     }

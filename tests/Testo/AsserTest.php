@@ -8,7 +8,7 @@ use Testo\Assert;
 use Testo\Attribute\ExpectException;
 use Testo\Attribute\Test;
 
-final class TestoTest
+final class AsserTest
 {
     #[Test]
     public function simpleAssertions(): void

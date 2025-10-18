@@ -7,4 +7,4 @@ namespace Testo\Interceptor\Exception;
 /**
  * Exception thrown when an exception occurs in the pipeline.
  */
-class PipelineException extends \RuntimeException {}
+class PipelineFailure extends \RuntimeException {}
