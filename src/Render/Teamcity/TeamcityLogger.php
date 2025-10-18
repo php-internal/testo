@@ -25,10 +25,15 @@ final class TeamcityLogger
      * Outputs a test suite started message.
      *
      * @param non-empty-string $name Suite name
+     * @param non-empty-string|null $locationHint Location hint for IDE navigation
      */
-    public function suiteStarted(string $name): void
+    public function suiteStarted(string $name, ?string $locationHint = null): void
     {
-        $this->message('testSuiteStarted', ['name' => $name]);
+        $attributes = ['name' => $name];
+
+        $locationHint !== null and $attributes['locationHint'] = $locationHint;
+
+        $this->message('testSuiteStarted', $attributes);
     }
 
     /**
@@ -65,7 +70,9 @@ final class TeamcityLogger
     public function caseStartedFromInfo(CaseInfo $info): void
     {
         $name = $this->getCaseName($info);
-        $this->suiteStarted($name);
+        $locationHint = $this->getCaseLocationHint($info);
+
+        $this->suiteStarted($name, $locationHint);
     }
 
     /**
@@ -116,12 +123,14 @@ final class TeamcityLogger
      *
      * @param non-empty-string $name Test name
      * @param bool $captureStandardOutput Whether to capture standard output
+     * @param non-empty-string|null $locationHint Location hint for IDE navigation
      */
-    public function testStarted(string $name, bool $captureStandardOutput = false): void
+    public function testStarted(string $name, bool $captureStandardOutput = false, ?string $locationHint = null): void
     {
         $attributes = ['name' => $name];
 
         $captureStandardOutput and $attributes['captureStandardOutput'] = 'true';
+        $locationHint !== null and $attributes['locationHint'] = $locationHint;
 
         $this->message('testStarted', $attributes);
     }
@@ -146,7 +155,8 @@ final class TeamcityLogger
      */
     public function testStartedFromInfo(TestInfo $info, bool $captureStandardOutput = false): void
     {
-        $this->testStarted($info->name, $captureStandardOutput);
+        $locationHint = $this->getTestLocationHint($info);
+        $this->testStarted($info->name, $captureStandardOutput, $locationHint);
     }
 
     /**
@@ -486,5 +496,49 @@ final class TeamcityLogger
         $trace = $throwable->getTraceAsString();
 
         return "{$class}: {$message}\nFile: {$file}:{$line}\n\nStack trace:\n{$trace}";
+    }
+
+    /**
+     * Gets location hint for a test case.
+     *
+     * Format: php_qn://path/to/file.php::\ClassName
+     */
+    private function getCaseLocationHint(CaseInfo $info): ?string
+    {
+        $reflection = $info->definition->reflection;
+
+        if ($reflection === null) {
+            return null;
+        }
+
+        $file = $reflection->getFileName();
+        $className = $reflection->getName();
+
+        return $file !== false
+            ? \sprintf('php_qn://%s::\\%s', $file, $className)
+            : null;
+    }
+
+    /**
+     * Gets location hint for a test method.
+     *
+     * Format: php_qn://path/to/file.php::\ClassName::methodName
+     */
+    private function getTestLocationHint(TestInfo $info): ?string
+    {
+        $reflection = $info->testDefinition->reflection;
+        $caseReflection = $info->caseInfo->definition->reflection;
+
+        if ($caseReflection === null) {
+            return null;
+        }
+
+        $file = $reflection->getFileName();
+        $className = $caseReflection->getName();
+        $methodName = $reflection->getName();
+
+        return $file !== false
+            ? \sprintf('php_qn://%s::\\%s::%s', $file, $className, $methodName)
+            : null;
     }
 }
