@@ -8,7 +8,7 @@ use Testo\Assert;
 use Testo\Attribute\ExpectException;
 use Testo\Attribute\Test;
 
-final class TestoTest
+final class AsserTest
 {
     #[Test]
     public function simpleAssertions(): void
@@ -29,6 +29,16 @@ final class TestoTest
         Assert::exception(\RuntimeException::class);
 
         throw new \RuntimeException('This is an expected exception.');
+    }
+
+    #[Test]
+    public function expectExceptionObject(): never
+    {
+        $e = new \RuntimeException('This is an expected exception.');
+
+        Assert::exception($e);
+
+        throw $e;
     }
 
     #[Test]

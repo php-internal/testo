@@ -7,7 +7,7 @@ namespace Testo\Test;
 use Testo\Assert\Interceptor\AssertCollectorInterceptor;
 use Testo\Assert\Interceptor\ExpectExceptionInterceptor;
 use Testo\Attribute\Interceptable;
-use Testo\Interceptor\Exception\PipelineException;
+use Testo\Interceptor\Exception\PipelineFailure;
 use Testo\Interceptor\InterceptorProvider;
 use Testo\Interceptor\Internal\Pipeline;
 use Testo\Interceptor\TestCallInterceptor;
@@ -60,8 +60,8 @@ final class TestRunner
         } catch (\Throwable $e) {
             return new TestResult(
                 info: $info,
-                status: Status::Skipped,
-                failure: new PipelineException('Error during test execution pipeline.', previous: $e),
+                status: Status::Aborted,
+                failure: new PipelineFailure('Error during test execution pipeline.', previous: $e),
             );
         }
     }

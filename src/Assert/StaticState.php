@@ -65,17 +65,17 @@ final class StaticState
     /**
      * Set the expected exception for the current test.
      *
-     * @param class-string<\Throwable> $class The expected exception class or interface.
+     * @param class-string|\Throwable $classOrObject The expected exception class, interface, or an exception object.
      *
      * @throws \RuntimeException when there is no current {@see TestState}.
      */
     public static function expectException(
-        string $class,
+        string|\Throwable $classOrObject,
     ): void {
         # todo make the exception friendlier
         self::$state === null and throw new \RuntimeException(
             'No current AssertState to set expected exception on.',
         );
-        self::$state->expectException = new ExpectedException($class);
+        self::$state->expectException = new ExpectedException($classOrObject);
     }
 }

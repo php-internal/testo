@@ -55,14 +55,15 @@ final class ExpectExceptionInterceptor implements TestCallInterceptor
 
     private static function isPassed(State\ExpectedException $expected, ?\Throwable $actual): Record|AssertException
     {
-        if (!$actual instanceof $expected->class) {
-            return AssertException::exceptionClass($expected->class, $actual);
+        $class = \is_string($expected->classOrObject) ? $expected->classOrObject : $expected->classOrObject::class;
+        if (\is_object($expected->classOrObject) ? $actual === $expected->classOrObject : $actual instanceof $class) {
+            return new Success(
+                assertion: $class === $actual::class
+                    ? 'Throw exception: `' . $class . '`.'
+                    : 'Throw exception: `' . $class . '` (got `' . $actual::class . '`).',
+            );
         }
 
-        return new Success(
-            assertion: $expected->class === $actual::class
-                ? 'Throw exception: `' . $expected->class . '`.'
-                : 'Throw exception: `' . $actual::class . '` (got `' . $expected->class . '`).',
-        );
+        return AssertException::exceptionClass($expected->classOrObject, $actual);
     }
 }
