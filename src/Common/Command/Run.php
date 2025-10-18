@@ -8,6 +8,8 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Testo\Render\StdoutRenderer;
+use Testo\Render\Teamcity\TeamcityInterceptor;
 
 #[AsCommand(
     name: 'run',
@@ -18,6 +20,8 @@ final class Run extends Base
         InputInterface $input,
         OutputInterface $output,
     ): int {
+        $this->container->bind(StdoutRenderer::class, TeamcityInterceptor::class);
+
         $result = $this->application->run();
         tr($result);
         return Command::SUCCESS;

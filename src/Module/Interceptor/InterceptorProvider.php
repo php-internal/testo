@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Testo\Module\Interceptor;
 
 use Testo\Attribute\Interceptable;
+use Testo\Common\Container;
 use Testo\Module\Interceptor\Internal\InterceptorMarker;
 use Testo\Module\Tokenizer\Reflection;
+use Yiisoft\Injector\Injector;
 
 final class InterceptorProvider
 {
@@ -16,13 +18,17 @@ final class InterceptorProvider
      */
     private array $map = [];
 
-    public function __construct(
-        private readonly Factory $factory = new Factory(),
-    ) {}
+    private readonly Injector $injector;
 
-    public static function createDefault(): self
+    public function __construct(
+        private readonly Container $container,
+    ) {
+        $this->injector = $this->container->get(Injector::class)->withCacheReflections(true);
+    }
+
+    public static function createDefault(Container $container): self
     {
-        $self = new self();
+        $self = new self($container);
         $self->map = [];
         return $self;
     }
@@ -40,7 +46,19 @@ final class InterceptorProvider
      */
     public function fromClasses(string $class, string|InterceptorMarker ...$interceptors): array
     {
-        return [];
+        $result = [];
+        foreach ($interceptors as $interceptor) {
+            if (\is_string($interceptor)) {
+                if (\class_exists($interceptor) && !\is_a($interceptor, $class, true)) {
+                    continue;
+                }
+
+                $interceptor = $this->container->get($interceptor);
+            }
+
+            $interceptor instanceof $class and $result[] = $interceptor;
+        }
+        return $result;
     }
 
     /**
@@ -63,10 +81,25 @@ final class InterceptorProvider
                 \sprintf('No interceptor found for attribute %s.', $attribute::class),
             );
 
-            \is_a($iClass, $class, true) and $result[] = $this->factory->make($iClass, [$attribute]);
+            \is_a($iClass, $class, true) and $result[] = $this->createInstance($iClass, [$attribute]);
         }
 
         return $result;
+    }
+
+    /**
+     * Creates an instance of the given class with the given arguments.
+     *
+     * @template T of InterceptorMarker
+     *
+     * @param class-string<T> $class The class to create.
+     * @param array $arguments The arguments to pass to the constructor.
+     *
+     * @return InterceptorMarker The created instance.
+     */
+    private function createInstance(string $class, array $arguments = []): InterceptorMarker
+    {
+        return $this->injector->make($class, $arguments);
     }
 
     /**

@@ -12,6 +12,8 @@ use Testo\Test\Definition\TestDefinition;
 final class TestInfo
 {
     public function __construct(
+        /** @var non-empty-string */
+        public readonly string $name,
         public readonly CaseInfo $caseInfo,
         public readonly TestDefinition $testDefinition,
     ) {}
