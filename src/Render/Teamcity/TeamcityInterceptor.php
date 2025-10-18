@@ -38,7 +38,7 @@ final class TeamcityInterceptor implements StdoutRenderer, TestCallInterceptor, 
         /** @var CaseResult $result */
         $result = $next($info);
 
-        $this->logger->handleCaseResult($result);
+        $this->logger->handleCaseResult($info, $result);
         return $result;
     }
 }

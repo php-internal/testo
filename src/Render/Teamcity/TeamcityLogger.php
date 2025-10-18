@@ -80,15 +80,35 @@ final class TeamcityLogger
     }
 
     /**
-     * Outputs all test results from a CaseResult.
+     * Closes the test case suite based on test results.
      *
-     * @param int<0, max>|null $duration Duration in milliseconds for each test
+     * Analyzes all test results to determine the overall case status
+     * and outputs appropriate TeamCity messages (failed tests, then suite finish).
+     *
+     * @param int<0, max>|null $duration Duration in milliseconds for the case
      */
-    public function handleCaseResult(CaseResult $result, ?int $duration = null): void
+    public function handleCaseResult(CaseInfo $caseInfo, CaseResult $result, ?int $duration = null): void
     {
+        $hasFailures = false;
+
         foreach ($result as $testResult) {
-            $this->handleTestResult($testResult, $duration);
+            if ($testResult->status->isFailure()) {
+                $hasFailures = true;
+                break;
+            }
         }
+
+        // Report case-level failure if any tests failed
+        if ($hasFailures) {
+            $caseName = $this->getCaseName($caseInfo);
+            $failedCount = $this->countFailedTests($result);
+            $this->testStdErr(
+                $caseName,
+                "Test case failed: {$failedCount} test(s) failed",
+            );
+        }
+
+        $this->caseFinishedFromInfo($caseInfo);
     }
 
     /**
@@ -382,6 +402,22 @@ final class TeamcityLogger
         return $reflection !== null
             ? $reflection->getShortName()
             : 'UnknownTestCase';
+    }
+
+    /**
+     * Counts the number of failed tests in a CaseResult.
+     *
+     * @return int<0, max>
+     */
+    private function countFailedTests(CaseResult $result): int
+    {
+        $count = 0;
+
+        foreach ($result as $testResult) {
+            $testResult->status->isFailure() and $count++;
+        }
+
+        return $count;
     }
 
     /**
