@@ -40,7 +40,7 @@ final class Application
 
         # Iterate Test Suites
         foreach ($suiteProvider->withFilter($filter)->getSuites() as $suite) {
-            $suiteResults[] = $suiteRunner->run($suite, $filter);
+            $suiteResults[] = $suiteRunner->runSuite($suite, $filter);
         }
 
         # Run suites
