@@ -7,11 +7,11 @@ namespace Testo\Assert\Interceptor;
 use Testo\Assert\State\ExpectedException;
 use Testo\Assert\StaticState;
 use Testo\Attribute\ExpectException;
-use Testo\Interceptor\TestCallInterceptor;
+use Testo\Interceptor\TestRunInterceptor;
 use Testo\Test\Dto\TestInfo;
 use Testo\Test\Dto\TestResult;
 
-final class ExpectExceptionConfigurator implements TestCallInterceptor
+final class ExpectExceptionConfigurator implements TestRunInterceptor
 {
     public function __construct(
         private readonly ExpectException $options,

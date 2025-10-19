@@ -6,7 +6,7 @@ namespace Testo\Assert\Interceptor;
 
 use Testo\Assert\StaticState;
 use Testo\Assert\TestState;
-use Testo\Interceptor\TestCallInterceptor;
+use Testo\Interceptor\TestRunInterceptor;
 use Testo\Test\Dto\TestInfo;
 use Testo\Test\Dto\TestResult;
 
@@ -18,7 +18,7 @@ use Testo\Test\Dto\TestResult;
  *
  * Supports both synchronous and asynchronous (Fiber-based) environments.
  */
-final class AssertCollectorInterceptor implements TestCallInterceptor
+final class AssertCollectorInterceptor implements TestRunInterceptor
 {
     #[\Override]
     public function runTest(TestInfo $info, callable $next): TestResult

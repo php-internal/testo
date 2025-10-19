@@ -2,17 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Testo\Render\Teamcity;
+namespace Testo\Render;
 
-use Testo\Interceptor\TestCallInterceptor;
-use Testo\Interceptor\TestCaseCallInterceptor;
-use Testo\Render\StdoutRenderer;
+use Testo\Interceptor\TestRunInterceptor;
+use Testo\Interceptor\TestCaseRunInterceptor;
+use Testo\Interceptor\TestSuiteRunInterceptor;
+use Testo\Render\Teamcity\TeamcityLogger;
 use Testo\Test\Dto\CaseInfo;
 use Testo\Test\Dto\CaseResult;
+use Testo\Test\Dto\SuiteInfo;
+use Testo\Test\Dto\SuiteResult;
 use Testo\Test\Dto\TestInfo;
 use Testo\Test\Dto\TestResult;
 
-final class TeamcityInterceptor implements StdoutRenderer, TestCallInterceptor, TestCaseCallInterceptor
+final class TeamcityInterceptor implements
+    StdoutRenderer,
+    TestRunInterceptor,
+    TestCaseRunInterceptor,
+    TestSuiteRunInterceptor
 {
     public function __construct(
         private readonly TeamcityLogger $logger,
@@ -39,6 +46,17 @@ final class TeamcityInterceptor implements StdoutRenderer, TestCallInterceptor, 
         $result = $next($info);
 
         $this->logger->handleCaseResult($info, $result);
+        return $result;
+    }
+
+    public function runTestSuite(SuiteInfo $info, callable $next): SuiteResult
+    {
+        $this->logger->suiteStartedFromInfo($info);
+
+        /** @var SuiteResult $result */
+        $result = $next($info);
+        $this->logger->handleSuiteResult($info, $result);
+
         return $result;
     }
 }

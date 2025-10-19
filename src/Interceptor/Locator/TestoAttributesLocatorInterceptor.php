@@ -7,7 +7,7 @@ namespace Testo\Interceptor\Locator;
 use Testo\Attribute\Test;
 use Testo\Interceptor\CaseLocatorInterceptor;
 use Testo\Interceptor\FileLocatorInterceptor;
-use Testo\Module\Tokenizer\Reflection;
+use Testo\Interceptor\Reflection\Reflection;
 use Testo\Module\Tokenizer\Reflection\FileDefinitions;
 use Testo\Module\Tokenizer\Reflection\TokenizedFile;
 use Testo\Test\Definition\CaseDefinitions;

@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Testo\Test\Runner;
 
 use Testo\Common\Filter;
+use Testo\Interceptor\TestSuiteRunInterceptor;
+use Testo\Module\Interceptor\InterceptorProvider;
+use Testo\Module\Interceptor\Internal\Pipeline;
 use Testo\Test\Dto\CaseInfo;
 use Testo\Test\Dto\SuiteInfo;
 use Testo\Test\Dto\SuiteResult;
@@ -16,7 +19,27 @@ final class SuiteRunner
 {
     public function __construct(
         private readonly CaseRunner $caseRunner,
+        private readonly InterceptorProvider $interceptorProvider,
     ) {}
+
+    public function runSuite(SuiteInfo $info, Filter $filter): SuiteResult
+    {
+        /**
+         * Prepare interceptors pipeline
+         *
+         * @see TestSuiteRunInterceptor::runTestSuite()
+         * @var list<TestSuiteRunInterceptor> $interceptors
+         * @var callable(SuiteInfo): SuiteResult $pipeline
+         */
+        $interceptors = $this->interceptorProvider->fromConfig(TestSuiteRunInterceptor::class);
+        $pipeline = Pipeline::prepare(...$interceptors)
+            ->with(
+                fn(SuiteInfo $info): SuiteResult => $this->run($info, $filter),
+                'runTestSuite',
+            );
+
+        return $pipeline($info);
+    }
 
     public function run(SuiteInfo $suite, Filter $filter): SuiteResult
     {

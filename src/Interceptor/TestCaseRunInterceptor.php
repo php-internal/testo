@@ -13,7 +13,7 @@ use Testo\Test\Dto\CaseResult;
  *
  * @extends InterceptorMarker<CaseInfo, CaseResult>
  */
-interface TestCaseCallInterceptor extends InterceptorMarker
+interface TestCaseRunInterceptor extends InterceptorMarker
 {
     /**
      * @param CaseInfo $info Test case to run.

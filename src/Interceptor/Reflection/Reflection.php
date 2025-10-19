@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Testo\Module\Tokenizer;
+namespace Testo\Interceptor\Reflection;
 
 /**
  * Reflection utilities.

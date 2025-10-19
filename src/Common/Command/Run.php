@@ -9,7 +9,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Testo\Render\StdoutRenderer;
-use Testo\Render\Teamcity\TeamcityInterceptor;
+use Testo\Render\TeamcityInterceptor;
 
 #[AsCommand(
     name: 'run',
@@ -23,7 +23,8 @@ final class Run extends Base
         $this->container->bind(StdoutRenderer::class, TeamcityInterceptor::class);
 
         $result = $this->application->run();
-        tr($result);
+        // tr($result);
+
         return Command::SUCCESS;
     }
 }

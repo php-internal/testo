@@ -23,7 +23,8 @@ final class Pipeline
     /** @var non-empty-string */
     private string $method;
 
-    private \Closure $last;
+    /** @var callable(TInput): TOutput */
+    private mixed $last;
 
     /** @var TInterceptor */
     private array $interceptors = [];
@@ -59,7 +60,7 @@ final class Pipeline
      *
      * @return callable(object): TOutput
      */
-    public function with(\Closure $last, string $method): callable
+    public function with(callable $last, string $method): callable
     {
         $new = clone $this;
 
