@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Testo\Module\Interceptor;
 
+use Testo\Assert\Interceptor\AssertCollectorInterceptor;
+use Testo\Assert\Interceptor\ExpectExceptionInterceptor;
 use Testo\Attribute\Interceptable;
 use Testo\Common\Container;
+use Testo\Interceptor\Reflection\AttributesInterceptor;
+use Testo\Interceptor\Reflection\Reflection;
 use Testo\Module\Interceptor\Internal\InterceptorMarker;
-use Testo\Module\Tokenizer\Reflection;
+use Testo\Render\StdoutRenderer;
 use Yiisoft\Injector\Injector;
 
 final class InterceptorProvider
@@ -31,6 +35,25 @@ final class InterceptorProvider
         $self = new self($container);
         $self->map = [];
         return $self;
+    }
+
+    /**
+     * Get interceptors for the given configuration filtered by the given class.
+     *
+     * @template-covariant T of InterceptorMarker
+     *
+     * @param class-string<T> $class The target interceptor class.
+     *
+     * @return InterceptorMarker Interceptor instances of the given class.
+     */
+    public function fromConfig(string $class): array
+    {
+        return $this->fromClasses($class, ...[
+            StdoutRenderer::class,
+            new AssertCollectorInterceptor(),
+            AttributesInterceptor::class,
+            new ExpectExceptionInterceptor(),
+        ]);
     }
 
     /**

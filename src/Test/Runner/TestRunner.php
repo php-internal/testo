@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace Testo\Test\Runner;
 
-use Testo\Assert\Interceptor\AssertCollectorInterceptor;
-use Testo\Assert\Interceptor\ExpectExceptionInterceptor;
-use Testo\Attribute\Interceptable;
 use Testo\Interceptor\Exception\PipelineFailure;
 use Testo\Interceptor\TestRunInterceptor;
 use Testo\Module\Interceptor\InterceptorProvider;
 use Testo\Module\Interceptor\Internal\Pipeline;
-use Testo\Render\StdoutRenderer;
 use Testo\Test\Dto\Status;
 use Testo\Test\Dto\TestInfo;
 use Testo\Test\Dto\TestResult;
@@ -26,12 +22,7 @@ final class TestRunner
     {
         try {
             # Build interceptors pipeline
-            $interceptors = [
-                ...$this->interceptorProvider->fromClasses(TestRunInterceptor::class, StdoutRenderer::class), // todo remove
-                new AssertCollectorInterceptor(), // todo remove
-                ...$this->prepareInterceptors($info),
-                new ExpectExceptionInterceptor(), // todo remove
-            ];
+            $interceptors = $this->interceptorProvider->fromConfig(TestRunInterceptor::class);
 
             return Pipeline::prepare(...$interceptors)->with(
                 static function (TestInfo $info): TestResult {
@@ -66,28 +57,5 @@ final class TestRunner
                 failure: new PipelineFailure('Error during test execution pipeline.', previous: $e),
             );
         }
-    }
-
-    /**
-     * @return list<TestRunInterceptor>
-     */
-    private function prepareInterceptors(TestInfo $info): array
-    {
-        $classAttributes = $info->caseInfo->definition->reflection?->getAttributes(
-            Interceptable::class,
-            \ReflectionAttribute::IS_INSTANCEOF,
-        ) ?? [];
-        $methodAttributes = $info->testDefinition->reflection->getAttributes(
-            Interceptable::class,
-            \ReflectionAttribute::IS_INSTANCEOF,
-        );
-
-        # Merge and instantiate attributes
-        $attrs = \array_map(
-            static fn(\ReflectionAttribute $a): Interceptable => $a->newInstance(),
-            \array_merge($classAttributes, $methodAttributes),
-        );
-
-        return $this->interceptorProvider->fromAttributes(TestRunInterceptor::class, ...$attrs);
     }
 }
