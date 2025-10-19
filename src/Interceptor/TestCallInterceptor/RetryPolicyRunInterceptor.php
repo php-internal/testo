@@ -32,13 +32,17 @@ final class RetryPolicyRunInterceptor implements TestRunInterceptor
         /** @var TestResult $result */
         $result = $next($info);
 
-        if ($result->status->isFailure() && $attempts > 0) {
+        if ($result->status->isFailure()) {
             # Test failed, check if we can retry
-            $isFlaky = true;
-            goto run;
+            if ($attempts > 0) {
+                $isFlaky = true;
+                goto run;
+            }
+
+            return $result;
         }
 
-        return $isFlaky && $this->options->markFlaky
+        return $isFlaky && $this->options->markFlaky && $result->status->isSuccessful()
             ? $result->with(status: Status::Flaky)
             : $result;
     }

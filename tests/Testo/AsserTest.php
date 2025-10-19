@@ -30,7 +30,7 @@ final class AsserTest
     {
         static $attempt = 0;
         ++$attempt;
-        Assert::same(1, 2);
+        Assert::same($attempt, 2);
     }
 
     #[Test]
