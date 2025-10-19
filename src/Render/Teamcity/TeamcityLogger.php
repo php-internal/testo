@@ -13,62 +13,37 @@ use Testo\Test\Dto\TestInfo;
 use Testo\Test\Dto\TestResult;
 
 /**
- * TeamCity service messages logger for test reporting.
+ * TeamCity logger for test reporting using DTO objects.
  *
- * Outputs TeamCity-compatible service messages for CI integration.
- * Messages follow the format: ##teamcity[messageName name='value' attr='value']
+ * Publishes TeamCity service messages based on test execution results.
+ * Uses TeamcityMessageFormatter for message formatting.
  *
- * @link https://www.jetbrains.com/help/teamcity/service-messages.html
+ * @see Formatter for message formatting
  * @internal
  */
 final class TeamcityLogger
 {
     /**
-     * Outputs a test suite started message.
-     *
-     * @param non-empty-string $name Suite name
-     * @param non-empty-string|null $locationHint Location hint for IDE navigation
-     */
-    public function suiteStarted(string $name, ?string $locationHint = null): void
-    {
-        $attributes = ['name' => $name];
-
-        $locationHint !== null and $attributes['locationHint'] = $locationHint;
-
-        $this->message('testSuiteStarted', $attributes);
-    }
-
-    /**
-     * Outputs a test suite finished message.
-     *
-     * @param non-empty-string $name Suite name
-     */
-    public function suiteFinished(string $name): void
-    {
-        $this->message('testSuiteFinished', ['name' => $name]);
-    }
-
-    /**
-     * Outputs a test suite started message using SuiteInfo.
+     * Publishes test suite started message using SuiteInfo.
      */
     public function suiteStartedFromInfo(SuiteInfo $info): void
     {
-        $this->suiteStarted($info->name);
+        $this->publish(Formatter::suiteStarted($info->name));
     }
 
     /**
-     * Outputs a test suite finished message using SuiteInfo.
+     * Publishes test suite finished message using SuiteInfo.
      */
     public function suiteFinishedFromInfo(SuiteInfo $info): void
     {
-        $this->suiteFinished($info->name);
+        $this->publish(Formatter::suiteFinished($info->name));
     }
 
     /**
-     * Closes the test suite based on suite results.
+     * Handles test suite result.
      *
      * Analyzes all case results to determine the overall suite status
-     * and outputs appropriate TeamCity messages (failed cases, then suite finish).
+     * and publishes appropriate TeamCity messages.
      */
     public function handleSuiteResult(SuiteInfo $info, SuiteResult $result): void
     {
@@ -86,9 +61,11 @@ final class TeamcityLogger
         // Report suite-level failure if any tests failed
         if ($hasFailures) {
             $failedCount = $this->countFailedTestsInSuite($result);
-            $this->testStdErr(
-                $info->name,
-                "Test suite failed: {$failedCount} test(s) failed",
+            $this->publish(
+                Formatter::testStdErr(
+                    $info->name,
+                    "Test suite failed: {$failedCount} test(s) failed",
+                ),
             );
         }
 
@@ -96,7 +73,7 @@ final class TeamcityLogger
     }
 
     /**
-     * Outputs a test case started message using CaseInfo.
+     * Publishes test case started message using CaseInfo.
      *
      * Test case is treated as a suite in TeamCity (a class containing tests).
      */
@@ -105,25 +82,25 @@ final class TeamcityLogger
         $name = $this->getCaseName($info);
         $locationHint = $this->getCaseLocationHint($info);
 
-        $this->suiteStarted($name, $locationHint);
+        $this->publish(Formatter::suiteStarted($name, $locationHint));
     }
 
     /**
-     * Outputs a test case finished message using CaseInfo.
+     * Publishes test case finished message using CaseInfo.
      *
      * Test case is treated as a suite in TeamCity (a class containing tests).
      */
     public function caseFinishedFromInfo(CaseInfo $info): void
     {
         $name = $this->getCaseName($info);
-        $this->suiteFinished($name);
+        $this->publish(Formatter::suiteFinished($name));
     }
 
     /**
-     * Closes the test case suite based on test results.
+     * Handles test case result.
      *
      * Analyzes all test results to determine the overall case status
-     * and outputs appropriate TeamCity messages (failed tests, then suite finish).
+     * and publishes appropriate TeamCity messages.
      *
      * @param int<0, max>|null $duration Duration in milliseconds for the case
      */
@@ -142,9 +119,11 @@ final class TeamcityLogger
         if ($hasFailures) {
             $caseName = $this->getCaseName($caseInfo);
             $failedCount = $this->countFailedTests($result);
-            $this->testStdErr(
-                $caseName,
-                "Test case failed: {$failedCount} test(s) failed",
+            $this->publish(
+                Formatter::testStdErr(
+                    $caseName,
+                    "Test case failed: {$failedCount} test(s) failed",
+                ),
             );
         }
 
@@ -152,89 +131,26 @@ final class TeamcityLogger
     }
 
     /**
-     * Outputs a test started message.
-     *
-     * @param non-empty-string $name Test name
-     * @param bool $captureStandardOutput Whether to capture standard output
-     * @param non-empty-string|null $locationHint Location hint for IDE navigation
-     */
-    public function testStarted(string $name, bool $captureStandardOutput = false, ?string $locationHint = null): void
-    {
-        $attributes = ['name' => $name];
-
-        $captureStandardOutput and $attributes['captureStandardOutput'] = 'true';
-        $locationHint !== null and $attributes['locationHint'] = $locationHint;
-
-        $this->message('testStarted', $attributes);
-    }
-
-    /**
-     * Outputs a test finished message.
-     *
-     * @param non-empty-string $name Test name
-     * @param int<0, max>|null $duration Duration in milliseconds
-     */
-    public function testFinished(string $name, ?int $duration = null): void
-    {
-        $attributes = ['name' => $name];
-
-        $duration !== null and $attributes['duration'] = (string) $duration;
-
-        $this->message('testFinished', $attributes);
-    }
-
-    /**
-     * Outputs a test started message using TestInfo.
+     * Publishes test started message using TestInfo.
      */
     public function testStartedFromInfo(TestInfo $info, bool $captureStandardOutput = false): void
     {
         $locationHint = $this->getTestLocationHint($info);
-        $this->testStarted($info->name, $captureStandardOutput, $locationHint);
+        $this->publish(Formatter::testStarted($info->name, $captureStandardOutput, $locationHint));
     }
 
     /**
-     * Outputs a test finished message using TestInfo.
+     * Publishes test finished message using TestInfo.
      *
      * @param int<0, max>|null $duration Duration in milliseconds
      */
     public function testFinishedFromInfo(TestInfo $info, ?int $duration = null): void
     {
-        $this->testFinished($info->name, $duration);
+        $this->publish(Formatter::testFinished($info->name, $duration));
     }
 
     /**
-     * Outputs a test failed message.
-     *
-     * @param non-empty-string $name Test name
-     * @param non-empty-string $message Failure message
-     * @param non-empty-string $details Detailed failure information (stack trace, etc.)
-     * @param non-empty-string|null $type Comparison type for diff display (e.g., 'comparisonFailure')
-     * @param non-empty-string|null $expected Expected value for diff
-     * @param non-empty-string|null $actual Actual value for diff
-     */
-    public function testFailed(
-        string $name,
-        string $message,
-        string $details = '',
-        ?string $type = null,
-        ?string $expected = null,
-        ?string $actual = null,
-    ): void {
-        $attributes = [
-            'name' => $name,
-            'message' => $message,
-            'details' => $details,
-        ];
-
-        $type !== null and $attributes['type'] = $type;
-        $expected !== null and $attributes['expected'] = $expected;
-        $actual !== null and $attributes['actual'] = $actual;
-
-        $this->message('testFailed', $attributes);
-    }
-
-    /**
-     * Outputs a test failed message using TestResult.
+     * Publishes test failed message using TestResult.
      */
     public function testFailedFromResult(TestResult $result): void
     {
@@ -242,183 +158,48 @@ final class TeamcityLogger
         $message = $failure?->getMessage() ?? 'Test failed';
         $details = $failure !== null ? $this->formatThrowable($failure) : '';
 
-        $this->testFailed(
-            name: $result->info->name,
-            message: $message,
-            details: $details,
+        $this->publish(
+            Formatter::testFailed(
+                name: $result->info->name,
+                message: $message,
+                details: $details,
+            ),
         );
     }
 
     /**
-     * Outputs a test ignored/skipped message.
-     *
-     * @param non-empty-string $name Test name
-     * @param non-empty-string $message Optional skip reason
-     */
-    public function testIgnored(string $name, string $message = ''): void
-    {
-        $attributes = ['name' => $name];
-
-        $message !== '' and $attributes['message'] = $message;
-
-        $this->message('testIgnored', $attributes);
-    }
-
-    /**
-     * Outputs a test ignored message using TestInfo.
+     * Publishes test ignored message using TestInfo.
      *
      * @param non-empty-string $message Optional skip reason
      */
     public function testIgnoredFromInfo(TestInfo $info, string $message = ''): void
     {
-        $this->testIgnored($info->name, $message);
+        $this->publish(Formatter::testIgnored($info->name, $message));
     }
 
     /**
-     * Outputs a test standard output message.
-     *
-     * @param non-empty-string $name Test name
-     * @param non-empty-string $output Standard output content
-     */
-    public function testStdOut(string $name, string $output): void
-    {
-        $this->message('testStdOut', [
-            'name' => $name,
-            'out' => $output,
-        ]);
-    }
-
-    /**
-     * Outputs a test standard error message.
-     *
-     * @param non-empty-string $name Test name
-     * @param non-empty-string $output Standard error content
-     */
-    public function testStdErr(string $name, string $output): void
-    {
-        $this->message('testStdErr', [
-            'name' => $name,
-            'out' => $output,
-        ]);
-    }
-
-    /**
-     * Outputs a message based on test status.
+     * Handles test result and publishes appropriate message based on status.
      */
     public function handleTestResult(TestResult $result, ?int $duration = null): void
     {
         match ($result->status) {
-            Status::Passed, Status::Flaky => $this->testFinished($result->info->name, $duration),
+            Status::Passed, Status::Flaky => $this->publish(
+                Formatter::testFinished($result->info->name, $duration),
+            ),
             Status::Failed, Status::Error => $this->testFailedFromResult($result),
-            Status::Skipped => $this->testIgnored($result->info->name),
+            Status::Skipped => $this->publish(Formatter::testIgnored($result->info->name)),
             Status::Risky => $this->handleRiskyTest($result, $duration),
-            Status::Cancelled => $this->testIgnored($result->info->name, 'Test cancelled'),
-            Status::Aborted => $this->testFailed(
-                $result->info->name,
-                'Test aborted',
-                $result->failure !== null ? $this->formatThrowable($result->failure) : '',
+            Status::Cancelled => $this->publish(
+                Formatter::testIgnored($result->info->name, 'Test cancelled'),
+            ),
+            Status::Aborted => $this->publish(
+                Formatter::testFailed(
+                    $result->info->name,
+                    'Test aborted',
+                    $result->failure !== null ? $this->formatThrowable($result->failure) : '',
+                ),
             ),
         };
-    }
-
-    /**
-     * Outputs a progress message.
-     *
-     * @param non-empty-string $message Progress message
-     */
-    public function progressMessage(string $message): void
-    {
-        $this->message('progressMessage', ['text' => $message]);
-    }
-
-    /**
-     * Outputs a progress start message.
-     *
-     * @param non-empty-string $message Progress message
-     */
-    public function progressStart(string $message): void
-    {
-        $this->message('progressStart', ['text' => $message]);
-    }
-
-    /**
-     * Outputs a progress finish message.
-     *
-     * @param non-empty-string $message Progress message
-     */
-    public function progressFinish(string $message): void
-    {
-        $this->message('progressFinish', ['text' => $message]);
-    }
-
-    /**
-     * Outputs a build problem message.
-     *
-     * @param non-empty-string $description Problem description
-     * @param non-empty-string|null $identity Problem identity for deduplication
-     */
-    public function buildProblem(string $description, ?string $identity = null): void
-    {
-        $attributes = ['description' => $description];
-
-        $identity !== null and $attributes['identity'] = $identity;
-
-        $this->message('buildProblem', $attributes);
-    }
-
-    /**
-     * Outputs a build status message.
-     *
-     * @param non-empty-string $text Status text
-     * @param 'FAILURE'|'SUCCESS'|null $status Build status
-     */
-    public function buildStatus(string $text, ?string $status = null): void
-    {
-        $attributes = ['text' => $text];
-
-        $status !== null and $attributes['status'] = $status;
-
-        $this->message('buildStatus', $attributes);
-    }
-
-    /**
-     * Outputs a block opened message for grouping output.
-     *
-     * @param non-empty-string $name Block name
-     */
-    public function blockOpened(string $name): void
-    {
-        $this->message('blockOpened', ['name' => $name]);
-    }
-
-    /**
-     * Outputs a block closed message.
-     *
-     * @param non-empty-string $name Block name
-     */
-    public function blockClosed(string $name): void
-    {
-        $this->message('blockClosed', ['name' => $name]);
-    }
-
-    /**
-     * Outputs a compilation started message.
-     *
-     * @param non-empty-string $compiler Compiler name
-     */
-    public function compilationStarted(string $compiler): void
-    {
-        $this->message('compilationStarted', ['compiler' => $compiler]);
-    }
-
-    /**
-     * Outputs a compilation finished message.
-     *
-     * @param non-empty-string $compiler Compiler name
-     */
-    public function compilationFinished(string $compiler): void
-    {
-        $this->message('compilationFinished', ['compiler' => $compiler]);
     }
 
     /**
@@ -426,10 +207,12 @@ final class TeamcityLogger
      */
     private function handleRiskyTest(TestResult $result, ?int $duration): void
     {
-        $this->testFinished($result->info->name, $duration);
-        $this->testStdOut(
-            $result->info->name,
-            'Warning: This test has been marked as risky',
+        $this->publish(Formatter::testFinished($result->info->name, $duration));
+        $this->publish(
+            Formatter::testStdOut(
+                $result->info->name,
+                'Warning: This test has been marked as risky',
+            ),
         );
     }
 
@@ -479,60 +262,6 @@ final class TeamcityLogger
         }
 
         return $count;
-    }
-
-    /**
-     * Outputs a TeamCity service message.
-     *
-     * @param non-empty-string $messageName Message type name
-     * @param array<non-empty-string, string> $attributes Message attributes
-     */
-    private function message(string $messageName, array $attributes): void
-    {
-        $formattedAttributes = $this->formatAttributes($attributes);
-        echo "##teamcity[{$messageName}{$formattedAttributes}]\n";
-    }
-
-    /**
-     * Formats message attributes.
-     *
-     * @param array<non-empty-string, string> $attributes
-     * @return non-empty-string Formatted attributes string
-     */
-    private function formatAttributes(array $attributes): string
-    {
-        if ($attributes === []) {
-            return '';
-        }
-
-        $parts = [];
-        foreach ($attributes as $key => $value) {
-            $escapedValue = $this->escape($value);
-            $parts[] = " {$key}='{$escapedValue}'";
-        }
-
-        return \implode('', $parts);
-    }
-
-    /**
-     * Escapes a value for TeamCity service messages.
-     *
-     * Special characters that need escaping:
-     * - ' (apostrophe) -> |'
-     * - \n (newline) -> |n
-     * - \r (carriage return) -> |r
-     * - | (pipe) -> ||
-     * - [ (opening bracket) -> |[
-     * - ] (closing bracket) -> |]
-     * - Unicode characters 0x0000-0x001F -> |0x<code>
-     */
-    private function escape(string $value): string
-    {
-        return \str_replace(
-            ["|", "'", "\n", "\r", "[", "]"],
-            ["||", "|'", "|n", "|r", "|[", "|]"],
-            $value,
-        );
     }
 
     /**
@@ -591,5 +320,15 @@ final class TeamcityLogger
         return $file !== false
             ? \sprintf('php_qn://%s::\\%s::%s', $file, $className, $methodName)
             : null;
+    }
+
+    /**
+     * Publishes a TeamCity service message to stdout.
+     *
+     * @param non-empty-string $message Formatted TeamCity message
+     */
+    private function publish(string $message): void
+    {
+        echo $message . "\n";
     }
 }
