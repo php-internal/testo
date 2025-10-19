@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Testo\Test\Runner;
 
 use Testo\Common\Filter;
+use Testo\Interceptor\TestCaseCallInterceptor\InstantiateTestCase;
 use Testo\Interceptor\TestCaseRunInterceptor;
 use Testo\Module\Interceptor\InterceptorProvider;
 use Testo\Module\Interceptor\Internal\Pipeline;
@@ -35,7 +36,7 @@ final class CaseRunner
         $interceptors = [
             ...$this->interceptorProvider->fromClasses(TestCaseRunInterceptor::class, StdoutRenderer::class), // todo remove
             ...$this->interceptorProvider->fromClasses(TestCaseRunInterceptor::class),
-            new TestCaseCallInterceptor\InstantiateTestCase(),// todo remove
+            new InstantiateTestCase(),// todo remove
         ];
 
         $pipeline = Pipeline::prepare(...$interceptors)
