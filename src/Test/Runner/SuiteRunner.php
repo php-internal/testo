@@ -8,7 +8,6 @@ use Testo\Common\Filter;
 use Testo\Interceptor\TestSuiteRunInterceptor;
 use Testo\Module\Interceptor\InterceptorProvider;
 use Testo\Module\Interceptor\Internal\Pipeline;
-use Testo\Render\StdoutRenderer;
 use Testo\Test\Dto\CaseInfo;
 use Testo\Test\Dto\SuiteInfo;
 use Testo\Test\Dto\SuiteResult;
@@ -32,10 +31,7 @@ final class SuiteRunner
          * @var list<TestSuiteRunInterceptor> $interceptors
          * @var callable(SuiteInfo): SuiteResult $pipeline
          */
-        $interceptors = [
-            ...$this->interceptorProvider->fromClasses(TestSuiteRunInterceptor::class, StdoutRenderer::class), // todo remove
-        ];
-
+        $interceptors = $this->interceptorProvider->fromConfig(TestSuiteRunInterceptor::class);
         $pipeline = Pipeline::prepare(...$interceptors)
             ->with(
                 fn(SuiteInfo $info): SuiteResult => $this->run($info, $filter),

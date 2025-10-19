@@ -33,11 +33,7 @@ final class CaseRunner
          * @var list<TestCaseRunInterceptor> $interceptors
          * @var callable(CaseInfo): CaseResult $pipeline
          */
-        $interceptors = [
-            ...$this->interceptorProvider->fromClasses(TestCaseRunInterceptor::class, StdoutRenderer::class), // todo remove
-            new InstantiateTestCase(),// todo remove
-        ];
-
+        $interceptors = $this->interceptorProvider->fromConfig(TestCaseRunInterceptor::class);
         $pipeline = Pipeline::prepare(...$interceptors)
             ->with(
                 $this->run(...),
