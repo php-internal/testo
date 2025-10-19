@@ -8,6 +8,7 @@ use Testo\Test\Dto\CaseInfo;
 use Testo\Test\Dto\CaseResult;
 use Testo\Test\Dto\Status;
 use Testo\Test\Dto\SuiteInfo;
+use Testo\Test\Dto\SuiteResult;
 use Testo\Test\Dto\TestInfo;
 use Testo\Test\Dto\TestResult;
 
@@ -61,6 +62,37 @@ final class TeamcityLogger
     public function suiteFinishedFromInfo(SuiteInfo $info): void
     {
         $this->suiteFinished($info->name);
+    }
+
+    /**
+     * Closes the test suite based on suite results.
+     *
+     * Analyzes all case results to determine the overall suite status
+     * and outputs appropriate TeamCity messages (failed cases, then suite finish).
+     */
+    public function handleSuiteResult(SuiteInfo $info, SuiteResult $result): void
+    {
+        $hasFailures = false;
+
+        foreach ($result as $caseResult) {
+            foreach ($caseResult as $testResult) {
+                if ($testResult->status->isFailure()) {
+                    $hasFailures = true;
+                    break 2;
+                }
+            }
+        }
+
+        // Report suite-level failure if any tests failed
+        if ($hasFailures) {
+            $failedCount = $this->countFailedTestsInSuite($result);
+            $this->testStdErr(
+                $info->name,
+                "Test suite failed: {$failedCount} test(s) failed",
+            );
+        }
+
+        $this->suiteFinishedFromInfo($info);
     }
 
     /**
@@ -426,6 +458,24 @@ final class TeamcityLogger
 
         foreach ($result as $testResult) {
             $testResult->status->isFailure() and $count++;
+        }
+
+        return $count;
+    }
+
+    /**
+     * Counts the number of failed tests in a SuiteResult.
+     *
+     * @return int<0, max>
+     */
+    private function countFailedTestsInSuite(SuiteResult $result): int
+    {
+        $count = 0;
+
+        foreach ($result as $caseResult) {
+            foreach ($caseResult as $testResult) {
+                $testResult->status->isFailure() and $count++;
+            }
         }
 
         return $count;
