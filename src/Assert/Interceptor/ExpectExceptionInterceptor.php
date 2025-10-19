@@ -9,7 +9,7 @@ use Testo\Assert\State\AssertException;
 use Testo\Assert\State\Record;
 use Testo\Assert\State\Success;
 use Testo\Assert\StaticState;
-use Testo\Interceptor\TestCallInterceptor;
+use Testo\Interceptor\TestRunInterceptor;
 use Testo\Test\Dto\Status;
 use Testo\Test\Dto\TestInfo;
 use Testo\Test\Dto\TestResult;
@@ -19,7 +19,7 @@ use Testo\Test\Dto\TestResult;
  *
  * @note Must be placed right before the test execution.
  */
-final class ExpectExceptionInterceptor implements TestCallInterceptor
+final class ExpectExceptionInterceptor implements TestRunInterceptor
 {
     /**
      * @throws AssertException When the expected exception is not thrown.

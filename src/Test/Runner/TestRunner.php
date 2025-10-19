@@ -8,7 +8,7 @@ use Testo\Assert\Interceptor\AssertCollectorInterceptor;
 use Testo\Assert\Interceptor\ExpectExceptionInterceptor;
 use Testo\Attribute\Interceptable;
 use Testo\Interceptor\Exception\PipelineFailure;
-use Testo\Interceptor\TestCallInterceptor;
+use Testo\Interceptor\TestRunInterceptor;
 use Testo\Module\Interceptor\InterceptorProvider;
 use Testo\Module\Interceptor\Internal\Pipeline;
 use Testo\Render\StdoutRenderer;
@@ -27,7 +27,7 @@ final class TestRunner
         try {
             # Build interceptors pipeline
             $interceptors = [
-                ...$this->interceptorProvider->fromClasses(TestCallInterceptor::class, StdoutRenderer::class), // todo remove
+                ...$this->interceptorProvider->fromClasses(TestRunInterceptor::class, StdoutRenderer::class), // todo remove
                 new AssertCollectorInterceptor(), // todo remove
                 ...$this->prepareInterceptors($info),
                 new ExpectExceptionInterceptor(), // todo remove
@@ -56,7 +56,7 @@ final class TestRunner
                         );
                     }
                 },
-                /** @see TestCallInterceptor::runTest() */
+                /** @see TestRunInterceptor::runTest() */
                 'runTest',
             )($info);
         } catch (\Throwable $e) {
@@ -69,7 +69,7 @@ final class TestRunner
     }
 
     /**
-     * @return list<TestCallInterceptor>
+     * @return list<TestRunInterceptor>
      */
     private function prepareInterceptors(TestInfo $info): array
     {
@@ -88,6 +88,6 @@ final class TestRunner
             \array_merge($classAttributes, $methodAttributes),
         );
 
-        return $this->interceptorProvider->fromAttributes(TestCallInterceptor::class, ...$attrs);
+        return $this->interceptorProvider->fromAttributes(TestRunInterceptor::class, ...$attrs);
     }
 }

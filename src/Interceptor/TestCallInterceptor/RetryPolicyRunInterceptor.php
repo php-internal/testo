@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Testo\Interceptor\TestCallInterceptor;
 
 use Testo\Attribute\RetryPolicy;
-use Testo\Interceptor\TestCallInterceptor;
+use Testo\Interceptor\TestRunInterceptor;
 use Testo\Test\Dto\Status;
 use Testo\Test\Dto\TestInfo;
 use Testo\Test\Dto\TestResult;
@@ -15,7 +15,7 @@ use Testo\Test\Dto\TestResult;
  *
  * @see RetryPolicy
  */
-final class RetryPolicyCallInterceptor implements TestCallInterceptor
+final class RetryPolicyRunInterceptor implements TestRunInterceptor
 {
     public function __construct(
         private readonly RetryPolicy $options,

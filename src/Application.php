@@ -23,7 +23,7 @@ final class Application
 
     public static function create(
         ApplicationConfig $config,
-    ) {
+    ): self {
         $container = Bootstrap::init()
             ->withConfig($config->services)
             ->finish();

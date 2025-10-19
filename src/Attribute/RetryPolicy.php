@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Testo\Attribute;
 
-use Testo\Interceptor\TestCallInterceptor\RetryPolicyCallInterceptor;
+use Testo\Interceptor\TestCallInterceptor\RetryPolicyRunInterceptor;
 use Testo\Module\Interceptor\FallbackInterceptor;
 
 /**
  * Retry test on failure.
  */
 #[\Attribute(\Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION)]
-#[FallbackInterceptor(RetryPolicyCallInterceptor::class)]
+#[FallbackInterceptor(RetryPolicyRunInterceptor::class)]
 final class RetryPolicy implements Interceptable
 {
     public function __construct(

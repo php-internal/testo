@@ -18,6 +18,7 @@ use Testo\Test\Dto\TestResult;
  * Messages follow the format: ##teamcity[messageName name='value' attr='value']
  *
  * @link https://www.jetbrains.com/help/teamcity/service-messages.html
+ * @internal
  */
 final class TeamcityLogger
 {

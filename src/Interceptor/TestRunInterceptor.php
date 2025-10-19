@@ -24,7 +24,7 @@ use Testo\Test\Runner\TestRunner;
  *
  * @extends InterceptorMarker<TestInfo, TestResult>
  */
-interface TestCallInterceptor extends InterceptorMarker
+interface TestRunInterceptor extends InterceptorMarker
 {
     /**
      * @param TestInfo $info Information about the test to be run.
