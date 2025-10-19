@@ -186,20 +186,54 @@ final class TeamcityLogger
             Status::Passed, Status::Flaky => $this->publish(
                 Formatter::testFinished($result->info->name, $duration),
             ),
-            Status::Failed, Status::Error => $this->testFailedFromResult($result),
-            Status::Skipped => $this->publish(Formatter::testIgnored($result->info->name)),
+            Status::Failed, Status::Error => $this->handleFailedTest($result, $duration),
+            Status::Skipped => $this->handleSkippedTest($result, $duration),
             Status::Risky => $this->handleRiskyTest($result, $duration),
-            Status::Cancelled => $this->publish(
-                Formatter::testIgnored($result->info->name, 'Test cancelled'),
-            ),
-            Status::Aborted => $this->publish(
-                Formatter::testFailed(
-                    $result->info->name,
-                    'Test aborted',
-                    $result->failure !== null ? $this->formatThrowable($result->failure) : '',
-                ),
-            ),
+            Status::Cancelled => $this->handleCancelledTest($result, $duration),
+            Status::Aborted => $this->handleAbortedTest($result, $duration),
         };
+    }
+
+    /**
+     * Handles skipped test status.
+     */
+    private function handleSkippedTest(TestResult $result, ?int $duration): void
+    {
+        $this->publish(Formatter::testIgnored($result->info->name));
+        $this->publish(Formatter::testFinished($result->info->name, $duration));
+    }
+
+    /**
+     * Handles cancelled test status.
+     */
+    private function handleCancelledTest(TestResult $result, ?int $duration): void
+    {
+        $this->publish(Formatter::testIgnored($result->info->name, 'Test cancelled'));
+        $this->publish(Formatter::testFinished($result->info->name, $duration));
+    }
+
+    /**
+     * Handles failed test status.
+     */
+    private function handleFailedTest(TestResult $result, ?int $duration): void
+    {
+        $this->testFailedFromResult($result);
+        $this->publish(Formatter::testFinished($result->info->name, $duration));
+    }
+
+    /**
+     * Handles aborted test status.
+     */
+    private function handleAbortedTest(TestResult $result, ?int $duration): void
+    {
+        $this->publish(
+            Formatter::testFailed(
+                $result->info->name,
+                'Test aborted',
+                $result->failure !== null ? $this->formatThrowable($result->failure) : '',
+            ),
+        );
+        $this->publish(Formatter::testFinished($result->info->name, $duration));
     }
 
     /**
