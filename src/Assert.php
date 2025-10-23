@@ -30,6 +30,21 @@ final class Assert
     }
 
     /**
+     * Asserts that two values are the not same (not identical).
+     *
+     * @param mixed $expected The expected value.
+     * @param mixed $actual The actual value to compare against the expected value.
+     * @param string $message Short description about what exactly is being asserted.
+     * @throws AssertException when the assertion fails.
+     */
+    public static function notSame(mixed $expected, mixed $actual, string $message = ''): void
+    {
+        $actual !== $expected
+            ? StaticState::log('Assert not same: `' . Support::stringify($expected) . '`', $message)
+            : StaticState::fail(AssertException::notSame($expected, $actual, $message));
+    }
+
+    /**
      * Asserts that the given value is null.
      *
      * @param mixed $actual The actual value to check for null.
