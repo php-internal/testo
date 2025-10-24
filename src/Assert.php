@@ -26,7 +26,28 @@ final class Assert
     {
         $actual === $expected
             ? StaticState::log('Assert same: `' . Support::stringify($expected) . '`', $message)
-            : StaticState::fail(AssertException::same($expected, $actual, $message));
+            : StaticState::fail(AssertException::compare($expected, $actual, $message));
+    }
+
+    /**
+     * Asserts that two values are the not same (not identical).
+     *
+     * @param mixed $expected The expected value.
+     * @param mixed $actual The actual value to compare against the expected value.
+     * @param string $message Short description about what exactly is being asserted.
+     * @throws AssertException when the assertion fails.
+     */
+    public static function notSame(mixed $expected, mixed $actual, string $message = ''): void
+    {
+        $actual !== $expected
+            ? StaticState::log('Assert not same: `' . Support::stringify($expected) . '`', $message)
+            : StaticState::fail(AssertException::compare(
+                $expected,
+                $actual,
+                $message,
+                pattern: 'Failed asserting that `%s` is not identical to `%s`.',
+                showDiff: false,
+            ));
     }
 
     /**
@@ -42,7 +63,7 @@ final class Assert
     ): void {
         $actual === null
             ? StaticState::log('Assert null', $message)
-            : StaticState::fail(AssertException::same(null, $actual, $message));
+            : StaticState::fail(AssertException::compare(null, $actual, $message));
     }
 
     /**
