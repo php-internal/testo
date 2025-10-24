@@ -26,7 +26,7 @@ final class Assert
     {
         $actual === $expected
             ? StaticState::log('Assert same: `' . Support::stringify($expected) . '`', $message)
-            : StaticState::fail(AssertException::same($expected, $actual, $message));
+            : StaticState::fail(AssertException::compare($expected, $actual, $message));
     }
 
     /**
@@ -41,12 +41,13 @@ final class Assert
     {
         $actual !== $expected
             ? StaticState::log('Assert not same: `' . Support::stringify($expected) . '`', $message)
-            : StaticState::fail(AssertException::same(
+            : StaticState::fail(AssertException::compare(
                 $expected,
                 $actual,
                 $message,
-                'Failed asserting that two values are not identical. Expected `%1$s`, got `%2$s`.'
-        ));
+                pattern: 'Failed asserting that `%s` is not identical to `%s`.',
+                showDiff: false,
+            ));
     }
 
     /**
@@ -62,7 +63,7 @@ final class Assert
     ): void {
         $actual === null
             ? StaticState::log('Assert null', $message)
-            : StaticState::fail(AssertException::same(null, $actual, $message));
+            : StaticState::fail(AssertException::compare(null, $actual, $message));
     }
 
     /**
