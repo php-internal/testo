@@ -53,34 +53,6 @@ final class AssertException extends \Exception implements Record
     }
 
     /**
-     * Failed `notSame` assertion factory.
-     * @param mixed $expected The expected value.
-     * @param mixed $actual The actual value to compare against the expected value.
-     * @param non-empty-string $message Short description about what exactly is being asserted.
-     * @param non-empty-string $pattern The message pattern.
-     */
-    public static function notSame(
-        mixed $expected,
-        mixed $actual,
-        string $message,
-        string $pattern = 'Failed asserting that two values are not identical. Expected `%1$s`, got `%2$s`.',
-    ): self {
-        # todo
-        $diff = '';
-
-        $msg = \sprintf(
-            $pattern,
-            Support::stringify($expected),
-            Support::stringify($actual),
-        );
-        return new self(
-            assertion: $msg,
-            context: $message,
-            details: $diff,
-        );
-    }
-
-    /**
      * Failed `expect exception` assertion factory.
      *
      * @param class-string<\Throwable> $expected The expected exception class.

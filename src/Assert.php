@@ -41,7 +41,12 @@ final class Assert
     {
         $actual !== $expected
             ? StaticState::log('Assert not same: `' . Support::stringify($expected) . '`', $message)
-            : StaticState::fail(AssertException::notSame($expected, $actual, $message));
+            : StaticState::fail(AssertException::same(
+                $expected,
+                $actual,
+                $message,
+                'Failed asserting that two values are not identical. Expected `%1$s`, got `%2$s`.'
+        ));
     }
 
     /**
