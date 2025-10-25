@@ -42,24 +42,12 @@ final class TeamcityLogger
     /**
      * Handles test suite result.
      *
-     * Analyzes all case results to determine the overall suite status
-     * and publishes appropriate TeamCity messages.
+     * Publishes appropriate TeamCity messages based on suite status.
      */
     public function handleSuiteResult(SuiteInfo $info, SuiteResult $result): void
     {
-        $hasFailures = false;
-
-        foreach ($result as $caseResult) {
-            foreach ($caseResult as $testResult) {
-                if ($testResult->status->isFailure()) {
-                    $hasFailures = true;
-                    break 2;
-                }
-            }
-        }
-
-        // Report suite-level failure if any tests failed
-        if ($hasFailures) {
+        // Report suite-level failure if status indicates failure
+        if ($result->status->isFailure()) {
             $failedCount = $this->countFailedTestsInSuite($result);
             $this->publish(
                 Formatter::testStdErr(
@@ -99,24 +87,14 @@ final class TeamcityLogger
     /**
      * Handles test case result.
      *
-     * Analyzes all test results to determine the overall case status
-     * and publishes appropriate TeamCity messages.
+     * Publishes appropriate TeamCity messages based on case status.
      *
      * @param int<0, max>|null $duration Duration in milliseconds for the case
      */
     public function handleCaseResult(CaseInfo $caseInfo, CaseResult $result, ?int $duration = null): void
     {
-        $hasFailures = false;
-
-        foreach ($result as $testResult) {
-            if ($testResult->status->isFailure()) {
-                $hasFailures = true;
-                break;
-            }
-        }
-
-        // Report case-level failure if any tests failed
-        if ($hasFailures) {
+        // Report case-level failure if status indicates failure
+        if ($result->status->isFailure()) {
             $caseName = $this->getCaseName($caseInfo);
             $failedCount = $this->countFailedTests($result);
             $this->publish(
