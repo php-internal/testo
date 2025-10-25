@@ -280,6 +280,8 @@ final class Formatter
             : Style::error('✗');
 
         $text = (string) $assertion;
+        $message = $assertion->getContext();
+        $message === null or $text =  $text . ' → ' . Style::dim($message);
 
         return "{$indent}  {$symbol} {$text}\n";
     }

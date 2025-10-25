@@ -24,6 +24,11 @@ final class Success implements Record
         return $this->success;
     }
 
+    public function getContext(): ?string
+    {
+        return $this->context !== '' ? $this->context : null;
+    }
+
     public function __toString(): string
     {
         return $this->assertion;

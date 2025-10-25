@@ -81,6 +81,11 @@ final class AssertException extends \Exception implements Record
         return false;
     }
 
+    public function getContext(): ?string
+    {
+        return $this->context !== '' ? $this->context : null;
+    }
+
     public function __toString(): string
     {
         return $this->assertion;
