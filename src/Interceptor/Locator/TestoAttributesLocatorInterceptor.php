@@ -10,7 +10,7 @@ use Testo\Interceptor\FileLocatorInterceptor;
 use Testo\Interceptor\Reflection\Reflection;
 use Testo\Module\Tokenizer\Reflection\FileDefinitions;
 use Testo\Module\Tokenizer\Reflection\TokenizedFile;
-use Testo\Test\Definition\CaseDefinitions;
+use Testo\Test\Dto\CaseDefinitions;
 
 /**
  * Accepts files that contain classes or functions with the Test attribute and fetches test cases from them.

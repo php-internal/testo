@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Testo\Test\Dto;
 
-use Testo\Test\Definition\CaseDefinitions;
-
 final class SuiteInfo
 {
     public function __construct(

@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Testo\Test\Definition;
+namespace Testo\Test\Dto;
+
+use Testo\Test\Definition\CaseDefinition;
 
 /**
  * Collection of test cases located in a file.

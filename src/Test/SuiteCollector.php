@@ -16,7 +16,7 @@ use Testo\Module\Tokenizer\FileLocator;
 use Testo\Module\Tokenizer\Reflection\FileDefinitions;
 use Testo\Module\Tokenizer\Reflection\TokenizedFile;
 use Testo\Test\Definition\CaseDefinition;
-use Testo\Test\Definition\CaseDefinitions;
+use Testo\Test\Dto\CaseDefinitions;
 use Testo\Test\Dto\SuiteInfo;
 
 /**
