@@ -6,6 +6,7 @@ namespace Testo\Module\Interceptor;
 
 use Testo\Assert\Interceptor\AssertCollectorInterceptor;
 use Testo\Assert\Interceptor\ExpectExceptionInterceptor;
+use Testo\Assert\Interceptor\ObjectTrackerInterceptor;
 use Testo\Attribute\Interceptable;
 use Testo\Common\Container;
 use Testo\Interceptor\Reflection\AttributesInterceptor;
@@ -55,6 +56,7 @@ final class InterceptorProvider
             new AssertCollectorInterceptor(),
             AttributesInterceptor::class,
             new ExpectExceptionInterceptor(),
+            new ObjectTrackerInterceptor(),
         ]);
     }
 

@@ -116,4 +116,14 @@ final class Assert
     ): void {
         StaticState::expectException($classOrObject);
     }
+
+    /**
+     * Asserts that the given objects do not leak memory after the test execution.
+     *
+     * @param object ...$objects The objects to monitor for memory leaks.
+     */
+    public static function leaks(object ...$objects): void
+    {
+        StaticState::trackObjects(...$objects);
+    }
 }
