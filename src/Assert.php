@@ -51,6 +51,25 @@ final class Assert
     }
 
     /**
+     * Asserts that the condition is true.
+     *
+     * @param bool $condition The condition asserting to be true.
+     * @param string $message Short description about what exactly is being asserted.
+     * @throws AssertException when the assertion fails.
+     */
+    public static function true(bool $condition, string $message = ''): void
+    {
+        $condition === true
+            ? StaticState::log('Assert true', $message)
+            : StaticState::fail(AssertException::compare(
+                true,
+                $condition,
+                $message,
+                'Failed asserting that value `%2$s` is `%1$s`.',
+            ));
+    }
+
+    /**
      * Asserts that the given value is null.
      *
      * @param mixed $actual The actual value to check for null.
