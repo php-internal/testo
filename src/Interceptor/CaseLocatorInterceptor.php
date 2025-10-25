@@ -6,7 +6,7 @@ namespace Testo\Interceptor;
 
 use Testo\Module\Interceptor\Internal\InterceptorMarker;
 use Testo\Module\Tokenizer\Reflection\FileDefinitions;
-use Testo\Test\Definition\CaseDefinitions;
+use Testo\Test\Dto\CaseDefinitions;
 
 /**
  * Intercept locating test files and test cases.TokenizedFile

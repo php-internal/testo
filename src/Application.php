@@ -9,6 +9,7 @@ use Testo\Common\Filter;
 use Testo\Common\Internal\Bootstrap;
 use Testo\Config\ApplicationConfig;
 use Testo\Test\Dto\RunResult;
+use Testo\Test\Dto\Status;
 use Testo\Test\Runner\SuiteRunner;
 use Testo\Test\SuiteProvider;
 
@@ -37,13 +38,15 @@ final class Application
 
         $suiteProvider = $this->container->get(SuiteProvider::class);
         $suiteRunner = $this->container->get(SuiteRunner::class);
+        $status = Status::Passed;
 
         # Iterate Test Suites
         foreach ($suiteProvider->withFilter($filter)->getSuites() as $suite) {
-            $suiteResults[] = $suiteRunner->runSuite($suite, $filter);
+            $suiteResults[] = $suiteResult = $suiteRunner->runSuite($suite, $filter);
+            $suiteResult->status->isFailure() and $status = Status::Failed;
         }
 
         # Run suites
-        return new RunResult($suiteResults);
+        return new RunResult($suiteResults, status: $status);
     }
 }

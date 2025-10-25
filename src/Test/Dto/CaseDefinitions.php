@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Testo\Test\Definition;
+namespace Testo\Test\Dto;
+
+use Testo\Module\Tokenizer\Reflection\FileDefinitions;
+use Testo\Test\Definition\CaseDefinition;
 
 /**
  * Collection of test cases located in a file.
@@ -22,7 +25,7 @@ final class CaseDefinitions
         return $self;
     }
 
-    public function define(?\ReflectionClass $reflection): CaseDefinition
+    public function define(?\ReflectionClass $reflection, FileDefinitions $file): CaseDefinition
     {
         foreach ($this->cases as $case) {
             if ($case->reflection === $reflection) {
@@ -30,7 +33,10 @@ final class CaseDefinitions
             }
         }
 
-        return $this->cases[] = new CaseDefinition($reflection);
+        return $this->cases[] = new CaseDefinition(
+            name: $reflection?->getShortName() ?? $file->tokenizedFile->path->name(),
+            reflection: $reflection,
+        );
     }
 
     /**

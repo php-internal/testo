@@ -10,7 +10,7 @@ use Testo\Interceptor\FileLocatorInterceptor;
 use Testo\Interceptor\Reflection\Reflection;
 use Testo\Module\Tokenizer\Reflection\FileDefinitions;
 use Testo\Module\Tokenizer\Reflection\TokenizedFile;
-use Testo\Test\Definition\CaseDefinitions;
+use Testo\Test\Dto\CaseDefinitions;
 
 /**
  * Accepts files that contain classes or functions with the Test attribute and fetches test cases from them.
@@ -26,6 +26,7 @@ final class TestoAttributesLocatorInterceptor implements FileLocatorInterceptor,
     #[\Override]
     public function locateTestCases(FileDefinitions $file, callable $next): CaseDefinitions
     {
+        # Define cases for classes
         foreach ($file->classes as $class) {
             if ($class->isAbstract()) {
                 continue;
@@ -33,14 +34,20 @@ final class TestoAttributesLocatorInterceptor implements FileLocatorInterceptor,
 
             foreach ($class->getMethods() as $method) {
                 if ($method->isPublic() && Reflection::fetchFunctionAttributes($method, attributeClass: Test::class)) {
-                    $file->cases->define($class)->tests->define($method);
+                    $file->cases->define($class, $file)->tests->define($method);
                 }
             }
         }
 
+        if ($file->functions === []) {
+            return $next($file);
+        }
+
+        # Define a case for functions
+        $case = $file->cases->define(null, $file);
         foreach ($file->functions as $function) {
             if ($function->isPublic() && Reflection::fetchFunctionAttributes($function, attributeClass: Test::class)) {
-                $file->cases->define(null)->tests->define($function);
+                $case->tests->define($function);
             }
         }
 

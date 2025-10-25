@@ -23,8 +23,9 @@ final class Run extends Base
         $this->container->bind(StdoutRenderer::class, TeamcityInterceptor::class);
 
         $result = $this->application->run();
-        // tr($result);
 
-        return Command::SUCCESS;
+        return $result->status->isSuccessful()
+            ? Command::SUCCESS
+            : Command::FAILURE;
     }
 }

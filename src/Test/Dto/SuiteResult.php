@@ -18,6 +18,7 @@ final class SuiteResult implements \IteratorAggregate
          * @var iterable<CaseResult>
          */
         public readonly iterable $results,
+        public readonly Status $status,
     ) {}
 
     /**
@@ -26,5 +27,21 @@ final class SuiteResult implements \IteratorAggregate
     public function getIterator(): \Traversable
     {
         yield from $this->results;
+    }
+
+    /**
+     * Counts the number of failed tests across all cases in the suite.
+     *
+     * @return int<0, max>
+     */
+    public function countFailedTests(): int
+    {
+        $count = 0;
+
+        foreach ($this->results as $caseResult) {
+            $count += $caseResult->countFailedTests();
+        }
+
+        return $count;
     }
 }

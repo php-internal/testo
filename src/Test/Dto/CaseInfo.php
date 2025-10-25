@@ -13,6 +13,7 @@ use Testo\Test\Definition\CaseDefinition;
 final class CaseInfo
 {
     use CloneWith;
+    public readonly string $name;
 
     public function __construct(
         public readonly CaseDefinition $definition = new CaseDefinition(),
@@ -20,7 +21,9 @@ final class CaseInfo
          * Test Case class instance if class is defined, null otherwise.
          */
         public readonly ?object $instance = null,
-    ) {}
+    ) {
+        $this->name = $definition->getName();
+    }
 
     public function withInstance(?object $instance): self
     {

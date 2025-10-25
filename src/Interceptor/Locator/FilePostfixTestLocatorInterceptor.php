@@ -8,7 +8,7 @@ use Testo\Interceptor\CaseLocatorInterceptor;
 use Testo\Interceptor\FileLocatorInterceptor;
 use Testo\Module\Tokenizer\Reflection\FileDefinitions;
 use Testo\Module\Tokenizer\Reflection\TokenizedFile;
-use Testo\Test\Definition\CaseDefinitions;
+use Testo\Test\Dto\CaseDefinitions;
 
 /**
  * Accepts files with the postfix "Test" and fetches test cases from them.
@@ -28,7 +28,7 @@ final class FilePostfixTestLocatorInterceptor implements FileLocatorInterceptor,
     {
         foreach ($file->classes as $class) {
             if (!$class->isAbstract() && \str_ends_with($class->getName(), 'Test')) {
-                $case = $file->cases->define($class);
+                $case = $file->cases->define($class, $file);
                 foreach ($class->getMethods() as $method) {
                     if ($method->isPublic() && \str_starts_with($method->getName(), 'test')) {
                         $case->tests->define($method);

@@ -16,5 +16,11 @@ final class TestInfo
         public readonly string $name,
         public readonly CaseInfo $caseInfo,
         public readonly TestDefinition $testDefinition,
+
+        /**
+         * Arguments to pass to the test method.
+         * @var array<array-key, mixed>
+         */
+        public readonly array $arguments = [],
     ) {}
 }
