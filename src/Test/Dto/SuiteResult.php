@@ -18,6 +18,8 @@ final class SuiteResult implements \IteratorAggregate
          * @var iterable<CaseResult>
          */
         public readonly iterable $results,
+
+        public readonly Status $status,
     ) {}
 
     /**

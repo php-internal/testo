@@ -9,6 +9,7 @@ use Testo\Interceptor\TestSuiteRunInterceptor;
 use Testo\Module\Interceptor\InterceptorProvider;
 use Testo\Module\Interceptor\Internal\Pipeline;
 use Testo\Test\Dto\CaseInfo;
+use Testo\Test\Dto\Status;
 use Testo\Test\Dto\SuiteInfo;
 use Testo\Test\Dto\SuiteResult;
 
@@ -50,18 +51,22 @@ final class SuiteRunner
 
         $runner = $this->caseRunner;
         $results = [];
+        $status = Status::Passed;
         # Run tests for each case
         foreach ($suite->testCases->getCases() as $caseDefinition) {
             try {
                 $caseInfo = new CaseInfo(
                     definition: $caseDefinition,
                 );
-                $results[] = $runner->runCase($caseInfo, $filter);
+                $result = $runner->runCase($caseInfo, $filter);
+                $result->status->isFailure() and $status = Status::Failed;
+                $results[] = $result;
             } catch (\Throwable) {
                 // Skip for now
+                $status = Status::Failed;
             }
         }
 
-        return new SuiteResult($results);
+        return new SuiteResult($results, status: $status);
     }
 }
