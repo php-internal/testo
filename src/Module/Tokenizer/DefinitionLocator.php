@@ -15,6 +15,30 @@ use Testo\Module\Tokenizer\Reflection\TokenizedFile;
 final class DefinitionLocator
 {
     /**
+     * Get all function reflections defined in the file.
+     *
+     * @return array<string, \ReflectionFunction>
+     */
+    public static function getFunctions(TokenizedFile $file): array
+    {
+        $functions = [];
+
+        // todo rethink including files here
+        include_once $file->path->__toString();
+
+        foreach ($file->getFunctions() as $name) {
+            try {
+                $functions[$name] = self::functionReflection($name);
+            } catch (LocatorException $e) {
+                // Ignoring functions that cannot be loaded
+                continue;
+            }
+        }
+
+        return $functions;
+    }
+
+    /**
      * Get all class reflections defined in the file.
      *
      * @return array<class-string, \ReflectionClass>
@@ -91,7 +115,7 @@ final class DefinitionLocator
      *
      * @throws LocatorException
      */
-    private function enumReflection(string $enum): \ReflectionEnum
+    private static function enumReflection(string $enum): \ReflectionEnum
     {
         $loader = static function (string $enum): void {
             if ($enum === LocatorException::class) {
@@ -119,6 +143,40 @@ final class DefinitionLocator
             //         ['error' => $e],
             //     );
             // }
+
+            throw new LocatorException($e->getMessage(), (int) $e->getCode(), $e);
+        } finally {
+            \spl_autoload_unregister($loader);
+        }
+    }
+
+    /**
+     * Safely get function reflection, function loading errors will be blocked and reflection will be
+     * excluded from analysis.
+     *
+     * @throws LocatorException
+     */
+    private static function functionReflection(string $function): \ReflectionFunction
+    {
+        $loader = static function (string $class): void {
+            if ($class === LocatorException::class) {
+                return;
+            }
+
+            throw new LocatorException(\sprintf("Class '%s' can not be loaded", $class));
+        };
+
+        //To suspend class dependency exception
+        \spl_autoload_register($loader);
+
+        try {
+            //In some cases reflection can throw an exception if function is invalid or can not be loaded,
+            //we are going to handle such exception and convert it to soft exception
+            return new \ReflectionFunction($function);
+        } catch (\Throwable $e) {
+            if ($e instanceof LocatorException && $e->getPrevious() !== null) {
+                $e = $e->getPrevious();
+            }
 
             throw new LocatorException($e->getMessage(), (int) $e->getCode(), $e);
         } finally {

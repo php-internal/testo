@@ -24,8 +24,8 @@ final class AsserTest
     #[Test]
     public function failed(): void
     {
-        Assert::same(1, 1);
-        Assert::null(null);
+        Assert::same(1, 1, 'One is one btw.');
+        Assert::null(null, 'Custom message on null assertion failure.');
         Assert::notSame(42, '42');
         Assert::same(0, null);
     }

@@ -46,8 +46,7 @@ final class FileDefinitions
         $this->classes = DefinitionLocator::getClasses($tokenizedFile);
         $this->enums = [];
         // $this->enums = DefinitionLocator::getEnums($tokenizedFile);
-        $this->functions = [];
-        // $this->functions = DefinitionLocator::getFunctions($tokenizedFile);
+        $this->functions = DefinitionLocator::getFunctions($tokenizedFile);
         $this->interfaces = [];
         // $this->interfaces = DefinitionLocator::getInterfaces($tokenizedFile);
         $this->traits = [];
