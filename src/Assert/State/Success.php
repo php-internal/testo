@@ -23,4 +23,9 @@ final class Success implements Record
     {
         return $this->success;
     }
+
+    public function __toString(): string
+    {
+        return $this->assertion;
+    }
 }

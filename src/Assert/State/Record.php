@@ -7,7 +7,7 @@ namespace Testo\Assert\State;
 /**
  * Assertion record.
  */
-interface Record
+interface Record extends \Stringable
 {
     /**
      * Indicates whether the assertion was successful.

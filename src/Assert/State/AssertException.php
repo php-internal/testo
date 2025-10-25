@@ -37,7 +37,7 @@ final class AssertException extends \Exception implements Record
         mixed $expected,
         mixed $actual,
         string $message,
-        string $pattern = 'Expected `%1$s`, got `%2$s.`',
+        string $pattern = 'Expected `%1$s`, got `%2$s`.',
         bool $showDiff = true,
     ): self {
         # todo
@@ -79,5 +79,10 @@ final class AssertException extends \Exception implements Record
     public function isSuccess(): bool
     {
         return false;
+    }
+
+    public function __toString(): string
+    {
+        return $this->assertion;
     }
 }
