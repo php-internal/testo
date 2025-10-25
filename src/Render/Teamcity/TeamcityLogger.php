@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Testo\Render\Teamcity;
 
+use Testo\Render\Helper;
 use Testo\Test\Dto\CaseInfo;
 use Testo\Test\Dto\CaseResult;
 use Testo\Test\Dto\Status;
@@ -134,7 +135,7 @@ final class TeamcityLogger
     {
         $failure = $result->failure;
         $message = $failure?->getMessage() ?? 'Test failed';
-        $details = $failure !== null ? $this->formatThrowable($failure) : '';
+        $details = $failure !== null ? Helper::formatThrowable($failure) : '';
 
         $this->publish(
             Formatter::testFailed(
@@ -208,7 +209,7 @@ final class TeamcityLogger
             Formatter::testFailed(
                 $result->info->name,
                 'Test aborted',
-                $result->failure !== null ? $this->formatThrowable($result->failure) : '',
+                $result->failure !== null ? Helper::formatThrowable($result->failure) : '',
             ),
         );
         $this->publish(Formatter::testFinished($result->info->name, $duration));
@@ -258,20 +259,6 @@ final class TeamcityLogger
         }
 
         return $count;
-    }
-
-    /**
-     * Formats a throwable into a detailed string.
-     */
-    private function formatThrowable(\Throwable $throwable): string
-    {
-        $class = $throwable::class;
-        $message = $throwable->getMessage();
-        $file = $throwable->getFile();
-        $line = $throwable->getLine();
-        $trace = $throwable->getTraceAsString();
-
-        return "{$class}: {$message}\nFile: {$file}:{$line}\n\nStack trace:\n{$trace}";
     }
 
     /**
