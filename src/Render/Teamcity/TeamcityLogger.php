@@ -96,7 +96,7 @@ final class TeamcityLogger
         // Report case-level failure if status indicates failure
         if ($result->status->isFailure()) {
             $caseName = $this->getCaseName($caseInfo);
-            $failedCount = $this->countFailedTests($result);
+            $failedCount = $result->countFailedTests();
             $this->publish(
                 Formatter::testStdErr(
                     $caseName,
@@ -240,22 +240,6 @@ final class TeamcityLogger
         return $reflection !== null
             ? $reflection->getShortName()
             : 'UnknownTestCase';
-    }
-
-    /**
-     * Counts the number of failed tests in a CaseResult.
-     *
-     * @return int<0, max>
-     */
-    private function countFailedTests(CaseResult $result): int
-    {
-        $count = 0;
-
-        foreach ($result as $testResult) {
-            $testResult->status->isFailure() and $count++;
-        }
-
-        return $count;
     }
 
     /**

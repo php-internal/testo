@@ -26,4 +26,20 @@ final class CaseResult implements \IteratorAggregate
     {
         yield from $this->results;
     }
+
+    /**
+     * Counts the number of failed tests.
+     *
+     * @return int<0, max>
+     */
+    public function countFailedTests(): int
+    {
+        $count = 0;
+
+        foreach ($this->results as $testResult) {
+            $testResult->status->isFailure() and $count++;
+        }
+
+        return $count;
+    }
 }
