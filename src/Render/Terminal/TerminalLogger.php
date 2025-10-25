@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Testo\Render\Terminal;
 
+use Testo\Assert\TestState;
 use Testo\Render\Helper;
 use Testo\Test\Dto\CaseInfo;
 use Testo\Test\Dto\CaseResult;
@@ -151,6 +152,27 @@ final class TerminalLogger
         $this->failedTests++;
         $this->failures[] = ['result' => $result, 'duration' => $duration];
         echo Formatter::testLine($result->info->name, $result->status, $duration, $this->format);
+
+        $this->printAssertionHistory($result);
+    }
+
+    /**
+     * Prints assertion history for a test result if available.
+     */
+    private function printAssertionHistory(TestResult $result): void
+    {
+        /** @var TestState|null $testState */
+        $testState = $result->getAttribute(TestState::class);
+
+        if ($testState === null || $testState->history === []) {
+            return;
+        }
+
+        echo Formatter::assertionHistoryHeader($this->format);
+
+        foreach ($testState->history as $assertion) {
+            echo Formatter::assertionLine($assertion, $this->format);
+        }
     }
 
     /**

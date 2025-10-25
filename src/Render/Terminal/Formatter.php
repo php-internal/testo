@@ -247,6 +247,44 @@ final class Formatter
     }
 
     /**
+     * Formats assertion history header.
+     *
+     * @return non-empty-string
+     */
+    public static function assertionHistoryHeader(OutputFormat $format): string
+    {
+        if ($format === OutputFormat::Dots) {
+            return '';
+        }
+
+        $indent = $format === OutputFormat::Verbose ? '       ' : '     ';
+        return $indent . Style::dim('Assertion history:') . "\n";
+    }
+
+    /**
+     * Formats a single assertion line.
+     *
+     * @param \Testo\Assert\State\Record $assertion
+     * @param OutputFormat $format
+     * @return non-empty-string
+     */
+    public static function assertionLine(object $assertion, OutputFormat $format): string
+    {
+        if ($format === OutputFormat::Dots) {
+            return '';
+        }
+
+        $indent = $format === OutputFormat::Verbose ? '       ' : '     ';
+        $symbol = $assertion->isSuccess()
+            ? Style::success('✓')
+            : Style::error('✗');
+
+        $text = (string) $assertion;
+
+        return "{$indent}  {$symbol} {$text}\n";
+    }
+
+    /**
      * Formats test in compact/verbose mode.
      *
      * @param non-empty-string $name
