@@ -49,7 +49,7 @@ final class TeamcityLogger
     {
         // Report suite-level failure if status indicates failure
         if ($result->status->isFailure()) {
-            $failedCount = $this->countFailedTestsInSuite($result);
+            $failedCount = $result->countFailedTests();
             $this->publish(
                 Formatter::testStdErr(
                     $info->name,
@@ -241,24 +241,6 @@ final class TeamcityLogger
         return $reflection !== null
             ? $reflection->getShortName()
             : 'UnknownTestCase';
-    }
-
-    /**
-     * Counts the number of failed tests in a SuiteResult.
-     *
-     * @return int<0, max>
-     */
-    private function countFailedTestsInSuite(SuiteResult $result): int
-    {
-        $count = 0;
-
-        foreach ($result as $caseResult) {
-            foreach ($caseResult as $testResult) {
-                $testResult->status->isFailure() and $count++;
-            }
-        }
-
-        return $count;
     }
 
     /**

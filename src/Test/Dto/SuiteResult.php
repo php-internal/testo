@@ -29,4 +29,20 @@ final class SuiteResult implements \IteratorAggregate
     {
         yield from $this->results;
     }
+
+    /**
+     * Counts the number of failed tests across all cases in the suite.
+     *
+     * @return int<0, max>
+     */
+    public function countFailedTests(): int
+    {
+        $count = 0;
+
+        foreach ($this->results as $caseResult) {
+            $count += $caseResult->countFailedTests();
+        }
+
+        return $count;
+    }
 }
