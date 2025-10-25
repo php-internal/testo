@@ -32,7 +32,7 @@ final class TerminalInterceptor implements
 {
     public function __construct(
         private readonly TerminalLogger $logger,
-        ColorMode $colorMode = ColorMode::Auto,
+        ColorMode $colorMode = ColorMode::Always,
     ) {
         // Configure color support based on mode
         Style::setColorsEnabled($colorMode->shouldUseColors());
