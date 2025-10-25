@@ -13,6 +13,7 @@ use Testo\Test\Definition\CaseDefinition;
 final class CaseInfo
 {
     use CloneWith;
+
     public readonly string $name;
 
     public function __construct(
