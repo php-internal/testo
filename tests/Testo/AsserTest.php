@@ -18,6 +18,7 @@ final class AsserTest
         Assert::null(null);
         Assert::notSame(42, '42');
         Assert::true(true);
+        Assert::false(false);
     }
 
     #[Test]
