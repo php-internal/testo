@@ -12,6 +12,7 @@ use Testo\Module\Interceptor\Internal\Pipeline;
 use Testo\Render\StdoutRenderer;
 use Testo\Test\Dto\CaseInfo;
 use Testo\Test\Dto\CaseResult;
+use Testo\Test\Dto\Status;
 use Testo\Test\Dto\TestInfo;
 
 final class CaseRunner
@@ -46,6 +47,7 @@ final class CaseRunner
     public function run(CaseInfo $info): CaseResult
     {
         $results = [];
+        $status = Status::Passed;
         foreach ($info->definition->tests->getTests() as $name => $testDefinition) {
             $testInfo = new TestInfo(
                 name: $name,
@@ -53,9 +55,15 @@ final class CaseRunner
                 testDefinition: $testDefinition,
             );
 
-            $results[] = $this->testRunner->runTest($testInfo);
+            $result = $this->testRunner->runTest($testInfo);
+            $result->status->isFailure() and $status = Status::Failed;
+
+            $results[] = $result;
         }
 
-        return new CaseResult($results);
+        return new CaseResult(
+            $results,
+            status: $status,
+        );
     }
 }

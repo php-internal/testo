@@ -18,6 +18,8 @@ final class CaseResult implements \IteratorAggregate
          * @var iterable<TestResult>
          */
         public readonly iterable $results,
+
+        public readonly Status $status,
     ) {}
 
     public function getIterator(): \Traversable
