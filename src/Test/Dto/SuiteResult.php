@@ -30,6 +30,22 @@ final class SuiteResult implements \IteratorAggregate
     }
 
     /**
+     * Counts tests by specific status across all cases in the suite.
+     *
+     * @return int<0, max>
+     */
+    public function countTests(Status $status): int
+    {
+        $count = 0;
+
+        foreach ($this->results as $caseResult) {
+            $count += $caseResult->countTests($status);
+        }
+
+        return $count;
+    }
+
+    /**
      * Counts the number of failed tests across all cases in the suite.
      *
      * @return int<0, max>
@@ -40,6 +56,22 @@ final class SuiteResult implements \IteratorAggregate
 
         foreach ($this->results as $caseResult) {
             $count += $caseResult->countFailedTests();
+        }
+
+        return $count;
+    }
+
+    /**
+     * Counts the number of passed tests across all cases in the suite.
+     *
+     * @return int<0, max>
+     */
+    public function countPassedTests(): int
+    {
+        $count = 0;
+
+        foreach ($this->results as $caseResult) {
+            $count += $caseResult->countPassedTests();
         }
 
         return $count;

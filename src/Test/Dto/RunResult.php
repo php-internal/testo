@@ -18,7 +18,6 @@ final class RunResult implements \IteratorAggregate
          * @var iterable<SuiteResult>
          */
         public readonly iterable $results,
-
         public readonly Status $status,
     ) {}
 

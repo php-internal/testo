@@ -27,6 +27,22 @@ final class CaseResult implements \IteratorAggregate
     }
 
     /**
+     * Counts tests by specific status.
+     *
+     * @return int<0, max>
+     */
+    public function countTests(Status $status): int
+    {
+        $count = 0;
+
+        foreach ($this->results as $testResult) {
+            $testResult->status === $status and $count++;
+        }
+
+        return $count;
+    }
+
+    /**
      * Counts the number of failed tests.
      *
      * @return int<0, max>
@@ -37,6 +53,22 @@ final class CaseResult implements \IteratorAggregate
 
         foreach ($this->results as $testResult) {
             $testResult->status->isFailure() and $count++;
+        }
+
+        return $count;
+    }
+
+    /**
+     * Counts the number of passed tests.
+     *
+     * @return int<0, max>
+     */
+    public function countPassedTests(): int
+    {
+        $count = 0;
+
+        foreach ($this->results as $testResult) {
+            $testResult->status->isSuccessful() and $count++;
         }
 
         return $count;
