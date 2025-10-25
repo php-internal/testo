@@ -69,9 +69,7 @@ final class TeamcityLogger
     public function caseStartedFromInfo(CaseInfo $info): void
     {
         $name = $this->getCaseName($info);
-        $locationHint = $this->getCaseLocationHint($info);
-
-        $this->publish(Formatter::suiteStarted($name, $locationHint));
+        $this->publish(Formatter::suiteStarted($name, $info->definition->reflection));
     }
 
     /**
@@ -114,8 +112,7 @@ final class TeamcityLogger
      */
     public function testStartedFromInfo(TestInfo $info, bool $captureStandardOutput = false): void
     {
-        $locationHint = $this->getTestLocationHint($info);
-        $this->publish(Formatter::testStarted($info->name, $captureStandardOutput, $locationHint));
+        $this->publish(Formatter::testStarted($info->name, $captureStandardOutput, $info->testDefinition->reflection));
     }
 
     /**
@@ -241,50 +238,6 @@ final class TeamcityLogger
         return $reflection !== null
             ? $reflection->getShortName()
             : 'UnknownTestCase';
-    }
-
-    /**
-     * Gets location hint for a test case.
-     *
-     * Format: php_qn://path/to/file.php::\ClassName
-     */
-    private function getCaseLocationHint(CaseInfo $info): ?string
-    {
-        $reflection = $info->definition->reflection;
-
-        if ($reflection === null) {
-            return null;
-        }
-
-        $file = $reflection->getFileName();
-        $className = $reflection->getName();
-
-        return $file !== false
-            ? \sprintf('php_qn://%s::\\%s', $file, $className)
-            : null;
-    }
-
-    /**
-     * Gets location hint for a test method.
-     *
-     * Format: php_qn://path/to/file.php::\ClassName::methodName
-     */
-    private function getTestLocationHint(TestInfo $info): ?string
-    {
-        $reflection = $info->testDefinition->reflection;
-        $caseReflection = $info->caseInfo->definition->reflection;
-
-        if ($caseReflection === null) {
-            return null;
-        }
-
-        $file = $reflection->getFileName();
-        $className = $caseReflection->getName();
-        $methodName = $reflection->getName();
-
-        return $file !== false
-            ? \sprintf('php_qn://%s::\\%s::%s', $file, $className, $methodName)
-            : null;
     }
 
     /**

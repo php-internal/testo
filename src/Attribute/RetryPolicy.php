@@ -10,7 +10,7 @@ use Testo\Module\Interceptor\FallbackInterceptor;
 /**
  * Retry test on failure.
  */
-#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION | \Attribute::TARGET_CLASS )]
+#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION | \Attribute::TARGET_CLASS)]
 #[FallbackInterceptor(RetryPolicyRunInterceptor::class)]
 final class RetryPolicy implements Interceptable
 {

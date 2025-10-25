@@ -23,14 +23,17 @@ final class Formatter
      * Formats a test suite started message.
      *
      * @param non-empty-string $name Suite name
-     * @param non-empty-string|null $locationHint Location hint for IDE navigation
+     * @param \ReflectionClass<object>|null $reflection Class reflection for location hint
      * @return non-empty-string
      */
-    public static function suiteStarted(string $name, ?string $locationHint = null): string
+    public static function suiteStarted(string $name, ?\ReflectionClass $reflection = null): string
     {
         $attributes = ['name' => $name];
 
-        $locationHint !== null and $attributes['locationHint'] = $locationHint;
+        if ($reflection !== null) {
+            $locationHint = self::caseLocationHint($reflection);
+            $locationHint !== null and $attributes['locationHint'] = $locationHint;
+        }
 
         return self::formatMessage('testSuiteStarted', $attributes);
     }
@@ -51,15 +54,19 @@ final class Formatter
      *
      * @param non-empty-string $name Test name
      * @param bool $captureStandardOutput Whether to capture standard output
-     * @param non-empty-string|null $locationHint Location hint for IDE navigation
+     * @param \ReflectionFunctionAbstract|null $reflection Function/method reflection for location hint
      * @return non-empty-string
      */
-    public static function testStarted(string $name, bool $captureStandardOutput = false, ?string $locationHint = null): string
+    public static function testStarted(string $name, bool $captureStandardOutput = false, ?\ReflectionFunctionAbstract $reflection = null): string
     {
         $attributes = ['name' => $name];
 
         $captureStandardOutput and $attributes['captureStandardOutput'] = 'true';
-        $locationHint !== null and $attributes['locationHint'] = $locationHint;
+
+        if ($reflection !== null) {
+            $locationHint = self::testLocationHint($reflection);
+            $locationHint !== null and $attributes['locationHint'] = $locationHint;
+        }
 
         return self::formatMessage('testStarted', $attributes);
     }
@@ -320,5 +327,51 @@ final class Formatter
             ["||", "|'", "|n", "|r", "|[", "|]"],
             $value,
         );
+    }
+
+    /**
+     * Generates location hint for a test case from reflection.
+     *
+     * Format: php_qn://path/to/file.php::\ClassName
+     *
+     * @param \ReflectionClass<object> $reflection
+     * @return non-empty-string|null
+     */
+    private static function caseLocationHint(\ReflectionClass $reflection): ?string
+    {
+        $file = $reflection->getFileName();
+        $className = $reflection->getName();
+
+        return $file !== false
+            ? \sprintf('php_qn://%s::\\%s', $file, $className)
+            : null;
+    }
+
+    /**
+     * Generates location hint for a test method/function from reflection.
+     *
+     * Format: php_qn://path/to/file.php::\ClassName::methodName (for methods)
+     * Format: php_qn://path/to/file.php::functionName (for functions)
+     *
+     * @return non-empty-string|null
+     */
+    private static function testLocationHint(\ReflectionFunctionAbstract $reflection): ?string
+    {
+        $file = $reflection->getFileName();
+
+        if ($file === false) {
+            return null;
+        }
+
+        $name = $reflection->getName();
+
+        // For methods, include class name
+        if ($reflection instanceof \ReflectionMethod) {
+            $className = $reflection->getDeclaringClass()->getName();
+            return \sprintf('php_qn://%s::\\%s::%s', $file, $className, $name);
+        }
+
+        // For functions, just the function name
+        return \sprintf('php_qn://%s::%s', $file, $name);
     }
 }
