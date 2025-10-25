@@ -32,6 +32,7 @@ final class AsserTest
     }
 
     #[Test]
+    #[ExpectException(Assert\State\AssertException::class)]
     public function leaks(): void
     {
         static $leak = null;

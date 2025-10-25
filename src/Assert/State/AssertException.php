@@ -37,7 +37,7 @@ final class AssertException extends \Exception implements Record
         mixed $expected,
         mixed $actual,
         string $message,
-        string $pattern = 'Expected `%1$s`, got `%2$s`.',
+        string $pattern = 'Expected `%1$s`, got `%2$s`',
         bool $showDiff = true,
     ): self {
         # todo
@@ -66,8 +66,8 @@ final class AssertException extends \Exception implements Record
         ?\Throwable $actual,
     ): self {
         $msg = $actual === null
-            ? "Expected exception of type `$expected`, none thrown."
-            : "Expected exception of type `$expected`, got `" . $actual::class . '`.';
+            ? "Expected exception of type `$expected`, none thrown"
+            : "Expected exception of type `$expected`, got `" . $actual::class . '`';
 
         return new self(
             assertion: $msg,

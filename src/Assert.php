@@ -45,7 +45,7 @@ final class Assert
                 $expected,
                 $actual,
                 $message,
-                pattern: 'Failed asserting that `%s` is not identical to `%s`.',
+                pattern: 'Failed asserting that `%s` is not identical to `%s`',
                 showDiff: false,
             ));
     }
@@ -65,7 +65,7 @@ final class Assert
                 true,
                 $condition,
                 $message,
-                'Failed asserting that value `%2$s` is `%1$s`.',
+                'Failed asserting that value `%2$s` is `%1$s`',
             ));
     }
 
@@ -84,7 +84,7 @@ final class Assert
                 false,
                 $condition,
                 $message,
-                'Failed asserting that value `%2$s` is `%1$s`.',
+                'Failed asserting that value `%2$s` is `%1$s`',
             ));
     }
 
@@ -104,7 +104,7 @@ final class Assert
                 $expected,
                 $actual,
                 $message,
-                'Expected instance of `%2$s`, got `%1$s`.',
+                'Expected instance of `%2$s`, got `%1$s`',
             ));
     }
 
@@ -120,7 +120,7 @@ final class Assert
         string $message = '',
     ): void {
         $actual === null
-            ? StaticState::log('Assert null', $message)
+            ? StaticState::log('Assert `null`', $message)
             : StaticState::fail(AssertException::compare(null, $actual, $message));
     }
 
