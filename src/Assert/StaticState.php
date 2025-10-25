@@ -78,4 +78,18 @@ final class StaticState
         );
         self::$state->expectException = new ExpectedException($classOrObject);
     }
+
+    /**
+     * Track the given objects in the current test state to detect memory leaks.
+     *
+     * @param object ...$objects The objects to track.
+     */
+    public static function trackObjects(
+        object ...$objects,
+    ): void {
+        foreach ($objects as $k => $object) {
+            $name = \is_string($k) ? $k : true;
+            self::$state->weakMap->offsetSet($object, $name);
+        }
+    }
 }

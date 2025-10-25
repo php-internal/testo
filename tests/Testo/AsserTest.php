@@ -31,6 +31,21 @@ final class AsserTest
     }
 
     #[Test]
+    public function leaks(): void
+    {
+        static $leak = null;
+        $leak = new \stdClass();
+        Assert::leaks(myStdClass: $leak);
+    }
+
+    #[Test]
+    public function notLeaks(): void
+    {
+        $leak = new \stdClass();
+        Assert::leaks(myStdClass: $leak);
+    }
+
+    #[Test]
     #[RetryPolicy(maxAttempts: 2)]
     public function flaky(): void
     {

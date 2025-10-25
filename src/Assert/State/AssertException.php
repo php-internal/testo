@@ -76,6 +76,26 @@ final class AssertException extends \Exception implements Record
         );
     }
 
+    public static function leaks(\WeakMap $map): self
+    {
+        # Collect all records from the map
+        $records = [];
+
+        /**
+         * @var object $obj
+         * @var true|string $rec
+         */
+        foreach ($map as $obj => $rec) {
+            $records[] = \is_string($rec) ? $rec : $obj::class;
+        }
+
+        return new self(
+            assertion: 'Objects not leaks: ' . \implode(', ', $records),
+            context: '',
+            details: '',
+        );
+    }
+
     public function isSuccess(): bool
     {
         return false;
