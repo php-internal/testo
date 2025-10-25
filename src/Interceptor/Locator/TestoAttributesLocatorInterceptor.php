@@ -44,9 +44,11 @@ final class TestoAttributesLocatorInterceptor implements FileLocatorInterceptor,
         }
 
         # Define a case for functions
-        $case = $file->cases->define(null, $file);
+        # Implement a lazy case definition
+        $case = null;
         foreach ($file->functions as $function) {
-            if ($function->isPublic() && Reflection::fetchFunctionAttributes($function, attributeClass: Test::class)) {
+            if (Reflection::fetchFunctionAttributes($function, attributeClass: Test::class)) {
+                $case ??= $file->cases->define(null, $file);
                 $case->tests->define($function);
             }
         }
