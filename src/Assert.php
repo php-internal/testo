@@ -89,6 +89,26 @@ final class Assert
     }
 
     /**
+     * Asserts that the actual object is an instance of the expected class/interface.
+     *
+     * @param string $expected Expected class/interface (class-string).
+     * @param mixed $actual The actual value to compare against the expected value.
+     * @param string $message Short description about what exactly is being asserted.
+     * @throws AssertException when the assertion fails.
+     */
+    public static function instanceOf(string $expected, mixed $actual, string $message = ''): void
+    {
+        $actual instanceof $expected
+            ? StaticState::log('Assert instance of `' . $expected . '`', $message)
+            : StaticState::fail(AssertException::compare(
+                $expected,
+                $actual,
+                $message,
+                'Failed asserting that object of type `%2$s` is instance of `%1$s`.',
+            ));
+    }
+
+    /**
      * Asserts that the given value is null.
      *
      * @param mixed $actual The actual value to check for null.
