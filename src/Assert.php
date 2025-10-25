@@ -104,7 +104,7 @@ final class Assert
                 $expected,
                 $actual,
                 $message,
-                'Failed asserting that object of type `%2$s` is instance of `%1$s`.',
+                'Expected instance of `%2$s`, got `%1$s`.',
             ));
     }
 
