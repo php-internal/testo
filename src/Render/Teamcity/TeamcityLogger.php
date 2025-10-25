@@ -68,8 +68,7 @@ final class TeamcityLogger
      */
     public function caseStartedFromInfo(CaseInfo $info): void
     {
-        $name = $this->getCaseName($info);
-        $this->publish(Formatter::suiteStarted($name, $info->definition->reflection));
+        $this->publish(Formatter::suiteStarted($info->name, $info->definition->reflection));
     }
 
     /**
@@ -79,8 +78,7 @@ final class TeamcityLogger
      */
     public function caseFinishedFromInfo(CaseInfo $info): void
     {
-        $name = $this->getCaseName($info);
-        $this->publish(Formatter::suiteFinished($name));
+        $this->publish(Formatter::suiteFinished($info->name));
     }
 
     /**
@@ -94,11 +92,10 @@ final class TeamcityLogger
     {
         // Report case-level failure if status indicates failure
         if ($result->status->isFailure()) {
-            $caseName = $this->getCaseName($caseInfo);
             $failedCount = $result->countFailedTests();
             $this->publish(
                 Formatter::testStdErr(
-                    $caseName,
+                    $caseInfo->name,
                     "Test case failed: {$failedCount} test(s) failed",
                 ),
             );
@@ -224,20 +221,6 @@ final class TeamcityLogger
                 'Warning: This test has been marked as risky',
             ),
         );
-    }
-
-    /**
-     * Gets the name of a test case for TeamCity output.
-     *
-     * @return non-empty-string
-     */
-    private function getCaseName(CaseInfo $info): string
-    {
-        $reflection = $info->definition->reflection;
-
-        return $reflection !== null
-            ? $reflection->getShortName()
-            : 'UnknownTestCase';
     }
 
     /**

@@ -23,8 +23,10 @@ final class TestsRunnerTest extends TestCase
     {
         $instance = self::createInstance();
         $info = new TestInfo(
+            name: 'withRetryPolicy',
             caseInfo: new CaseInfo(
                 definition: new CaseDefinition(
+                    name: 'TestInterceptors',
                     reflection: new \ReflectionClass(TestInterceptors::class),
                 ),
                 instance: new TestInterceptors(),
@@ -47,6 +49,7 @@ final class TestsRunnerTest extends TestCase
     {
         $instance = self::createInstance();
         $info = new TestInfo(
+            name: 'withRetryPolicy',
             caseInfo: new CaseInfo(
                 instance: new TestInterceptors(),
             ),

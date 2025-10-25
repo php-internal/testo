@@ -28,7 +28,7 @@ final class FilePostfixTestLocatorInterceptor implements FileLocatorInterceptor,
     {
         foreach ($file->classes as $class) {
             if (!$class->isAbstract() && \str_ends_with($class->getName(), 'Test')) {
-                $case = $file->cases->define($class);
+                $case = $file->cases->define($class, $file);
                 foreach ($class->getMethods() as $method) {
                     if ($method->isPublic() && \str_starts_with($method->getName(), 'test')) {
                         $case->tests->define($method);
