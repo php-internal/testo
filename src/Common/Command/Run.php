@@ -30,8 +30,7 @@ final class Run extends Base
     public function __invoke(
         InputInterface  $input,
         OutputInterface $output,
-    ): int
-    {
+    ): int {
         if ($input->getOption('teamcity')) {
             $this->container->bind(StdoutRenderer::class, TeamcityInterceptor::class);
         } else {
