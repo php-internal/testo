@@ -37,7 +37,7 @@ final class AssertException extends \Exception implements Record
         mixed $expected,
         mixed $actual,
         string $message,
-        string $pattern = 'Expected `%1$s`, got `%2$s`.',
+        string $pattern = 'Expected `%1$s`, got `%2$s`',
         bool $showDiff = true,
     ): self {
         # todo
@@ -66,11 +66,31 @@ final class AssertException extends \Exception implements Record
         ?\Throwable $actual,
     ): self {
         $msg = $actual === null
-            ? "Expected exception of type `$expected`, none thrown."
-            : "Expected exception of type `$expected`, got `" . $actual::class . '`.';
+            ? "Expected exception of type `$expected`, none thrown"
+            : "Expected exception of type `$expected`, got `" . $actual::class . '`';
 
         return new self(
             assertion: $msg,
+            context: '',
+            details: '',
+        );
+    }
+
+    public static function leaks(\WeakMap $map): self
+    {
+        # Collect all records from the map
+        $records = [];
+
+        /**
+         * @var object $obj
+         * @var true|string $rec
+         */
+        foreach ($map as $obj => $rec) {
+            $records[] = \is_string($rec) ? $rec : $obj::class;
+        }
+
+        return new self(
+            assertion: 'Objects not leaks: ' . \implode(', ', $records),
             context: '',
             details: '',
         );

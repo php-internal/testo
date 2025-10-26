@@ -21,6 +21,7 @@ final class AsserTest
         Assert::false(false);
         Assert::contains(1, [1,2,3]);
         Assert::contains(2, new \ArrayIterator([1,2,3]));
+        Assert::instanceOf(\Exception::class, new \RuntimeException());
     }
 
     #[Test]
@@ -30,6 +31,22 @@ final class AsserTest
         Assert::null(null, 'Custom message on null assertion failure.');
         Assert::notSame(42, '42');
         Assert::same(0, null);
+    }
+
+    #[Test]
+    #[ExpectException(Assert\State\AssertException::class)]
+    public function leaks(): void
+    {
+        static $leak = null;
+        $leak = new \stdClass();
+        Assert::leaks(myStdClass: $leak);
+    }
+
+    #[Test]
+    public function notLeaks(): void
+    {
+        $leak = new \stdClass();
+        Assert::leaks(myStdClass: $leak);
     }
 
     #[Test]

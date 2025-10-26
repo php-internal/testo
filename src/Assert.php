@@ -45,7 +45,7 @@ final class Assert
                 $expected,
                 $actual,
                 $message,
-                pattern: 'Failed asserting that `%s` is not identical to `%s`.',
+                pattern: 'Failed asserting that `%s` is not identical to `%s`',
                 showDiff: false,
             ));
     }
@@ -65,7 +65,7 @@ final class Assert
                 true,
                 $condition,
                 $message,
-                'Failed asserting that value `%2$s` is `%1$s`.',
+                'Failed asserting that value `%2$s` is `%1$s`',
             ));
     }
 
@@ -84,7 +84,27 @@ final class Assert
                 false,
                 $condition,
                 $message,
-                'Failed asserting that value `%2$s` is `%1$s`.',
+                'Failed asserting that value `%2$s` is `%1$s`',
+            ));
+    }
+
+    /**
+     * Asserts that the actual object is an instance of the expected class/interface.
+     *
+     * @param string $expected Expected class/interface (class-string).
+     * @param mixed $actual The actual value to compare against the expected value.
+     * @param string $message Short description about what exactly is being asserted.
+     * @throws AssertException when the assertion fails.
+     */
+    public static function instanceOf(string $expected, mixed $actual, string $message = ''): void
+    {
+        $actual instanceof $expected
+            ? StaticState::log('Assert instance of `' . $expected . '`', $message)
+            : StaticState::fail(AssertException::compare(
+                $expected,
+                $actual,
+                $message,
+                'Expected instance of `%2$s`, got `%1$s`',
             ));
     }
 
@@ -124,7 +144,7 @@ final class Assert
         string $message = '',
     ): void {
         $actual === null
-            ? StaticState::log('Assert null', $message)
+            ? StaticState::log('Assert `null`', $message)
             : StaticState::fail(AssertException::compare(null, $actual, $message));
     }
 
@@ -139,5 +159,15 @@ final class Assert
         string|\Throwable $classOrObject,
     ): void {
         StaticState::expectException($classOrObject);
+    }
+
+    /**
+     * Asserts that the given objects do not leak memory after the test execution.
+     *
+     * @param object ...$objects The objects to monitor for memory leaks.
+     */
+    public static function leaks(object ...$objects): void
+    {
+        StaticState::trackObjects(...$objects);
     }
 }

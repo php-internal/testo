@@ -21,4 +21,11 @@ final class TestState
      * @var ExpectedException|null Expected exception configuration.
      */
     public ?ExpectedException $expectException = null;
+
+    public \WeakMap $weakMap;
+
+    public function __construct()
+    {
+        $this->weakMap = new \WeakMap();
+    }
 }
