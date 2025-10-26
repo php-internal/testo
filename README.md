@@ -15,6 +15,12 @@
 
 <br />
 
+**Testo** (pronounced [test-oh], meaning "dough" in Russian) — is an extensible testing framework for PHP.
+Built for scenarios requiring complete customization of the testing process: SDKs, framework tools, complex integrations.
+Unlike other testing frameworks, Testo provides all at once: familiar and convenient PHP syntax, unprecedented extensibility and customizability, and a simple yet powerful architecture based on a minimal core and middleware system.
+Like dough, you can mold and shape it into any testing infrastructure you need.
+We believe developers should have full control over their testing environment, and Testo delivers exactly that.
+
 ## Installation
 
 ```bash
