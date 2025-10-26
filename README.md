@@ -1,11 +1,9 @@
 <p align="center">
-    <img alt="logo"
+    <img alt="TESTO"
          src="https://github.com/php-testo/testo/blob/1.x/resources/logo.svg?raw=true"
-         style="width: 4in; display: block"
+         style="width: 3in; display: block"
     />
 </p>
-
-<h1 align="center">Testo</h1>
 
 <p align="center">The Testing Framework</p>
 
