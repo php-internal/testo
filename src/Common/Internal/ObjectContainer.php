@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Testo\Common\Internal;
 
+use Internal\Destroy\Destroyable;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Testo\Common\Container;
+use Testo\Common\Inflector;
 use Yiisoft\Injector\Injector;
 
 /**
@@ -25,6 +27,9 @@ final class ObjectContainer implements Container
     /** @var array<class-string, array|\Closure(mixed ...): object> */
     private array $factory = [];
 
+    /** @var list<Inflector> */
+    private array $inflectors = [];
+
     private readonly Injector $injector;
 
     /**
@@ -38,6 +43,11 @@ final class ObjectContainer implements Container
         $this->cache[self::class] = $this;
         $this->cache[ObjectContainer::class] = $this;
         $this->cache[ContainerInterface::class] = $this;
+    }
+
+    public function addInflector(Inflector $inflector): void
+    {
+        $this->inflectors[] = $inflector;
     }
 
     public function get(string $id, array $arguments = []): object
@@ -73,14 +83,9 @@ final class ObjectContainer implements Container
 
         \assert($result instanceof $class, "Created object must be instance of {$class}.");
 
-        // Detect related types
-        // Configs
-        // if (\str_starts_with($class, 'Internal\\Module\\Config\\Schema\\')) {
-        //     // Hydrate config
-        //     /** @var ConfigLoader $configLoader */
-        //     $configLoader = $this->get(ConfigLoader::class);
-        //     $configLoader->hydrate($result);
-        // }
+        foreach ($this->inflectors as $inflector) {
+            $result = $inflector->inflect($result, $this);
+        }
 
         return $result;
     }
@@ -120,5 +125,8 @@ final class ObjectContainer implements Container
     public function destroy(): void
     {
         unset($this->cache, $this->factory, $this->injector);
+        while ($inflector = \array_pop($this->inflectors)) {
+            $inflector instanceof Destroyable and $inflector->destroy();
+        }
     }
 }
