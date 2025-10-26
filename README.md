@@ -31,3 +31,11 @@ composer require testo/testo
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/testo/testo.svg?style=flat-square&logo=packagist)](https://packagist.org/packages/testo/testo)
 [![License](https://img.shields.io/packagist/l/testo/testo.svg?style=flat-square)](LICENSE.md)
 [![Total Destroys](https://img.shields.io/packagist/dt/testo/testo.svg?style=flat-square)](https://packagist.org/packages/testo/testo/stats)
+
+## IDE Support
+
+Testo comes with the [IDEA plugin `Testo`](https://plugins.jetbrains.com/plugin/28842-testo?noRedirect=true).
+
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/28842-testo?style=flat-square)](https://plugins.jetbrains.com/plugin/28842-testo)
+[![Rating](https://img.shields.io/jetbrains/plugin/r/rating/28842-testo?style=flat-square)](https://plugins.jetbrains.com/plugin/28842-testo/reviews)
+[![Version](https://img.shields.io/jetbrains/plugin/v/28842-testo?style=flat-square)](https://plugins.jetbrains.com/plugin/28842-testo/versions)
