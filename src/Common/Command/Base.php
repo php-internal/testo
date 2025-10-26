@@ -82,8 +82,8 @@ abstract class Base extends Command
             ],
         );
 
-        $this->application = Application::create($cfg);
-        $this->container = $this->application->container;
+        $this->application = Application::createFromConfig($cfg);
+        $this->container = $this->application->getContainer();
 
         $this->container->set($input, InputInterface::class);
         $this->container->set($output, OutputInterface::class);
