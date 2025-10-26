@@ -109,7 +109,7 @@ final class Assert
     }
 
     /**
-     * Asserts that given array contains expected value.
+     * Asserts that given collection contains expected value.
      *
      * @param mixed $needle The expected value.
      * @param iterable $haystack Iterable (array or Traversable) to search in.
