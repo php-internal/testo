@@ -372,6 +372,6 @@ final class Formatter
         }
 
         // For functions, just the function name
-        return \sprintf('php_qn://%s::%s', $file, $name);
+        return \sprintf('php_qn://%s::%s', $file, "\\$name");
     }
 }
