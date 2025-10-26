@@ -3,7 +3,7 @@
     "release-type": "php",
     "packages": {
         ".": {
-            "package-name": "destroy",
+            "package-name": "testo",
             "changelog-path": "/CHANGELOG.md"
         }
     },
