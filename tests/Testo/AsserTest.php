@@ -19,6 +19,8 @@ final class AsserTest
         Assert::notSame(42, '42');
         Assert::true(true);
         Assert::false(false);
+        Assert::contains(1, [1,2,3]);
+        Assert::contains(2, new \ArrayIterator([1,2,3]));
         Assert::instanceOf(\Exception::class, new \RuntimeException());
     }
 

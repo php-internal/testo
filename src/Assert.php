@@ -109,6 +109,30 @@ final class Assert
     }
 
     /**
+     * Asserts that given collection contains expected value.
+     *
+     * @param mixed $needle The expected value.
+     * @param iterable $haystack Iterable (array or Traversable) to search in.
+     * @param string $message Short description about what exactly is being asserted.
+     * @throws AssertException when the assertion fails.
+     */
+    public static function contains(mixed $needle, iterable $haystack, string $message = ''): void
+    {
+        foreach ($haystack as $element) {
+            if ($needle === $element) {
+                StaticState::log('Assert contains', $message);
+                return;
+            }
+        }
+        StaticState::fail(AssertException::compare(
+            $needle,
+            $haystack,
+            $message,
+            'Failed asserting that `%1$s` contains `%2$s`',
+        ));
+    }
+
+    /**
      * Asserts that the given value is null.
      *
      * @param mixed $actual The actual value to check for null.
