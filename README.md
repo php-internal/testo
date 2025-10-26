@@ -1,25 +1,20 @@
 <p align="center">
-    <img alt="TESTO"
-         src="https://github.com/php-testo/testo/blob/1.x/resources/logo.svg?raw=true"
-         style="width: 3in; display: block"
-    />
+    <a href="#installation"><img alt="TESTO"
+         src="https://github.com/php-testo/.github/blob/1.x/resources/logo-full.svg?raw=true"
+         style="width: 2in; display: block"
+    /></a>
 </p>
 
 <p align="center">The Testing Framework</p>
 
 <div align="center">
 
-[![Support](https://img.shields.io/static/v1?style=flat-square&label=Support&message=%E2%9D%A4&logo=GitHub&color=%23fe0086)](https://boosty.to/roxblnfk)
+[![Support on Boosty](https://img.shields.io/static/v1?style=flat-square&label=Boosty&message=%E2%9D%A4&logo=Boosty&color=%23F15F2C)](https://boosty.to/roxblnfk)
+[![Support on Patreon](https://img.shields.io/static/v1?style=flat-square&label=Patreon&message=%E2%9D%A4&logo=Patreon&color=%23fe0086)](https://patreon.com/roxblnfk)
 
 </div>
 
 <br />
-
-**Testo** (pronounced [test-oh], meaning "dough" in Russian) — is an extensible testing framework for PHP.
-Built for scenarios requiring complete customization of the testing process: SDKs, framework tools, complex integrations.
-Unlike other testing frameworks, Testo provides all at once: familiar and convenient PHP syntax, unprecedented extensibility and customizability, and a simple yet powerful architecture based on a minimal core and middleware system.
-Like dough, you can mold and shape it into any testing infrastructure you need.
-We believe developers should have full control over their testing environment, and Testo delivers exactly that.
 
 ## Installation
 
