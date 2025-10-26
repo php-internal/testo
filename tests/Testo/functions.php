@@ -8,7 +8,7 @@ use Testo\Assert;
 use Testo\Attribute\Test;
 
 #[Test]
-function simpleAssertions(): void
+function simpleFunctionAssertions(): void
 {
     Assert::same(1, 1);
     Assert::null(null);
