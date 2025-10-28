@@ -51,6 +51,42 @@ final class Assert
     }
 
     /**
+     * Asserts that two values are equal (not strict).
+     *
+     * @param mixed $expected The expected value.
+     * @param mixed $actual The actual value to compare against the expected value.
+     * @param string $message Short description about what exactly is being asserted.
+     * @throws AssertException when the assertion fails.
+     */
+    public static function equal(mixed $expected, mixed $actual, string $message = ''): void
+    {
+        $actual == $expected
+            ? StaticState::log('Assert equal: `' . Support::stringify($expected) . '`', $message)
+            : StaticState::fail(AssertException::compare($expected, $actual, $message));
+    }
+
+    /**
+     * Asserts that two values are not equal (not strict).
+     *
+     * @param mixed $expected The expected value.
+     * @param mixed $actual The actual value to compare against the expected value.
+     * @param string $message Short description about what exactly is being asserted.
+     * @throws AssertException when the assertion fails.
+     */
+    public static function notEqual(mixed $expected, mixed $actual, string $message = ''): void
+    {
+        $actual != $expected
+            ? StaticState::log('Assert not equal: `' . Support::stringify($expected) . '`', $message)
+            : StaticState::fail(AssertException::compare(
+                $expected,
+                $actual,
+                $message,
+                pattern: 'Failed asserting that `%1s` is not equal to `%2s`',
+                showDiff: false,
+            ));
+    }
+
+    /**
      * Asserts that the condition is true.
      *
      * @param bool $condition The condition asserting to be true.
@@ -104,7 +140,7 @@ final class Assert
                 $expected,
                 $actual,
                 $message,
-                'Expected instance of `%2$s`, got `%1$s`',
+                'Expected instance of `%1$s`, got `%2$s`',
             ));
     }
 
@@ -128,7 +164,7 @@ final class Assert
             $needle,
             $haystack,
             $message,
-            'Failed asserting that `%1$s` contains `%2$s`',
+            'Failed asserting that `%2$s` contains `%1$s`',
         ));
     }
 
