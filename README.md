@@ -5,7 +5,7 @@
     /></a>
 </p>
 
-<p align="center">The Testing Framework</p>
+<p align="center">The PHP Testing Framework You Control</p>
 
 <div align="center">
 
@@ -31,6 +31,6 @@ composer require testo/testo
 
 Testo comes with the [IDEA plugin `Testo`](https://plugins.jetbrains.com/plugin/28842-testo?noRedirect=true).
 
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/28842-testo?style=flat-square)](https://plugins.jetbrains.com/plugin/28842-testo)
-[![Rating](https://img.shields.io/jetbrains/plugin/r/rating/28842-testo?style=flat-square)](https://plugins.jetbrains.com/plugin/28842-testo/reviews)
 [![Version](https://img.shields.io/jetbrains/plugin/v/28842-testo?style=flat-square)](https://plugins.jetbrains.com/plugin/28842-testo/versions)
+[![Rating](https://img.shields.io/jetbrains/plugin/r/rating/28842-testo?style=flat-square)](https://plugins.jetbrains.com/plugin/28842-testo/reviews)
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/28842-testo?style=flat-square)](https://plugins.jetbrains.com/plugin/28842-testo)
