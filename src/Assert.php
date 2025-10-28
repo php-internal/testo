@@ -173,7 +173,7 @@ final class Assert
     {
         if ($condition === true) {
             self::exception($exception);
-            throw is_string($exception) ? new $exception($message) : $exception;
+            throw \is_string($exception) ? new $exception($message) : $exception;
         }
 
         StaticState::log('Assert throw if: condition is false', $message);
@@ -191,7 +191,7 @@ final class Assert
     {
         if ($condition === false) {
             self::exception($exception);
-            throw is_string($exception) ? new $exception($message) : $exception;
+            throw \is_string($exception) ? new $exception($message) : $exception;
         }
 
         StaticState::log('Assert throw unless: condition is true', $message);
