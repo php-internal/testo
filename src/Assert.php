@@ -162,6 +162,42 @@ final class Assert
     }
 
     /**
+     * Throws an exception if the condition is true.
+     *
+     * @param bool $condition The condition to check.
+     * @param \Throwable|class-string<\Throwable> $exception The exception to throw or exception class.
+     * @param string $message Short description about what exactly is being asserted.
+     * @throws \Throwable when the condition is true.
+     */
+    public static function throwIf(bool $condition, \Throwable|string $exception, string $message = ''): void
+    {
+        if ($condition === true) {
+            self::exception($exception);
+            throw is_string($exception) ? new $exception($message) : $exception;
+        }
+
+        StaticState::log('Assert throw if: condition is false', $message);
+    }
+
+    /**
+     * Throws an exception unless the condition is true.
+     *
+     * @param bool $condition The condition to check.
+     * @param \Throwable|class-string<\Throwable> $exception The exception to throw or exception class.
+     * @param string $message Short description about what exactly is being asserted.
+     * @throws \Throwable when the condition is false.
+     */
+    public static function throwUnless(bool $condition, \Throwable|string $exception, string $message = ''): void
+    {
+        if ($condition === false) {
+            self::exception($exception);
+            throw is_string($exception) ? new $exception($message) : $exception;
+        }
+
+        StaticState::log('Assert throw unless: condition is true', $message);
+    }
+
+    /**
      * Asserts that the given objects do not leak memory after the test execution.
      *
      * @param object ...$objects The objects to monitor for memory leaks.
