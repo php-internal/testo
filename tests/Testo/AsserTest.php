@@ -90,62 +90,62 @@ final class AsserTest
     }
 
     #[Test]
-    public function throwIfConditionFalse(): void
+    public function throwsIfConditionFalse(): void
     {
-        Assert::throwIf(false, new \RuntimeException('Should not throw'), 'Condition is false');
+        Assert::throwsIf(false, new \RuntimeException('Should not throw'), 'Condition is false');
     }
 
     #[Test]
-    public function throwUnlessConditionTrue(): void
+    public function throwsUnlessConditionTrue(): void
     {
-        Assert::throwUnless(true, new \RuntimeException('Should not throw'), 'Condition is true');
+        Assert::throwsUnless(true, new \RuntimeException('Should not throw'), 'Condition is true');
     }
 
     #[Test]
-    public function throwIfConditionFalseWithClass(): void
+    public function throwsIfConditionFalseWithClass(): void
     {
-        Assert::throwIf(false, \RuntimeException::class, 'Condition is false with class string');
+        Assert::throwsIf(false, \RuntimeException::class, 'Condition is false with class string');
     }
 
     #[Test]
-    public function throwUnlessConditionTrueWithClass(): void
+    public function throwsUnlessConditionTrueWithClass(): void
     {
-        Assert::throwUnless(true, \RuntimeException::class, 'Condition is true with class string');
-    }
-
-    #[Test]
-    #[ExpectException(\RuntimeException::class)]
-    public function throwIfConditionTrue(): void
-    {
-        Assert::throwIf(true, new \RuntimeException('Condition is true, should throw'), 'Throw when true');
+        Assert::throwsUnless(true, \RuntimeException::class, 'Condition is true with class string');
     }
 
     #[Test]
     #[ExpectException(\RuntimeException::class)]
-    public function throwUnlessConditionFalse(): void
+    public function throwsIfConditionTrue(): void
     {
-        Assert::throwUnless(false, new \RuntimeException('Condition is false, should throw'), 'Throw when false');
+        Assert::throwsIf(true, new \RuntimeException('Condition is true, should throw'), 'Throw when true');
+    }
+
+    #[Test]
+    #[ExpectException(\RuntimeException::class)]
+    public function throwsUnlessConditionFalse(): void
+    {
+        Assert::throwsUnless(false, new \RuntimeException('Condition is false, should throw'), 'Throw when false');
     }
 
     #[Test]
     #[ExpectException(\InvalidArgumentException::class)]
-    public function throwIfConditionTrueWithClass(): void
+    public function throwsIfConditionTrueWithClass(): void
     {
-        Assert::throwIf(true, \InvalidArgumentException::class, 'Throw when true with class string');
+        Assert::throwsIf(true, \InvalidArgumentException::class, 'Throw when true with class string');
     }
 
     #[Test]
     #[ExpectException(\InvalidArgumentException::class)]
-    public function throwUnlessConditionFalseWithClass(): void
+    public function throwsUnlessConditionFalseWithClass(): void
     {
-        Assert::throwUnless(false, \InvalidArgumentException::class, 'Throw when false with class string');
+        Assert::throwsUnless(false, \InvalidArgumentException::class, 'Throw when false with class string');
     }
 
     #[Test]
     #[ExpectException(\RuntimeException::class)]
-    public function throwIfWithCustomExceptionMessage(): void
+    public function throwsIfWithCustomExceptionMessage(): void
     {
         $exception = new \RuntimeException('Custom message from exception');
-        Assert::throwIf(true, $exception, 'Custom assertion message');
+        Assert::throwsIf(true, $exception, 'Custom assertion message');
     }
 }

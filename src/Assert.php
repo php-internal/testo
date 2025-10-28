@@ -169,14 +169,14 @@ final class Assert
      * @param string $message Short description about what exactly is being asserted.
      * @throws \Throwable when the condition is true.
      */
-    public static function throwIf(bool $condition, \Throwable|string $exception, string $message = ''): void
+    public static function throwsIf(bool $condition, \Throwable|string $exception, string $message = ''): void
     {
         if ($condition === true) {
             self::exception($exception);
             throw \is_string($exception) ? new $exception($message) : $exception;
         }
 
-        StaticState::log('Assert throw if: condition is false', $message);
+        StaticState::log('Assert throws if: condition is false', $message);
     }
 
     /**
@@ -187,14 +187,14 @@ final class Assert
      * @param string $message Short description about what exactly is being asserted.
      * @throws \Throwable when the condition is false.
      */
-    public static function throwUnless(bool $condition, \Throwable|string $exception, string $message = ''): void
+    public static function throwsUnless(bool $condition, \Throwable|string $exception, string $message = ''): void
     {
         if ($condition === false) {
             self::exception($exception);
             throw \is_string($exception) ? new $exception($message) : $exception;
         }
 
-        StaticState::log('Assert throw unless: condition is true', $message);
+        StaticState::log('Assert throws unless: condition is true', $message);
     }
 
     /**
