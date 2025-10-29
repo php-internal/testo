@@ -38,6 +38,19 @@ trait AttributedTrait
     }
 
     /**
+     * Set multiple attributes at once.
+     *
+     * The new attributes will be merged with existing ones.
+     *
+     * @param non-empty-array<non-empty-string, mixed> $values
+     */
+    public function withAttributes(array $values): static
+    {
+        $attributes = \array_merge($this->attributes, $values);
+        return $this->cloneWith('attributes', $attributes);
+    }
+
+    /**
      * @param non-empty-string $name
      */
     public function withoutAttribute(string $name): static
