@@ -8,4 +8,9 @@ namespace Testo\Attribute;
  * Marks a method or a function as a test.
  */
 #[\Attribute(\Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION)]
-final class Test {}
+final class Test
+{
+    public function __construct(
+        public string $description = '',
+    ) {}
+}
