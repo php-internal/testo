@@ -9,6 +9,9 @@ use Testo\Attribute\ExpectException;
 use Testo\Attribute\RetryPolicy;
 use Testo\Attribute\Test;
 
+/**
+ * Assertion examples.
+ */
 final class AsserTest
 {
     #[Test]
@@ -22,8 +25,8 @@ final class AsserTest
         Assert::contains(1, [1,2,3]);
         Assert::contains(2, new \ArrayIterator([1,2,3]));
         Assert::instanceOf(\Exception::class, new \RuntimeException());
-        Assert::equal(1, '1');
-        Assert::notEqual(42,43);
+        Assert::equals(1, '1');
+        Assert::notEquals(42, 43);
     }
 
     #[Test]

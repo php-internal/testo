@@ -58,7 +58,7 @@ final class Assert
      * @param string $message Short description about what exactly is being asserted.
      * @throws AssertException when the assertion fails.
      */
-    public static function equal(mixed $expected, mixed $actual, string $message = ''): void
+    public static function equals(mixed $expected, mixed $actual, string $message = ''): void
     {
         $actual == $expected
             ? StaticState::log('Assert equal: `' . Support::stringify($expected) . '`', $message)
@@ -73,7 +73,7 @@ final class Assert
      * @param string $message Short description about what exactly is being asserted.
      * @throws AssertException when the assertion fails.
      */
-    public static function notEqual(mixed $expected, mixed $actual, string $message = ''): void
+    public static function notEquals(mixed $expected, mixed $actual, string $message = ''): void
     {
         $actual != $expected
             ? StaticState::log('Assert not equal: `' . Support::stringify($expected) . '`', $message)
