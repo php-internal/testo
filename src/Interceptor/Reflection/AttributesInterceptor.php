@@ -16,6 +16,7 @@ use Testo\Test\Dto\TestResult;
 
 /**
  * Reads {@see Interceptable} attributes and integrates them into the pipeline.
+ * Also maps the found attributes into the info DTO attributes.
  */
 final class AttributesInterceptor implements TestRunInterceptor, TestCaseRunInterceptor
 {
@@ -46,17 +47,19 @@ final class AttributesInterceptor implements TestRunInterceptor, TestCaseRunInte
             return $next($info);
         }
 
-        # Merge and instantiate attributes
-        $interceptors = $this->interceptorProvider->fromAttributes(TestRunInterceptor::class, ...\array_map(
+        $attrs = \array_map(
             static fn(\ReflectionAttribute $a): Interceptable => $a->newInstance(),
             $attrs,
-        ));
+        );
+
+        # Merge and instantiate attributes
+        $interceptors = $this->interceptorProvider->fromAttributes(TestRunInterceptor::class, ...$attrs);
 
         return Pipeline::prepare(...$interceptors)->with(
             $next,
             /** @see TestRunInterceptor::runTest() */
             'runTest',
-        )($info);
+        )($info->withAttributes(self::attributes($attrs)));
     }
 
     public function runTestCase(CaseInfo $info, callable $next): CaseResult
@@ -74,16 +77,34 @@ final class AttributesInterceptor implements TestRunInterceptor, TestCaseRunInte
             return $next($info);
         }
 
-        # Merge and instantiate attributes
-        $interceptors = $this->interceptorProvider->fromAttributes(TestCaseRunInterceptor::class, ...\array_map(
+        $attrs = \array_map(
             static fn(\ReflectionAttribute $a): Interceptable => $a->newInstance(),
             $attrs,
-        ));
+        );
+
+        # Merge and instantiate attributes
+        $interceptors = $this->interceptorProvider->fromAttributes(TestCaseRunInterceptor::class, ...$attrs);
 
         return Pipeline::prepare(...$interceptors)->with(
             $next,
             /** @see TestCaseRunInterceptor::runTestCase() */
             'runTestCase',
-        )($info);
+        )($info->withAttributes(self::attributes($attrs)));
+    }
+
+    /**
+     * Converts array of attributes to associative array of attributed lists
+     *
+     * @param list<Interceptable> $attrs
+     * @return array<class-string, list<Interceptable>>
+     */
+    private static function attributes(array $attrs): array
+    {
+        $result = [];
+        foreach ($attrs as $attr) {
+            $result[$attr::class][] = $attr;
+        }
+
+        return $result;
     }
 }
