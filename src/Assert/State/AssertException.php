@@ -25,6 +25,20 @@ final class AssertException extends \Exception implements Record
     }
 
     /**
+     * Simple failure assertion factory.
+     *
+     * @param string|null $message The failure message.
+     */
+    public static function fail(?string $message): self
+    {
+        return new self(
+            assertion: $message ?? 'Test failed explicitly',
+            context: '',
+            details: '',
+        );
+    }
+
+    /**
      * Failed comparison assertion factory.
      *
      * @param mixed $expected The expected value.

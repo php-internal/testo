@@ -6,6 +6,7 @@ namespace Tests\Testo;
 
 use Testo\Assert;
 use Testo\Attribute\ExpectException;
+use Testo\Attribute\Fail;
 use Testo\Attribute\RetryPolicy;
 use Testo\Attribute\Test;
 
@@ -19,8 +20,8 @@ final class AsserTest
         Assert::notSame(42, '42');
         Assert::true(true);
         Assert::false(false);
-        Assert::contains(1, [1,2,3]);
-        Assert::contains(2, new \ArrayIterator([1,2,3]));
+        Assert::contains(1, [1, 2, 3]);
+        Assert::contains(2, new \ArrayIterator([1, 2, 3]));
         Assert::instanceOf(\Exception::class, new \RuntimeException());
     }
 
@@ -87,5 +88,48 @@ final class AsserTest
     public function expectExceptionAttribute(): never
     {
         throw new \RuntimeException('This is an expected exception.');
+    }
+
+    #[Test]
+    #[Fail]
+    public function failWithNullMessage(): void
+    {
+        Assert::fail(null);
+    }
+
+    #[Test]
+    #[Fail]
+    public function failWithNoParameters(): void
+    {
+        Assert::fail();
+    }
+
+    #[Test]
+    #[Fail]
+    public function failWithAnyMessage(): void
+    {
+        Assert::fail('Any message works here');
+    }
+
+    #[Test]
+    #[Fail('Database connection failed')]
+    public function failWithExactMessage(): void
+    {
+        Assert::fail('Database connection failed');
+    }
+
+    #[Test]
+    #[Fail('Expected specific failure')]
+    public function failWithWrongMessageShouldFail(): void
+    {
+        Assert::fail('Different message than expected');
+    }
+
+    #[Test]
+    #[Fail]
+    public function failButDoesNotFailShouldFail(): void
+    {
+        // This test doesn't call Assert::fail(), so it should fail
+        Assert::true(true);
     }
 }

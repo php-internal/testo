@@ -149,6 +149,17 @@ final class Assert
     }
 
     /**
+     * Fails the test with the given message.
+     *
+     * @param string|null $message The failure message.
+     * @throws AssertException always, with the provided message.
+     */
+    public static function fail(?string $message = null): void
+    {
+        StaticState::fail(AssertException::fail($message));
+    }
+
+    /**
      * Expects that the test will throw an exception of the given class.
      *
      * @param class-string|\Throwable $classOrObject The expected exception class, interface, or an exception object.
