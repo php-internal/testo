@@ -16,6 +16,10 @@
 
 <br />
 
+Testo is an extensible testing framework built on a lightweight core with a middleware system.
+It gives you full control over your testing environment while keeping the familiar PHP syntax you already know.
+
+
 ## Get Started
 
 ### Installation
