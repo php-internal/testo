@@ -92,6 +92,48 @@ final class Assert
     }
 
     /**
+     * Asserts that actual value is greater than the defined minimum.
+     *
+     * @param mixed $minimum The defined minimum value.
+     * @param mixed $actual The actual value to compare against the minimum value.
+     * @param string $message Short description about what exactly is being asserted.
+     * @throws AssertException when the assertion fails.
+     */
+    public static function greaterThan(mixed $minimum, mixed $actual, string $message = ''): void
+    {
+        $actual > $minimum
+            ? StaticState::log('Assert `' . Support::stringify($actual) . '` is greater than: `' . Support::stringify($minimum) . '`', $message)
+            : StaticState::fail(AssertException::compare(
+                $minimum,
+                $actual,
+                $message,
+                pattern: 'Failed asserting that `%2s` is greater than `%1s`',
+                showDiff: false,
+            ));
+    }
+
+    /**
+     * Asserts that actual value is greater than or equal to the defined minimum.
+     *
+     * @param mixed $minimum The defined minimum value.
+     * @param mixed $actual The actual value to compare against the minimum value.
+     * @param string $message Short description about what exactly is being asserted.
+     * @throws AssertException when the assertion fails.
+     */
+    public static function greaterThanOrEqual(mixed $minimum, mixed $actual, string $message = ''): void
+    {
+        $actual >= $minimum
+            ? StaticState::log('Assert `' . Support::stringify($actual) . '` is greater than or equal to: `' . Support::stringify($minimum) . '`', $message)
+            : StaticState::fail(AssertException::compare(
+                $minimum,
+                $actual,
+                $message,
+                pattern: 'Failed asserting that `%2s` is greater than or equal to `%1s`',
+                showDiff: false,
+            ));
+    }
+
+    /**
      * Asserts that the condition is true.
      *
      * @param bool $condition The condition asserting to be true.
