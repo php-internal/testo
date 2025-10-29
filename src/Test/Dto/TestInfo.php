@@ -32,4 +32,16 @@ final class TestInfo
     ) {
         $this->attributes = $attributes;
     }
+
+    public function with(
+        ?array $arguments = null,
+    ): self {
+        return new self(
+            name: $this->name,
+            caseInfo: $this->caseInfo,
+            testDefinition: $this->testDefinition,
+            arguments: $arguments ?? $this->arguments,
+            attributes: $this->attributes,
+        );
+    }
 }
