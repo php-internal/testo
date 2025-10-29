@@ -7,6 +7,7 @@ namespace Testo;
 use Testo\Common\Container;
 use Testo\Common\Filter;
 use Testo\Common\Internal\ObjectContainer;
+use Testo\Common\Path;
 use Testo\Config\ApplicationConfig;
 use Testo\Config\Internal\ConfigInflector;
 use Testo\Config\ServicesConfig;
@@ -39,13 +40,13 @@ final class Application
     /**
      * Create the application instance from ENV, CLI arguments, and config file.
      *
-     * @param non-empty-string|null $xml Path to XML file or raw XML content
+     * @param Path|null $configFile Path to config file
      * @param array<string, mixed> $inputOptions Command-line options
      * @param array<string, mixed> $inputArguments Command-line arguments
      * @param array<string, string> $environment Environment variables
      */
     public static function createFromInput(
-        ?string $xml = null,
+        ?Path $configFile = null,
         array $inputOptions = [],
         array $inputArguments = [],
         array $environment = [],
@@ -57,8 +58,20 @@ final class Application
             'inputOptions' => $inputOptions,
         ];
 
-        # Read XML config file
-        // $xml === null or $args['xml'] = $this->readConfig($xml);
+        # Bind reading provided config file
+        $configFile === null or $container
+            ->bind(ApplicationConfig::class, function () use ($configFile): ApplicationConfig {
+                $cfg = include $configFile;
+                $cfg instanceof ApplicationConfig or throw new \InvalidArgumentException(
+                    \sprintf(
+                        'Configuration file %s must return an instance of %s, %s returned.',
+                        $configFile,
+                        ApplicationConfig::class,
+                        \is_object($cfg) ? \get_class($cfg) : \gettype($cfg),
+                    ),
+                );
+                return $cfg;
+            });
 
         # Register Config inflector
         $container->addInflector($container->make(ConfigInflector::class, $args));
