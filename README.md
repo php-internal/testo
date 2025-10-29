@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="#installation"><img alt="TESTO"
+    <a href="#get-started"><img alt="TESTO"
          src="https://github.com/php-testo/.github/blob/1.x/resources/logo-full.svg?raw=true"
          style="width: 2in; display: block"
     /></a>
@@ -16,7 +16,9 @@
 
 <br />
 
-## Installation
+## Get Started
+
+### Installation
 
 ```bash
 composer require testo/testo
@@ -26,6 +28,33 @@ composer require testo/testo
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/testo/testo.svg?style=flat-square&logo=packagist)](https://packagist.org/packages/testo/testo)
 [![License](https://img.shields.io/packagist/l/testo/testo.svg?style=flat-square)](LICENSE.md)
 [![Total Destroys](https://img.shields.io/packagist/dt/testo/testo.svg?style=flat-square)](https://packagist.org/packages/testo/testo/stats)
+
+### Configuration
+
+By default, if no configuration file is provided, Testo will run tests from the `tests` folder.
+
+To customize the configuration, create a `testo.php` file in the root of your project:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Testo\Config\ApplicationConfig;
+use Testo\Config\SuiteConfig;
+use Testo\Config\FinderConfig;
+
+return new ApplicationConfig(
+    suites: [
+        new SuiteConfig(
+            name: 'Unit',
+            location: new FinderConfig(
+                include: ['tests/Unit'],
+            ),
+        ),
+    ],
+);
+```
 
 ## IDE Support
 

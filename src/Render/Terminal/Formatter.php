@@ -265,7 +265,6 @@ final class Formatter
      * Formats a single assertion line.
      *
      * @param \Testo\Assert\State\Record $assertion
-     * @param OutputFormat $format
      * @return non-empty-string
      */
     public static function assertionLine(object $assertion, OutputFormat $format): string

@@ -8,7 +8,6 @@ use Testo\Interceptor\TestCaseRunInterceptor;
 use Testo\Interceptor\TestRunInterceptor;
 use Testo\Interceptor\TestSuiteRunInterceptor;
 use Testo\Render\Terminal\ColorMode;
-use Testo\Render\Terminal\OutputFormat;
 use Testo\Render\Terminal\Style;
 use Testo\Render\Terminal\TerminalLogger;
 use Testo\Test\Dto\CaseInfo;
