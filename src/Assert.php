@@ -61,8 +61,13 @@ final class Assert
     public static function equals(mixed $expected, mixed $actual, string $message = ''): void
     {
         $actual == $expected
-            ? StaticState::log('Assert equal: `' . Support::stringify($expected) . '`', $message)
-            : StaticState::fail(AssertException::compare($expected, $actual, $message));
+            ? StaticState::log('Assert equals: `' . Support::stringify($expected) . '`', $message)
+            : StaticState::fail(AssertException::compare(
+                $expected,
+                $actual,
+                $message,
+                pattern: 'Failed asserting that `%1s` is equals to `%2s`',
+            ));
     }
 
     /**
@@ -76,12 +81,12 @@ final class Assert
     public static function notEquals(mixed $expected, mixed $actual, string $message = ''): void
     {
         $actual != $expected
-            ? StaticState::log('Assert not equal: `' . Support::stringify($expected) . '`', $message)
+            ? StaticState::log('Assert not equals: `' . Support::stringify($expected) . '`', $message)
             : StaticState::fail(AssertException::compare(
                 $expected,
                 $actual,
                 $message,
-                pattern: 'Failed asserting that `%1s` is not equal to `%2s`',
+                pattern: 'Failed asserting that `%1s` is not equals to `%2s`',
                 showDiff: false,
             ));
     }
