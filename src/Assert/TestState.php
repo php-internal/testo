@@ -17,9 +17,9 @@ final class TestState
      */
     public array $history = [];
 
-    public ?\Throwable $failure = null;
-
     /**
+     * @note that the expectation list will be processed in LIFO order.
+     *
      * @var list<callable(TestResult, TestState): TestResult> List of expectation handlers.
      */
     public array $expectations = [];

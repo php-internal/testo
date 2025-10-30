@@ -90,7 +90,7 @@ final class AssertException extends \Exception implements Record
         );
     }
 
-    public static function leaks(\WeakMap $map): self
+    public static function leaks(\WeakMap $map, string $message): self
     {
         # Collect all records from the map
         $records = [];
@@ -105,7 +105,7 @@ final class AssertException extends \Exception implements Record
 
         return new self(
             assertion: 'Objects not leaks: ' . \implode(', ', $records),
-            context: '',
+            context: $message,
             details: '',
         );
     }

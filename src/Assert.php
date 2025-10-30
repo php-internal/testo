@@ -198,7 +198,7 @@ final class Assert
      * If the test catches this exception and continues execution, it will be marked as Risky.
      *
      * @param string $message The reason for the failure.
-     * @throws AssertException always, with the provided message.
+     * @throws AssertException
      */
     public static function fail(string $message = ''): never
     {
@@ -223,10 +223,11 @@ final class Assert
     /**
      * Asserts that the given objects do not leak memory after the test execution.
      *
+     * @param string $message Optional message to associate with the leak expectation.
      * @param object ...$objects The objects to monitor for memory leaks.
      */
-    public static function leaks(object ...$objects): void
+    public static function leaks(string $message = '', object ...$objects): void
     {
-        StaticState::expectNotLeaks(...$objects);
+        StaticState::expectNotLeaks($message, ...$objects);
     }
 }

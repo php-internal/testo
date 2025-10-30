@@ -6,6 +6,7 @@ namespace Testo\Assert;
 
 use Testo\Assert\Exception\StateNotFound;
 use Testo\Assert\Expectation\ExpectedException;
+use Testo\Assert\Expectation\ExpectedFail;
 use Testo\Assert\Expectation\NotLeaks;
 use Testo\Assert\State\AssertException;
 use Testo\Assert\State\Success;
@@ -78,19 +79,21 @@ final class StaticState
         return self::$state->expectations[] = new ExpectedException($classOrObject);
     }
 
-    public static function expectFail(\Throwable $exception): void
+    public static function expectFail(AssertException $exception): void
     {
         self::$state === null and throw new StateNotFound();
-        // self::$state->failure ??= $exception;
+        self::$state->expectations[] = new ExpectedFail($exception);
     }
 
     /**
      * Track the given objects in the current test state to detect memory leaks.
      *
+     * @param string $message Optional message to associate with the leak expectation.
      * @param object ...$objects The objects to track.
      */
-    public static function expectNotLeaks(object ...$objects): void
+    public static function expectNotLeaks(string $message, object ...$objects): void
     {
-        self::$state->expectations[] = new NotLeaks(...$objects);
+        self::$state === null and throw new StateNotFound();
+        self::$state->expectations[] = new NotLeaks($message, ...$objects);
     }
 }

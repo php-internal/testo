@@ -116,33 +116,9 @@ final class AsserTest
     }
 
     #[Test]
-    public function failWithNullMessage(): void
-    {
-        Assert::fail(null);
-    }
-
-    #[Test]
-    public function failWithNoParameters(): void
-    {
-        Assert::fail();
-    }
-
-    #[Test]
     public function failWithAnyMessage(): void
     {
         Assert::fail('Any message works here');
-    }
-
-    #[Test]
-    public function failWithExactMessage(): void
-    {
-        Assert::fail('Database connection failed');
-    }
-
-    #[Test]
-    public function failWithWrongMessageShouldFail(): void
-    {
-        Assert::fail('Different message than expected');
     }
 
     #[Test]

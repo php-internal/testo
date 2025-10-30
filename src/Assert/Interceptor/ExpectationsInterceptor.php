@@ -39,19 +39,13 @@ final class ExpectationsInterceptor implements TestRunInterceptor
         }
 
         while (\count($state->expectations) > 0) {
-            $expectation = \array_shift($state->expectations);
+            # Fetch and remove the last expectation
+            $expectation = \array_pop($state->expectations);
             $result = $expectation($result, $state);
         }
 
-        # Special case: Assert::fail() was called (expectation is AssertException instance)
-        # but the exception was caught, so test ended successfully without throwing
-        # This is suspicious behavior → mark as Risky
-        // if ($result->failure === null
-        //     && $expectation->classOrObject instanceof AssertException
-        //     && !$record->isSuccess()) {
-        //     return $result->with(status: Status::Risky)->withFailure($record);
-        // }
-
-        return $result;
+        return $result->status === Status::Passed && $state->history === []
+            ? $result->with(status: Status::Risky)
+            : $result;
     }
 }
