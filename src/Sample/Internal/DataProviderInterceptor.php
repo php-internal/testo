@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Testo\Data\Internal;
+namespace Testo\Sample\Internal;
 
 use Testo\Attribute\RetryPolicy;
-use Testo\Data\DataProvider;
-use Testo\Data\MultipleResult;
+use Testo\Sample\DataProvider;
+use Testo\Sample\MultipleResult;
 use Testo\Interceptor\TestRunInterceptor;
 use Testo\Test\Dto\Status;
 use Testo\Test\Dto\TestInfo;

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Testo\Data;
+namespace Testo\Sample;
 
 use Testo\Attribute\Interceptable;
-use Testo\Data\Internal\DataProviderInterceptor;
+use Testo\Sample\Internal\DataProviderInterceptor;
 use Testo\Module\Interceptor\FallbackInterceptor;
 
 /**
@@ -13,8 +13,10 @@ use Testo\Module\Interceptor\FallbackInterceptor;
  *
  * The data provider should be a callable that returns an iterable of argument sets.
  * Each argument set will be used to invoke the test method separately.
+ *
+ * @api
  */
-#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION | \Attribute::TARGET_CLASS)]
+#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION)]
 #[FallbackInterceptor(DataProviderInterceptor::class)]
 final class DataProvider implements Interceptable
 {

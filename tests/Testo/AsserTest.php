@@ -8,7 +8,7 @@ use Testo\Assert;
 use Testo\Attribute\ExpectException;
 use Testo\Attribute\RetryPolicy;
 use Testo\Attribute\Test;
-use Testo\Data\DataProvider;
+use Testo\Sample\DataProvider;
 
 /**
  * Assertion examples.

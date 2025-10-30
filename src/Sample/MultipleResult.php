@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Testo\Data;
+namespace Testo\Sample;
 
 use Testo\Test\Dto\TestResult;
 
 /**
  * Aggregate result for multiple test runs.
+ *
+ * @api
  */
 final class MultipleResult
 {
