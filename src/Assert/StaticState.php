@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Testo\Assert;
 
+use Testo\Assert\Expectation\ExpectedException;
 use Testo\Assert\State\AssertException;
-use Testo\Assert\State\ExpectedException;
 use Testo\Assert\State\Success;
 
 /**
@@ -76,7 +76,7 @@ final class StaticState
         self::$state === null and throw new \RuntimeException(
             'No current AssertState to set expected exception on.',
         );
-        self::$state->expectException = new ExpectedException($classOrObject);
+        self::$state->expectations[] = new ExpectedException($classOrObject);
     }
 
     /**

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Testo\Assert\Interceptor;
 
-use Testo\Assert\State\ExpectedException;
+use Testo\Assert\Expectation\ExpectedException;
 use Testo\Assert\StaticState;
 use Testo\Attribute\ExpectException;
 use Testo\Interceptor\TestRunInterceptor;
@@ -25,7 +25,7 @@ final class ExpectExceptionConfigurator implements TestRunInterceptor
             AssertCollectorInterceptor::class,
         ));
 
-        $context->expectException = new ExpectedException(
+        $context->expectations[] = new ExpectedException(
             classOrObject: $this->options->class,
         );
 
