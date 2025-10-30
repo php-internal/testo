@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Testo\Render\Teamcity;
 
 use Testo\Render\Helper;
+use Testo\Sample\MultipleResult;
 use Testo\Test\Dto\CaseInfo;
 use Testo\Test\Dto\CaseResult;
 use Testo\Test\Dto\Status;
@@ -106,6 +107,8 @@ final class TeamcityLogger
 
     /**
      * Publishes test started message using TestInfo.
+     *
+     * If the test has DataProvider (MultipleResult), starts it as a test suite.
      */
     public function testStartedFromInfo(TestInfo $info, bool $captureStandardOutput = false): void
     {
@@ -152,72 +155,147 @@ final class TeamcityLogger
 
     /**
      * Handles test result and publishes appropriate message based on status.
+     *
+     * If test has MultipleResult (DataProvider), wraps individual results in test suite messages.
      */
     public function handleTestResult(TestResult $result, ?int $duration = null): void
     {
+        $multipleResult = $result->getAttribute(MultipleResult::class);
+
+        if ($multipleResult instanceof MultipleResult) {
+            $this->handleDataProviderTest($result, $multipleResult, $duration);
+            return;
+        }
+
+        $this->handleSingleTestResult($result, $duration);
+    }
+
+    /**
+     * Handles test result with DataProvider (multiple runs).
+     *
+     * @param int<0, max>|null $duration Total duration for all runs
+     */
+    private function handleDataProviderTest(TestResult $result, MultipleResult $multipleResult, ?int $duration): void
+    {
+        // Start test suite for the DataProvider test
+        $this->publish(Formatter::suiteStarted($result->info->name, $result->info->testDefinition->reflection->getDeclaringClass()));
+
+        // Handle each individual data set run
+        $runNumber = 1;
+        foreach ($multipleResult->results as $runKey => $dataSetResult) {
+            $dataSetName = "Dataset {$runNumber} [{$runKey}]";
+
+            // Start individual data set test
+            $this->publish(Formatter::testStarted($dataSetName, false, $result->info->testDefinition->reflection));
+
+            // Handle the result status for this data set
+            $this->handleSingleTestResult($dataSetResult, null, $dataSetName);
+
+            $runNumber++;
+        }
+
+        // Finish test suite
+        $this->publish(Formatter::suiteFinished($result->info->name));
+    }
+
+    /**
+     * Handles single test result based on status.
+     *
+     * @param int<0, max>|null $duration Duration in milliseconds
+     * @param non-empty-string|null $overrideName Optional name to override test name
+     */
+    private function handleSingleTestResult(TestResult $result, ?int $duration = null, ?string $overrideName = null): void
+    {
+        $name = $overrideName ?? $result->info->name;
+
         match ($result->status) {
             Status::Passed, Status::Flaky => $this->publish(
-                Formatter::testFinished($result->info->name, $duration),
+                Formatter::testFinished($name, $duration),
             ),
-            Status::Failed, Status::Error => $this->handleFailedTest($result, $duration),
-            Status::Skipped => $this->handleSkippedTest($result, $duration),
-            Status::Risky => $this->handleRiskyTest($result, $duration),
-            Status::Cancelled => $this->handleCancelledTest($result, $duration),
-            Status::Aborted => $this->handleAbortedTest($result, $duration),
+            Status::Failed, Status::Error => $this->handleFailedTest($result, $duration, $overrideName),
+            Status::Skipped => $this->handleSkippedTest($result, $duration, $overrideName),
+            Status::Risky => $this->handleRiskyTest($result, $duration, $overrideName),
+            Status::Cancelled => $this->handleCancelledTest($result, $duration, $overrideName),
+            Status::Aborted => $this->handleAbortedTest($result, $duration, $overrideName),
         };
     }
 
     /**
      * Handles skipped test status.
+     *
+     * @param non-empty-string|null $overrideName Optional name to override test name
      */
-    private function handleSkippedTest(TestResult $result, ?int $duration): void
+    private function handleSkippedTest(TestResult $result, ?int $duration, ?string $overrideName = null): void
     {
-        $this->publish(Formatter::testIgnored($result->info->name));
-        $this->publish(Formatter::testFinished($result->info->name, $duration));
+        $name = $overrideName ?? $result->info->name;
+        $this->publish(Formatter::testIgnored($name));
+        $this->publish(Formatter::testFinished($name, $duration));
     }
 
     /**
      * Handles cancelled test status.
+     *
+     * @param non-empty-string|null $overrideName Optional name to override test name
      */
-    private function handleCancelledTest(TestResult $result, ?int $duration): void
+    private function handleCancelledTest(TestResult $result, ?int $duration, ?string $overrideName = null): void
     {
-        $this->publish(Formatter::testIgnored($result->info->name, 'Test cancelled'));
-        $this->publish(Formatter::testFinished($result->info->name, $duration));
+        $name = $overrideName ?? $result->info->name;
+        $this->publish(Formatter::testIgnored($name, 'Test cancelled'));
+        $this->publish(Formatter::testFinished($name, $duration));
     }
 
     /**
      * Handles failed test status.
+     *
+     * @param non-empty-string|null $overrideName Optional name to override test name
      */
-    private function handleFailedTest(TestResult $result, ?int $duration): void
+    private function handleFailedTest(TestResult $result, ?int $duration, ?string $overrideName = null): void
     {
-        $this->testFailedFromResult($result);
-        $this->publish(Formatter::testFinished($result->info->name, $duration));
+        $name = $overrideName ?? $result->info->name;
+        $failure = $result->failure;
+        $message = $failure?->getMessage() ?? 'Test failed';
+        $details = $failure !== null ? Helper::formatThrowable($failure) : '';
+
+        $this->publish(
+            Formatter::testFailed(
+                name: $name,
+                message: $message,
+                details: $details,
+            ),
+        );
+        $this->publish(Formatter::testFinished($name, $duration));
     }
 
     /**
      * Handles aborted test status.
+     *
+     * @param non-empty-string|null $overrideName Optional name to override test name
      */
-    private function handleAbortedTest(TestResult $result, ?int $duration): void
+    private function handleAbortedTest(TestResult $result, ?int $duration, ?string $overrideName = null): void
     {
+        $name = $overrideName ?? $result->info->name;
         $this->publish(
             Formatter::testFailed(
-                $result->info->name,
+                $name,
                 'Test aborted',
                 $result->failure !== null ? Helper::formatThrowable($result->failure) : '',
             ),
         );
-        $this->publish(Formatter::testFinished($result->info->name, $duration));
+        $this->publish(Formatter::testFinished($name, $duration));
     }
 
     /**
      * Handles risky test status.
+     *
+     * @param non-empty-string|null $overrideName Optional name to override test name
      */
-    private function handleRiskyTest(TestResult $result, ?int $duration): void
+    private function handleRiskyTest(TestResult $result, ?int $duration, ?string $overrideName = null): void
     {
-        $this->publish(Formatter::testFinished($result->info->name, $duration));
+        $name = $overrideName ?? $result->info->name;
+        $this->publish(Formatter::testFinished($name, $duration));
         $this->publish(
             Formatter::testStdOut(
-                $result->info->name,
+                $name,
                 'Warning: This test has been marked as risky',
             ),
         );

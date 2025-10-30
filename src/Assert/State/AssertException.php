@@ -59,8 +59,8 @@ final class AssertException extends \Exception implements Record
 
         $msg = \sprintf(
             $pattern,
-            Support::stringify($actual),
             Support::stringify($expected),
+            Support::stringify($actual),
         );
         return new self(
             assertion: $msg,

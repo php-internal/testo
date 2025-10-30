@@ -12,9 +12,7 @@ use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Testo\Application;
 use Testo\Common\Container;
-use Testo\Config\ApplicationConfig;
-use Testo\Config\FinderConfig;
-use Testo\Config\SuiteConfig;
+use Testo\Common\Path;
 use Yiisoft\Injector\Injector;
 
 /**
@@ -72,17 +70,12 @@ abstract class Base extends Command
         InputInterface $input,
         OutputInterface $output,
     ): int {
-        $cfg = new ApplicationConfig(
-            src: new FinderConfig(['src']),
-            suites: [
-                new SuiteConfig(
-                    name: 'default',
-                    location: new FinderConfig(['tests/Testo']),
-                ),
-            ],
+        $this->application = Application::createFromInput(
+            configFile: $this->getConfigFile($input),
+            inputOptions: $input->getOptions(),
+            inputArguments: $input->getArguments(),
+            environment: \getenv(),
         );
-
-        $this->application = Application::createFromConfig($cfg);
         $this->container = $this->application->getContainer();
 
         $this->container->set($input, InputInterface::class);
@@ -90,5 +83,31 @@ abstract class Base extends Command
         $this->container->set(new SymfonyStyle($input, $output), StyleInterface::class);
 
         return $this->container->get(Injector::class)->invoke($this) ?? Command::SUCCESS;
+    }
+
+    /**
+     * Resolves configuration file path from input or default location.
+     *
+     * @param InputInterface $input Command input
+     *
+     * @return Path|null Path to the configuration file
+     */
+    protected function getConfigFile(InputInterface $input): ?Path
+    {
+        /** @var string|null $config */
+        $config = $input->getOption('config');
+        $isConfigured = $config !== null;
+        // $config ??= './testo.xml';
+        $config ??= './testo.php';
+
+        if (\is_file($config)) {
+            return Path::create($config);
+        }
+
+        $isConfigured and throw new \InvalidArgumentException(
+            'Configuration file not found: ' . $config,
+        );
+
+        return null;
     }
 }

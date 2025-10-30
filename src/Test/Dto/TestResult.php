@@ -10,6 +10,9 @@ final class TestResult
 {
     use AttributedTrait;
 
+    /**
+     * @param array<non-empty-string, mixed> $attributes
+     */
     public function __construct(
         public readonly TestInfo $info,
         public readonly Status $status,

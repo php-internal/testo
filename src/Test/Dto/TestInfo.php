@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Testo\Test\Dto;
 
+use Testo\Common\AttributedTrait;
 use Testo\Test\Definition\TestDefinition;
 
 /**
@@ -11,6 +12,11 @@ use Testo\Test\Definition\TestDefinition;
  */
 final class TestInfo
 {
+    use AttributedTrait;
+
+    /**
+     * @param array<non-empty-string, mixed> $attributes
+     */
     public function __construct(
         /** @var non-empty-string */
         public readonly string $name,
@@ -22,5 +28,20 @@ final class TestInfo
          * @var array<array-key, mixed>
          */
         public readonly array $arguments = [],
-    ) {}
+        array $attributes = [],
+    ) {
+        $this->attributes = $attributes;
+    }
+
+    public function with(
+        ?array $arguments = null,
+    ): self {
+        return new self(
+            name: $this->name,
+            caseInfo: $this->caseInfo,
+            testDefinition: $this->testDefinition,
+            arguments: $arguments ?? $this->arguments,
+            attributes: $this->attributes,
+        );
+    }
 }

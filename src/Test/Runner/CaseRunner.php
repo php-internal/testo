@@ -12,6 +12,7 @@ use Testo\Test\Dto\CaseInfo;
 use Testo\Test\Dto\CaseResult;
 use Testo\Test\Dto\Status;
 use Testo\Test\Dto\TestInfo;
+use Testo\Test\Dto\TestResult;
 
 final class CaseRunner
 {
@@ -47,20 +48,29 @@ final class CaseRunner
         $results = [];
         $status = Status::Passed;
         foreach ($info->definition->tests->getTests() as $name => $testDefinition) {
-            $testInfo = new TestInfo(
-                name: $name,
-                caseInfo: $info,
-                testDefinition: $testDefinition,
-            );
+            try {
+                $testInfo = new TestInfo(
+                    name: $name,
+                    caseInfo: $info,
+                    testDefinition: $testDefinition,
+                );
 
-            $result = $this->testRunner->runTest($testInfo);
-            $result->status->isFailure() and $status = Status::Failed;
+                $result = $this->testRunner->runTest($testInfo);
+                $result->status->isFailure() and $status = Status::Failed;
 
-            $results[] = $result;
+                $results[] = $result;
+            } catch (\Throwable $throwable) {
+                $status = Status::Error;
+                isset($testInfo) and $results[] = new TestResult(
+                    info: $testInfo,
+                    status: Status::Error,
+                    failure: $throwable,
+                );
+            }
         }
 
         return new CaseResult(
-            $results,
+            results: $results,
             status: $status,
         );
     }

@@ -63,7 +63,7 @@ final class SuiteRunner
                 $results[] = $result;
             } catch (\Throwable) {
                 // Skip for now
-                $status = Status::Failed;
+                $status = Status::Error;
             }
         }
 

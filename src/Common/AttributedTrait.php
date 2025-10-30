@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Testo\Common;
 
+/**
+ * Trait providing attribute management functionality.
+ *
+ * @api
+ */
 trait AttributedTrait
 {
     use CloneWith;
@@ -13,6 +18,7 @@ trait AttributedTrait
 
     /**
      * @return array<non-empty-string, mixed> Attributes derived from the context.
+     * @psalm-pure
      */
     public function getAttributes(): array
     {
@@ -20,7 +26,12 @@ trait AttributedTrait
     }
 
     /**
-     * @param non-empty-string $name
+     * @template T
+     * @template D
+     * @param non-empty-string|class-string<T> $name
+     * @param D $default
+     * @return ($name is class-string<T> ? T|D : mixed|D)
+     * @psalm-pure
      */
     public function getAttribute(string $name, mixed $default = null): mixed
     {
@@ -28,7 +39,10 @@ trait AttributedTrait
     }
 
     /**
+     * Note that if the key contains a class name, the value must be an instance of that class.
+     *
      * @param non-empty-string $name
+     * @psalm-immutable
      */
     public function withAttribute(string $name, mixed $value): static
     {
@@ -38,7 +52,22 @@ trait AttributedTrait
     }
 
     /**
+     * Set multiple attributes at once.
+     *
+     * The new attributes will be merged with existing ones.
+     *
+     * @param non-empty-array<non-empty-string, mixed> $values
+     * @psalm-immutable
+     */
+    public function withAttributes(array $values): static
+    {
+        $attributes = \array_merge($this->attributes, $values);
+        return $this->cloneWith('attributes', $attributes);
+    }
+
+    /**
      * @param non-empty-string $name
+     * @psalm-immutable
      */
     public function withoutAttribute(string $name): static
     {

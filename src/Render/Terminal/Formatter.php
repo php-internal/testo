@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Testo\Render\Terminal;
 
+use Testo\Common\Info;
 use Testo\Test\Dto\CaseResult;
 use Testo\Test\Dto\Status;
 use Testo\Test\Dto\SuiteResult;
@@ -15,7 +16,35 @@ use Testo\Test\Dto\SuiteResult;
  */
 final class Formatter
 {
+    /**
+     * @var non-empty-string Base indentation for verbose mode
+     */
+    private const INDENT_VERBOSE = '     ';
+
+    /**
+     * @var non-empty-string Base indentation for compact mode
+     */
+    private const INDENT_COMPACT = '   ';
+
+    /**
+     * @var non-empty-string Indentation step for nested levels
+     */
+    private const INDENT_STEP = '  ';
+
     private function __construct() {}
+
+    /**
+     * Formats a test run item (test, data provider run, etc).
+     *
+     * @return non-empty-string
+     */
+    public static function formatRun(FormattedItem $item, OutputFormat $format): string
+    {
+        return match ($format) {
+            OutputFormat::Compact, OutputFormat::Verbose => self::formatCompactRun($item, $format),
+            OutputFormat::Dots => self::formatDotRun($item),
+        };
+    }
 
     /**
      * Formats the header for starting test run.
@@ -24,7 +53,9 @@ final class Formatter
      */
     public static function runHeader(): string
     {
-        return Style::bold(' Running Tests') . "\n\n";
+        $name = Info::NAME;
+        $version = Info::version();
+        return Style::bold('# Running Tests') . Style::dim(" ({$name} v{$version})") . "\n\n";
     }
 
     /**
@@ -54,25 +85,6 @@ final class Formatter
             OutputFormat::Verbose => "\n   " . Style::bold("Case: {$name}") . "\n",
             OutputFormat::Compact => " " . Style::bold($name) . "\n",
             OutputFormat::Dots => " " . Style::bold($name) . " ",
-        };
-    }
-
-    /**
-     * Formats a single test line.
-     *
-     * @param non-empty-string $name
-     * @param int<0, max>|null $duration Duration in milliseconds
-     * @return non-empty-string
-     */
-    public static function testLine(
-        string $name,
-        Status $status,
-        ?int $duration,
-        OutputFormat $format,
-    ): string {
-        return match ($format) {
-            OutputFormat::Compact, OutputFormat::Verbose => self::formatCompactTest($name, $status, $duration, $format),
-            OutputFormat::Dots => self::formatDotTest($status),
         };
     }
 
@@ -257,7 +269,8 @@ final class Formatter
             return '';
         }
 
-        $indent = $format === OutputFormat::Verbose ? '       ' : '     ';
+        $indent = $format === OutputFormat::Verbose ? self::INDENT_VERBOSE : self::INDENT_COMPACT;
+        $indent .= self::INDENT_STEP;
         return $indent . Style::dim('Assertion history:') . "\n";
     }
 
@@ -265,7 +278,6 @@ final class Formatter
      * Formats a single assertion line.
      *
      * @param \Testo\Assert\State\Record $assertion
-     * @param OutputFormat $format
      * @return non-empty-string
      */
     public static function assertionLine(object $assertion, OutputFormat $format): string
@@ -274,7 +286,8 @@ final class Formatter
             return '';
         }
 
-        $indent = $format === OutputFormat::Verbose ? '       ' : '     ';
+        $indent = $format === OutputFormat::Verbose ? self::INDENT_VERBOSE : self::INDENT_COMPACT;
+        $indent .= self::INDENT_STEP;
         $symbol = $assertion->isSuccess()
             ? Style::success('✓')
             : Style::error('✗');
@@ -287,33 +300,31 @@ final class Formatter
     }
 
     /**
-     * Formats test in compact/verbose mode.
-     *
-     * @param non-empty-string $name
-     * @param int<0, max>|null $duration
+     * Formats a test run in compact/verbose mode.
      */
-    private static function formatCompactTest(
-        string $name,
-        Status $status,
-        ?int $duration,
-        OutputFormat $format,
-    ): string {
-        $symbol = self::getStatusSymbol($status);
-        $indent = $format === OutputFormat::Verbose ? '     ' : '   ';
+    private static function formatCompactRun(FormattedItem $item, OutputFormat $format): string
+    {
+        $symbol = self::getStatusSymbol($item->status);
+        $baseIndent = $format === OutputFormat::Verbose ? self::INDENT_VERBOSE : self::INDENT_COMPACT;
+        $indent = $baseIndent . \str_repeat(self::INDENT_STEP, $item->indentLevel);
 
-        $durationStr = $duration !== null
-            ? Style::dim(" ({$duration}ms)")
+        $durationStr = $item->duration !== null
+            ? Style::dim(" ({$item->duration}ms)")
             : '';
 
-        return "{$indent}{$symbol} {$name}{$durationStr}\n";
+        $descriptionStr = $item->description !== ''
+            ? Style::dim(" [{$item->description}]")
+            : '';
+
+        return "{$indent}{$symbol} {$item->name}{$descriptionStr}{$durationStr}\n";
     }
 
     /**
-     * Formats test in dots mode.
+     * Formats a test run in dots mode.
      */
-    private static function formatDotTest(Status $status): string
+    private static function formatDotRun(FormattedItem $item): string
     {
-        $symbol = match ($status) {
+        $symbol = match ($item->status) {
             Status::Passed => DotSymbol::Passed->value,
             Status::Failed => Style::error(DotSymbol::Failed->value),
             Status::Skipped => Style::warning(DotSymbol::Skipped->value),
