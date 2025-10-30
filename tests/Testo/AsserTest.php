@@ -95,11 +95,11 @@ final class AsserTest
         throw new \RuntimeException('This is an expected exception.');
     }
 
-    #[Test]
+    #[Test(description: 'Data provider example')]
     #[DataProvider([self::class, 'dataForProvider'])]
     public function dataProvider(string $arg): string
     {
-        return $arg;
+        return $arg === 'zero' ? throw new \RuntimeException() : $arg;
     }
 
     public static function dataForProvider(): iterable
@@ -112,5 +112,6 @@ final class AsserTest
         yield ['second'];
         yield 'name' => ['third'];
         yield 'name' => ['conflict'];
+        yield 'Any warrior can change the world.' => ['yep'];
     }
 }
