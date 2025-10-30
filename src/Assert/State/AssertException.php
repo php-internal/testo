@@ -25,6 +25,20 @@ final class AssertException extends \Exception implements Record
     }
 
     /**
+     * Simple failure assertion factory.
+     *
+     * @param string|null $message The failure message.
+     */
+    public static function fail(?string $message): self
+    {
+        return new self(
+            assertion: 'Fail',
+            context: $message,
+            details: '',
+        );
+    }
+
+    /**
      * Failed comparison assertion factory.
      *
      * @param mixed $expected The expected value.
@@ -76,7 +90,7 @@ final class AssertException extends \Exception implements Record
         );
     }
 
-    public static function leaks(\WeakMap $map): self
+    public static function leaks(\WeakMap $map, string $message): self
     {
         # Collect all records from the map
         $records = [];
@@ -91,7 +105,7 @@ final class AssertException extends \Exception implements Record
 
         return new self(
             assertion: 'Objects not leaks: ' . \implode(', ', $records),
-            context: '',
+            context: $message,
             details: '',
         );
     }

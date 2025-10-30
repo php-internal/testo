@@ -23,8 +23,8 @@ final class AsserTest
         Assert::notSame(42, '42');
         Assert::true(true);
         Assert::false(false);
-        Assert::contains(1, [1,2,3]);
-        Assert::contains(2, new \ArrayIterator([1,2,3]));
+        Assert::contains(1, [1, 2, 3]);
+        Assert::contains(2, new \ArrayIterator([1, 2, 3]));
         Assert::instanceOf(\Exception::class, new \RuntimeException());
         Assert::equals(1, '1');
         Assert::notEquals(42, 43);
@@ -113,5 +113,25 @@ final class AsserTest
         yield 'name' => ['third'];
         yield 'name' => ['conflict'];
         yield 'Any warrior can change the world.' => ['yep'];
+    }
+
+    #[Test]
+    public function failWithAnyMessage(): void
+    {
+        Assert::fail('Any message works here');
+    }
+
+    #[Test]
+    public function failButCaughtExceptionShouldBeRisky(): void
+    {
+        try {
+            // Assert::fail() sets expectation and throws
+            Assert::fail('This exception will be caught');
+        } catch (Assert\State\AssertException $e) {
+            // Catching the exception prevents the test from failing
+            // But the expectation was set, so this should be marked as Risky
+        }
+
+        // Test completes successfully despite Assert::fail() being called
     }
 }

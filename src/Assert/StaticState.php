@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Testo\Assert;
 
+use Testo\Assert\Exception\StateNotFound;
+use Testo\Assert\Expectation\ExpectedException;
+use Testo\Assert\Expectation\ExpectedFail;
+use Testo\Assert\Expectation\NotLeaks;
 use Testo\Assert\State\AssertException;
-use Testo\Assert\State\ExpectedException;
 use Testo\Assert\State\Success;
 
 /**
@@ -71,25 +74,26 @@ final class StaticState
      */
     public static function expectException(
         string|\Throwable $classOrObject,
-    ): void {
-        # todo make the exception friendlier
-        self::$state === null and throw new \RuntimeException(
-            'No current AssertState to set expected exception on.',
-        );
-        self::$state->expectException = new ExpectedException($classOrObject);
+    ): ExpectedException {
+        self::$state === null and throw new StateNotFound();
+        return self::$state->expectations[] = new ExpectedException($classOrObject);
+    }
+
+    public static function expectFail(AssertException $exception): void
+    {
+        self::$state === null and throw new StateNotFound();
+        self::$state->expectations[] = new ExpectedFail($exception);
     }
 
     /**
      * Track the given objects in the current test state to detect memory leaks.
      *
+     * @param string $message Optional message to associate with the leak expectation.
      * @param object ...$objects The objects to track.
      */
-    public static function trackObjects(
-        object ...$objects,
-    ): void {
-        foreach ($objects as $k => $object) {
-            $name = \is_string($k) ? $k : true;
-            self::$state->weakMap->offsetSet($object, $name);
-        }
+    public static function expectNotLeaks(string $message, object ...$objects): void
+    {
+        self::$state === null and throw new StateNotFound();
+        self::$state->expectations[] = new NotLeaks($message, ...$objects);
     }
 }

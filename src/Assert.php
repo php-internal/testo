@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Testo;
 
-use Testo\Assert\Interceptor\ExpectExceptionInterceptor;
+use Testo\Assert\Expectation\ExpectedException;
 use Testo\Assert\State\AssertException;
 use Testo\Assert\StaticState;
 use Testo\Assert\Support;
@@ -190,25 +190,44 @@ final class Assert
     }
 
     /**
+     * Fails the test.
+     *
+     * Use this method to explicitly indicate that the test should end in failure.
+     *
+     * If this method is called, it is expected that the test will end with an exception thrown by this method.
+     * If the test catches this exception and continues execution, it will be marked as Risky.
+     *
+     * @param string $message The reason for the failure.
+     * @throws AssertException
+     */
+    public static function fail(string $message = ''): never
+    {
+        $exception = AssertException::fail($message);
+        StaticState::expectFail($exception);
+        StaticState::fail($exception);
+    }
+
+    /**
      * Expects that the test will throw an exception of the given class.
      *
      * @param class-string|\Throwable $classOrObject The expected exception class, interface, or an exception object.
      *
-     * @note Requires {@see ExpectExceptionInterceptor} to be registered.
+     * @note Requires {@see ExpectationsInterceptor} to be registered.
      */
     public static function exception(
         string|\Throwable $classOrObject,
-    ): void {
-        StaticState::expectException($classOrObject);
+    ): ExpectedException {
+        return StaticState::expectException($classOrObject);
     }
 
     /**
      * Asserts that the given objects do not leak memory after the test execution.
      *
+     * @param string $message Optional message to associate with the leak expectation.
      * @param object ...$objects The objects to monitor for memory leaks.
      */
-    public static function leaks(object ...$objects): void
+    public static function leaks(string $message = '', object ...$objects): void
     {
-        StaticState::trackObjects(...$objects);
+        StaticState::expectNotLeaks($message, ...$objects);
     }
 }
