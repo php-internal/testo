@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Testo;
 
-use Testo\Assert\Interceptor\ExpectExceptionInterceptor;
 use Testo\Assert\State\AssertException;
 use Testo\Assert\StaticState;
 use Testo\Assert\Support;
@@ -151,12 +150,17 @@ final class Assert
     /**
      * Fails the test with the given message.
      *
+     * Sets an expectation that the test will fail with a specific AssertException instance,
+     * then throws the exception to end the test.
+     *
      * @param string|null $message The failure message.
      * @throws AssertException always, with the provided message.
      */
     public static function fail(?string $message = null): void
     {
-        StaticState::fail(AssertException::fail($message));
+        $exception = AssertException::fail($message);
+        StaticState::expectException($exception);
+        StaticState::fail($exception);
     }
 
     /**

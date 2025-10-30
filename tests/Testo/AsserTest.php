@@ -6,7 +6,6 @@ namespace Tests\Testo;
 
 use Testo\Assert;
 use Testo\Attribute\ExpectException;
-use Testo\Attribute\Fail;
 use Testo\Attribute\RetryPolicy;
 use Testo\Attribute\Test;
 
@@ -91,45 +90,46 @@ final class AsserTest
     }
 
     #[Test]
-    #[Fail]
     public function failWithNullMessage(): void
     {
         Assert::fail(null);
     }
 
     #[Test]
-    #[Fail]
     public function failWithNoParameters(): void
     {
         Assert::fail();
     }
 
     #[Test]
-    #[Fail]
     public function failWithAnyMessage(): void
     {
         Assert::fail('Any message works here');
     }
 
     #[Test]
-    #[Fail('Database connection failed')]
     public function failWithExactMessage(): void
     {
         Assert::fail('Database connection failed');
     }
 
     #[Test]
-    #[Fail('Expected specific failure')]
     public function failWithWrongMessageShouldFail(): void
     {
         Assert::fail('Different message than expected');
     }
 
     #[Test]
-    #[Fail]
-    public function failButDoesNotFailShouldFail(): void
+    public function failButCaughtExceptionShouldBeRisky(): void
     {
-        // This test doesn't call Assert::fail(), so it should fail
-        Assert::true(true);
+        try {
+            // Assert::fail() sets expectation and throws
+            Assert::fail('This exception will be caught');
+        } catch (Assert\State\AssertException $e) {
+            // Catching the exception prevents the test from failing
+            // But the expectation was set, so this should be marked as Risky
+        }
+
+        // Test completes successfully despite Assert::fail() being called
     }
 }

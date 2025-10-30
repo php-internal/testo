@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Testo\Assert;
 
 use Testo\Assert\State\ExpectedException;
-use Testo\Assert\State\ExpectedFailure;
 use Testo\Assert\State\Record;
 
 /**
@@ -22,11 +21,6 @@ final class TestState
      * @var ExpectedException|null Expected exception configuration.
      */
     public ?ExpectedException $expectException = null;
-
-    /**
-     * @var ExpectedFailure|null Expected failure configuration.
-     */
-    public ?ExpectedFailure $expectedFailure = null;
 
     public \WeakMap $weakMap;
 

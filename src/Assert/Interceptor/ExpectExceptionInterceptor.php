@@ -48,6 +48,15 @@ final class ExpectExceptionInterceptor implements TestRunInterceptor
         $context->history[] = $record;
         $context->expectException = null;
 
+        # Special case: Assert::fail() was called (expectation is AssertException instance)
+        # but the exception was caught, so test ended successfully without throwing
+        # This is suspicious behavior → mark as Risky
+        if ($result->failure === null
+            && $expectation->classOrObject instanceof AssertException
+            && !$record->isSuccess()) {
+            return $result->with(status: Status::Risky)->withFailure($record);
+        }
+
         return $record->isSuccess()
             ? $result->with(status: Status::Passed)
             : $result->with(status: Status::Failed)->withFailure($record);
@@ -64,6 +73,6 @@ final class ExpectExceptionInterceptor implements TestRunInterceptor
             );
         }
 
-        return AssertException::exceptionClass($expected->classOrObject, $actual);
+        return AssertException::exceptionClass($class, $actual);
     }
 }
