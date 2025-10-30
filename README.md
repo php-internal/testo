@@ -25,7 +25,7 @@ It gives you full control over your testing environment while keeping the famili
 ### Installation
 
 ```bash
-composer require testo/testo
+composer require --dev testo/testo *
 ```
 
 [![PHP](https://img.shields.io/packagist/php-v/testo/testo.svg?style=flat-square&logo=php)](https://packagist.org/packages/testo/testo)
