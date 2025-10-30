@@ -16,7 +16,7 @@ use Testo\Module\Interceptor\FallbackInterceptor;
  *
  * @api
  */
-#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION)]
+#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION | \Attribute::IS_REPEATABLE)]
 #[FallbackInterceptor(DataProviderInterceptor::class)]
 final class DataProvider implements Interceptable
 {
