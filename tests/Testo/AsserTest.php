@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Testo\Assert\Stub;
+namespace Tests\Testo;
 
 use Testo\Assert;
 use Testo\Attribute\ExpectException;

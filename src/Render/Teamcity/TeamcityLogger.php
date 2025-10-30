@@ -181,17 +181,18 @@ final class TeamcityLogger
         $this->publish(Formatter::suiteStarted($result->info->name, $result->info->testDefinition->reflection->getDeclaringClass()));
 
         // Handle each individual data set run
-        $runNumber = 1;
+        $index = 0;
         foreach ($multipleResult->results as $runKey => $dataSetResult) {
-            $dataSetName = "Dataset {$runNumber} [{$runKey}]";
+            $dataSetSuffix = " with data set #{$index}";
+            $dataSetName = "Dataset {$index} [{$runKey}]";
 
-            // Start individual data set test
-            $this->publish(Formatter::testStarted($dataSetName, false, $result->info->testDefinition->reflection));
+            // Start individual data set test: name without suffix, but locationHint with suffix
+            $this->publish(Formatter::testStarted($dataSetName, false, $result->info->testDefinition->reflection, $dataSetSuffix));
 
             // Handle the result status for this data set
             $this->handleSingleTestResult($dataSetResult, null, $dataSetName);
 
-            $runNumber++;
+            $index++;
         }
 
         // Finish test suite

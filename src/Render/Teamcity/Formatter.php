@@ -55,16 +55,17 @@ final class Formatter
      * @param non-empty-string $name Test name
      * @param bool $captureStandardOutput Whether to capture standard output
      * @param \ReflectionFunctionAbstract|null $reflection Function/method reflection for location hint
+     * @param non-empty-string|null $locationSuffix Optional suffix to append to location hint (e.g., " with data set #0")
      * @return non-empty-string
      */
-    public static function testStarted(string $name, bool $captureStandardOutput = false, ?\ReflectionFunctionAbstract $reflection = null): string
+    public static function testStarted(string $name, bool $captureStandardOutput = false, ?\ReflectionFunctionAbstract $reflection = null, ?string $locationSuffix = null): string
     {
         $attributes = ['name' => $name];
 
         $captureStandardOutput and $attributes['captureStandardOutput'] = 'true';
 
         if ($reflection !== null) {
-            $locationHint = self::testLocationHint($reflection);
+            $locationHint = self::testLocationHint($reflection, $locationSuffix);
             $locationHint !== null and $attributes['locationHint'] = $locationHint;
         }
 
@@ -352,10 +353,12 @@ final class Formatter
      *
      * Format: php_qn://path/to/file.php::\ClassName::methodName (for methods)
      * Format: php_qn://path/to/file.php::functionName (for functions)
+     * Format: php_qn://path/to/file.php::\ClassName::methodName with data set #0 (with suffix)
      *
+     * @param non-empty-string|null $suffix Optional suffix to append (e.g., " with data set #0")
      * @return non-empty-string|null
      */
-    private static function testLocationHint(\ReflectionFunctionAbstract $reflection): ?string
+    private static function testLocationHint(\ReflectionFunctionAbstract $reflection, ?string $suffix = null): ?string
     {
         $file = $reflection->getFileName();
 
@@ -368,10 +371,12 @@ final class Formatter
         // For methods, include class name
         if ($reflection instanceof \ReflectionMethod) {
             $className = $reflection->getDeclaringClass()->getName();
-            return \sprintf('php_qn://%s::\\%s::%s', $file, $className, $name);
+            $locationHint = \sprintf('php_qn://%s::\\%s::%s', $file, $className, $name);
+        } else {
+            // For functions, just the function name
+            $locationHint = \sprintf('php_qn://%s::%s', $file, "\\$name");
         }
 
-        // For functions, just the function name
-        return \sprintf('php_qn://%s::%s', $file, "\\$name");
+        return $suffix !== null ? $locationHint . $suffix : $locationHint;
     }
 }
