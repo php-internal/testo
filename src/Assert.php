@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Testo;
 
+use Testo\Assert\Expectation\ExpectedException;
 use Testo\Assert\State\AssertException;
 use Testo\Assert\StaticState;
 use Testo\Assert\Support;
@@ -215,8 +216,8 @@ final class Assert
      */
     public static function exception(
         string|\Throwable $classOrObject,
-    ): void {
-        StaticState::expectException($classOrObject);
+    ): ExpectedException {
+        return StaticState::expectException($classOrObject);
     }
 
     /**

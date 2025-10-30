@@ -13,6 +13,8 @@ use Testo\Test\Dto\TestResult;
 
 /**
  * Expected exception declaration.
+ *
+ * todo: add methods like ->withMessage(), ->withCode(), etc.
  */
 final class ExpectedException
 {

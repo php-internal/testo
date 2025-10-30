@@ -72,12 +72,12 @@ final class StaticState
      */
     public static function expectException(
         string|\Throwable $classOrObject,
-    ): void {
+    ): ExpectedException {
         # todo make the exception friendlier
         self::$state === null and throw new \RuntimeException(
             'No current AssertState to set expected exception on.',
         );
-        self::$state->expectations[] = new ExpectedException($classOrObject);
+        return self::$state->expectations[] = new ExpectedException($classOrObject);
     }
 
     public static function expectFail(\Throwable $exception): void
