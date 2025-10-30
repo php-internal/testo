@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Testo\Assert;
 
+use Testo\Assert\Exception\StateNotFound;
 use Testo\Assert\Expectation\ExpectedException;
 use Testo\Assert\Expectation\NotLeaks;
 use Testo\Assert\State\AssertException;
@@ -73,19 +74,13 @@ final class StaticState
     public static function expectException(
         string|\Throwable $classOrObject,
     ): ExpectedException {
-        # todo make the exception friendlier
-        self::$state === null and throw new \RuntimeException(
-            'No current AssertState to set expected exception on.',
-        );
+        self::$state === null and throw new StateNotFound();
         return self::$state->expectations[] = new ExpectedException($classOrObject);
     }
 
     public static function expectFail(\Throwable $exception): void
     {
-        # todo make the exception friendlier
-        self::$state === null and throw new \RuntimeException(
-            'No current AssertState to set expected exception on.',
-        );
+        self::$state === null and throw new StateNotFound();
         // self::$state->failure ??= $exception;
     }
 

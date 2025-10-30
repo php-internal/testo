@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Testo\Attribute;
 
-use Testo\Assert\Interceptor\ExpectExceptionConfigurator;
+use Testo\Assert\Internal\ExpectExceptionConfigurator;
 use Testo\Module\Interceptor\FallbackInterceptor;
 
 /**

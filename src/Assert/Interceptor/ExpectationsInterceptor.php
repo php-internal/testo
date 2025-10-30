@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Testo\Assert\Interceptor;
 
 use Testo\Assert\State\AssertException;
-use Testo\Assert\State\Record;
-use Testo\Assert\State\Success;
 use Testo\Assert\StaticState;
 use Testo\Interceptor\TestRunInterceptor;
 use Testo\Test\Dto\Status;
