@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Testo\Common;
 
 /**
+ * Common trait to implement immutable "with" methods with readonly properties.
+ *
  * @internal
  */
 trait CloneWith
 {
     /**
      * Return a new immutable instance with the specified property value.
+     * @psalm-immutable
      */
     private function cloneWith(string $key, mixed $value): static
     {
