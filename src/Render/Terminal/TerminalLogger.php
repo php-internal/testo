@@ -6,6 +6,7 @@ namespace Testo\Render\Terminal;
 
 use Testo\Assert\TestState;
 use Testo\Render\Helper;
+use Testo\Sample\MultipleResult;
 use Testo\Test\Dto\CaseInfo;
 use Testo\Test\Dto\CaseResult;
 use Testo\Test\Dto\Status;
@@ -139,7 +140,16 @@ final class TerminalLogger
     private function handlePassedTest(TestResult $result, ?int $duration): void
     {
         $this->passedTests++;
-        echo Formatter::testLine($result->info->name, $result->status, $duration, $this->format);
+
+        $item = new FormattedItem(
+            name: $result->info->name,
+            status: $result->status,
+            duration: $duration,
+            indentLevel: 0,
+        );
+
+        echo Formatter::formatRun($item, $this->format);
+        $this->printMultipleRuns($result);
     }
 
     /**
@@ -151,9 +161,48 @@ final class TerminalLogger
     {
         $this->failedTests++;
         $this->failures[] = ['result' => $result, 'duration' => $duration];
-        echo Formatter::testLine($result->info->name, $result->status, $duration, $this->format);
 
+        $item = new FormattedItem(
+            name: $result->info->name,
+            status: $result->status,
+            duration: $duration,
+            indentLevel: 0,
+            description: (string) $result->getAttribute('description'),
+        );
+
+        echo Formatter::formatRun($item, $this->format);
+        $this->printMultipleRuns($result);
         $this->printAssertionHistory($result);
+    }
+
+    /**
+     * Prints multiple test runs if available.
+     */
+    private function printMultipleRuns(TestResult $result): void
+    {
+        if ($this->format === OutputFormat::Dots) {
+            return;
+        }
+
+        $multipleResult = $result->getAttribute(MultipleResult::class);
+
+        if ($multipleResult === null) {
+            return;
+        }
+
+        $runNumber = 1;
+        foreach ($multipleResult->results as $runKey => $runResult) {
+            $item = new FormattedItem(
+                name: "Run #{$runNumber}",
+                status: $runResult->status,
+                duration: null,
+                indentLevel: 1,
+                description: (string) $runKey,
+            );
+
+            echo Formatter::formatRun($item, $this->format);
+            $runNumber++;
+        }
     }
 
     /**
@@ -161,7 +210,6 @@ final class TerminalLogger
      */
     private function printAssertionHistory(TestResult $result): void
     {
-        /** @var TestState|null $testState */
         $testState = $result->getAttribute(TestState::class);
 
         if ($testState === null || $testState->history === []) {
@@ -183,7 +231,15 @@ final class TerminalLogger
     private function handleSkippedTest(TestResult $result, ?int $duration): void
     {
         $this->skippedTests++;
-        echo Formatter::testLine($result->info->name, $result->status, $duration, $this->format);
+
+        $item = new FormattedItem(
+            name: $result->info->name,
+            status: $result->status,
+            duration: $duration,
+            indentLevel: 0,
+        );
+
+        echo Formatter::formatRun($item, $this->format);
     }
 
     /**
@@ -194,7 +250,15 @@ final class TerminalLogger
     private function handleRiskyTest(TestResult $result, ?int $duration): void
     {
         $this->riskyTests++;
-        echo Formatter::testLine($result->info->name, $result->status, $duration, $this->format);
+
+        $item = new FormattedItem(
+            name: $result->info->name,
+            status: $result->status,
+            duration: $duration,
+            indentLevel: 0,
+        );
+
+        echo Formatter::formatRun($item, $this->format);
     }
 
     /**

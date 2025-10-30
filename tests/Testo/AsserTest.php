@@ -8,6 +8,7 @@ use Testo\Assert;
 use Testo\Attribute\ExpectException;
 use Testo\Attribute\RetryPolicy;
 use Testo\Attribute\Test;
+use Testo\Sample\DataProvider;
 
 /**
  * Assertion examples.
@@ -92,5 +93,25 @@ final class AsserTest
     public function expectExceptionAttribute(): never
     {
         throw new \RuntimeException('This is an expected exception.');
+    }
+
+    #[Test(description: 'Data provider example')]
+    #[DataProvider([self::class, 'dataForProvider'])]
+    public function dataProvider(string $arg): string
+    {
+        return $arg === 'zero' ? throw new \RuntimeException() : $arg;
+    }
+
+    public static function dataForProvider(): iterable
+    {
+        yield ['zero'];
+        yield 1 => ['first-1'];
+        yield 1 => ['first-2'];
+        yield 1 => ['first-3'];
+        yield 1 => ['first-4'];
+        yield ['second'];
+        yield 'name' => ['third'];
+        yield 'name' => ['conflict'];
+        yield 'Any warrior can change the world.' => ['yep'];
     }
 }

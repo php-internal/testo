@@ -8,6 +8,7 @@ use Testo\Interceptor\TestRunInterceptor;
 use Testo\Interceptor\TestCaseRunInterceptor;
 use Testo\Interceptor\TestSuiteRunInterceptor;
 use Testo\Render\Teamcity\TeamcityLogger;
+use Testo\Sample\MultipleResult;
 use Testo\Test\Dto\CaseInfo;
 use Testo\Test\Dto\CaseResult;
 use Testo\Test\Dto\SuiteInfo;
@@ -27,12 +28,19 @@ final class TeamcityInterceptor implements
 
     public function runTest(TestInfo $info, callable $next): TestResult
     {
-        $this->logger->testStartedFromInfo($info);
-
         $start = \microtime(true);
         /** @var TestResult $result */
         $result = $next($info);
         $duration = (int) \round((\microtime(true) - $start) * 1000);
+
+        # TODO: Refactor processing of MultipleResult
+        # Check if test has DataProvider (MultipleResult)
+        $multipleResult = $result->getAttribute(MultipleResult::class);
+
+        if (!$multipleResult instanceof MultipleResult) {
+            # For regular tests, send testStarted before handling result
+            $this->logger->testStartedFromInfo($info);
+        }
 
         $this->logger->handleTestResult($result, $duration);
         return $result;

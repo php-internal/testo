@@ -59,7 +59,7 @@ final class AttributesInterceptor implements TestRunInterceptor, TestCaseRunInte
             $next,
             /** @see TestRunInterceptor::runTest() */
             'runTest',
-        )($info->withAttributes(self::attributes($attrs)));
+        )($info->withAttributes(self::groupAttributes($attrs)));
     }
 
     public function runTestCase(CaseInfo $info, callable $next): CaseResult
@@ -89,7 +89,7 @@ final class AttributesInterceptor implements TestRunInterceptor, TestCaseRunInte
             $next,
             /** @see TestCaseRunInterceptor::runTestCase() */
             'runTestCase',
-        )($info->withAttributes(self::attributes($attrs)));
+        )($info->withAttributes(self::groupAttributes($attrs)));
     }
 
     /**
@@ -98,7 +98,7 @@ final class AttributesInterceptor implements TestRunInterceptor, TestCaseRunInte
      * @param list<Interceptable> $attrs
      * @return array<class-string, list<Interceptable>>
      */
-    private static function attributes(array $attrs): array
+    private static function groupAttributes(array $attrs): array
     {
         $result = [];
         foreach ($attrs as $attr) {
