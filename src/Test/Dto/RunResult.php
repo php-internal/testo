@@ -21,6 +21,9 @@ final class RunResult implements \IteratorAggregate
         public readonly Status $status,
     ) {}
 
+    /**
+     * @return \Traversable<SuiteResult>
+     */
     public function getIterator(): \Traversable
     {
         yield from $this->results;

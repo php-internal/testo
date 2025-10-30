@@ -11,6 +11,7 @@ return new ApplicationConfig(
             name: 'default',
             location: new \Testo\Config\FinderConfig(
                 include: ['tests/Testo'],
+                exclude: ['tests/Testo/Assert/Stub'],
             ),
         ),
     ],
