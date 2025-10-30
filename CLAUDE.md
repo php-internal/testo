@@ -1,4 +1,42 @@
-- Always use guidelines from the `docs/guidelines` folder
+## Important
+
+- Always use guidelines from the `docs/guidelines` folder when generating any code or documentation.
+
+## Project Overview
+
+**Testo** is an extensible PHP testing framework designed for projects requiring substantial customization of testing workflows.
+
+### Philosophy
+- Name derived from East and South Slavic languages "testo" (dough) - symbolizing malleability and customization
+- Core principle: developers deserve complete authority over their testing environments
+- Built on minimal core with middleware system for unprecedented extensibility
+
+### Target Audience
+Projects requiring significant testing workflow customization:
+- SDK development
+- Framework tools and libraries
+- Complex integrations
+- Scenarios where PHPUnit/standard frameworks lack flexibility
+
+### Key Differentiators
+1. **Familiar PHP syntax** - No new DSL to learn, standard PHP code
+2. **Extensibility first** - Middleware architecture enables deep customization
+3. **Minimal core** - Lightweight foundation that remains powerful through extensions
+
+### Core Features
+- Attribute-based test configuration (#[Test], #[RetryPolicy], #[ExpectException])
+- No base class requirement for test classes
+- Built-in dependency injection support
+- Memory leak detection capabilities
+- Retry policies for flaky tests
+- Flexible assertion library
+- Symfony Console-based CLI
+
+### Technical Stack
+- PHP 8.1+ (leverages modern language features)
+- Symfony components (Console, Finder, Process)
+- ReactPHP for async operations
+- PSR standards compliance (Container, SimpleCache)
 
 ## Guidelines Index
 
