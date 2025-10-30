@@ -4,7 +4,8 @@
     "license": "BSD-3-Clause",
     "type": "library",
     "keywords": [
-        "tests"
+        "tests",
+        "dev"
     ],
     "authors": [
         {
