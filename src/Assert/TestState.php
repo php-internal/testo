@@ -17,20 +17,10 @@ final class TestState
      */
     public array $history = [];
 
-    /**
-     * @see Assert::leaks()
-     */
-    public \WeakMap $weakMap;
-
     public ?\Throwable $failure = null;
 
     /**
      * @var list<callable(TestResult, TestState): TestResult> List of expectation handlers.
      */
     public array $expectations = [];
-
-    public function __construct()
-    {
-        $this->weakMap = new \WeakMap();
-    }
 }

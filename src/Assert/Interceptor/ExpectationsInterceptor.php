@@ -40,7 +40,8 @@ final class ExpectationsInterceptor implements TestRunInterceptor
             return $result;
         }
 
-        foreach ($state->expectations as $expectation) {
+        while (\count($state->expectations) > 0) {
+            $expectation = \array_shift($state->expectations);
             $result = $expectation($result, $state);
         }
 

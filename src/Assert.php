@@ -202,7 +202,7 @@ final class Assert
     public static function fail(string $message = ''): never
     {
         $exception = AssertException::fail($message);
-        StaticState::expectException($exception);
+        StaticState::expectFail($exception);
         StaticState::fail($exception);
     }
 
@@ -226,6 +226,6 @@ final class Assert
      */
     public static function leaks(object ...$objects): void
     {
-        StaticState::trackObjects(...$objects);
+        StaticState::expectNotLeaks(...$objects);
     }
 }
