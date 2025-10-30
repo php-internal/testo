@@ -32,8 +32,8 @@ final class AssertException extends \Exception implements Record
     public static function fail(?string $message): self
     {
         return new self(
-            assertion: $message ?? 'Test failed explicitly',
-            context: '',
+            assertion: 'Fail',
+            context: $message,
             details: '',
         );
     }

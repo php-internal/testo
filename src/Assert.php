@@ -189,15 +189,16 @@ final class Assert
     }
 
     /**
-     * Fails the test with the given message.
+     * Fails the test.
      *
-     * Sets an expectation that the test will fail with a specific AssertException instance,
+     * Sets an expectation that the test will fail with a specific {@see AssertException} instance,
      * then throws the exception to end the test.
+     * If the test catches the exception and continues execution, it will be marked as Risky.
      *
-     * @param string|null $message The failure message.
+     * @param string|null $message The reason for the failure.
      * @throws AssertException always, with the provided message.
      */
-    public static function fail(?string $message = null): void
+    public static function fail(?string $message = null): never
     {
         $exception = AssertException::fail($message);
         StaticState::expectException($exception);
