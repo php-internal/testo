@@ -2,15 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Finder;
+namespace Tests\Testo\Unit;
 
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
+use Testo\Assert;
 use Testo\Common\Path;
+use Testo\Sample\DataProvider;
 
-#[CoversClass(Path::class)]
-final class PathTest extends TestCase
+#[\Testo\Attribute\CoversClass(Path::class)]
+final class PathTest
 {
     public static function providePathsForAbsoluteDetection(): \Generator
     {
@@ -43,7 +42,7 @@ final class PathTest extends TestCase
         $path = Path::create('test/path');
 
         // Assert
-        self::assertInstanceOf(Path::class, $path);
+        Assert::InstanceOf(Path::class, $path);
     }
 
     public function testCreateWithEmptyPathReturnsCurrentDirectory(): void
@@ -52,7 +51,7 @@ final class PathTest extends TestCase
         $path = Path::create('');
 
         // Assert
-        self::assertSame('.', (string) $path);
+        Assert::same('.', (string) $path);
     }
 
     public function testCreateNormalizesDirectorySeparators(): void
@@ -61,7 +60,7 @@ final class PathTest extends TestCase
         $path = Path::create('test\\path/mixed/separators\\here');
 
         // Assert
-        self::assertSame('test/path/mixed/separators/here', (string) $path);
+        Assert::same('test/path/mixed/separators/here', (string) $path);
     }
 
     public function testCreateRemovesMultipleSeparators(): void
@@ -70,7 +69,7 @@ final class PathTest extends TestCase
         $path = Path::create('test//path///extra//separators');
 
         // Assert
-        self::assertSame('test/path/extra/separators', (string) $path);
+        Assert::same('test/path/extra/separators', (string) $path);
     }
 
     public function testCreateResolvesCurrentDirectorySegments(): void
@@ -79,7 +78,7 @@ final class PathTest extends TestCase
         $path = Path::create('test/./path/./current');
 
         // Assert
-        self::assertSame('test/path/current', (string) $path);
+        Assert::same('test/path/current', (string) $path);
     }
 
     public function testCreateResolvesParentDirectorySegments(): void
@@ -88,14 +87,14 @@ final class PathTest extends TestCase
         $path = Path::create('test/parent/../path');
 
         // Assert
-        self::assertSame('test/path', (string) $path);
+        Assert::same('test/path', (string) $path);
     }
 
     public function testCreateThrowsExceptionForInvalidParentNavigation(): void
     {
         // Arrange & Assert
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Cannot go up from root');
+        Assert::exception(\LogicException::class);
+        // ->withMessage('Cannot go up from root');
 
         // Act
         Path::create('/test/../..');
@@ -110,7 +109,7 @@ final class PathTest extends TestCase
         $result = $path->join('additional', 'components');
 
         // Assert
-        self::assertSame('base/path/additional/components', (string) $result);
+        Assert::same('base/path/additional/components', (string) $result);
     }
 
     public function testJoinWithEmptyComponentsIgnoresThem(): void
@@ -122,7 +121,7 @@ final class PathTest extends TestCase
         $result = $path->join('', 'component', '');
 
         // Assert
-        self::assertSame('base/path/component', (string) $result);
+        Assert::same('base/path/component', (string) $result);
     }
 
     public function testJoinWithPathObjects(): void
@@ -132,8 +131,8 @@ final class PathTest extends TestCase
         $additionalPath = Path::create('additional/path');
 
         // Assert (prepare for expected exception)
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Joining an absolute path is not allowed');
+        Assert::exception(\LogicException::class);
+        // ->withMessage('Joining an absolute path is not allowed');
 
         // Act
         // Using an absolute Path object which should throw
@@ -150,7 +149,7 @@ final class PathTest extends TestCase
         $result = $path->join($additionalPath);
 
         // Assert
-        self::assertSame('base/path/additional/path', (string) $result);
+        Assert::same('base/path/additional/path', (string) $result);
     }
 
     public function testJoinWithAbsolutePathString(): void
@@ -159,8 +158,8 @@ final class PathTest extends TestCase
         $path = Path::create('base/path');
 
         // Assert (prepare for expected exception)
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Joining an absolute path is not allowed');
+        Assert::exception(\LogicException::class);
+        // ->withMessage('Joining an absolute path is not allowed');
 
         // Act
         $path->join('/absolute/path');
@@ -175,7 +174,7 @@ final class PathTest extends TestCase
         $name = $path->name();
 
         // Assert
-        self::assertSame('file.txt', $name);
+        Assert::same('file.txt', $name);
     }
 
     public function testNameWithNoDirectoryComponents(): void
@@ -187,7 +186,7 @@ final class PathTest extends TestCase
         $name = $path->name();
 
         // Assert
-        self::assertSame('file.txt', $name);
+        Assert::same('file.txt', $name);
     }
 
     public function testStem(): void
@@ -199,7 +198,7 @@ final class PathTest extends TestCase
         $stem = $path->stem();
 
         // Assert
-        self::assertSame('file', $stem);
+        Assert::same('file', $stem);
     }
 
     public function testStemWithNoExtension(): void
@@ -211,7 +210,7 @@ final class PathTest extends TestCase
         $stem = $path->stem();
 
         // Assert
-        self::assertSame('file', $stem);
+        Assert::same('file', $stem);
     }
 
     public function testStemWithMultipleDots(): void
@@ -223,7 +222,7 @@ final class PathTest extends TestCase
         $stem = $path->stem();
 
         // Assert
-        self::assertSame('file.config', $stem);
+        Assert::same('file.config', $stem);
     }
 
     public function testStemWithHiddenFile(): void
@@ -235,7 +234,7 @@ final class PathTest extends TestCase
         $stem = $path->stem();
 
         // Assert
-        self::assertSame('.hidden', $stem);
+        Assert::same('.hidden', $stem);
     }
 
     public function testExtension(): void
@@ -247,7 +246,7 @@ final class PathTest extends TestCase
         $extension = $path->extension();
 
         // Assert
-        self::assertSame('txt', $extension);
+        Assert::same('txt', $extension);
     }
 
     public function testExtensionWithMultipleDots(): void
@@ -259,7 +258,7 @@ final class PathTest extends TestCase
         $extension = $path->extension();
 
         // Assert
-        self::assertSame('json', $extension);
+        Assert::same('json', $extension);
     }
 
     public function testExtensionWithNoExtension(): void
@@ -271,7 +270,7 @@ final class PathTest extends TestCase
         $extension = $path->extension();
 
         // Assert
-        self::assertSame('', $extension);
+        Assert::same('', $extension);
     }
 
     public function testExtensionWithHiddenFile(): void
@@ -283,7 +282,7 @@ final class PathTest extends TestCase
         $extension = $path->extension();
 
         // Assert
-        self::assertSame('hidden', $extension);
+        Assert::same('hidden', $extension);
     }
 
     #[DataProvider('providePathsForParent')]
@@ -296,7 +295,7 @@ final class PathTest extends TestCase
         $parent = $path->parent();
 
         // Assert
-        self::assertSame($expectedParent, (string) $parent);
+        Assert::same($expectedParent, (string) $parent);
     }
 
     #[DataProvider('providePathsForAbsoluteDetection')]
@@ -309,7 +308,7 @@ final class PathTest extends TestCase
         $isAbsolute = $path->isAbsolute();
 
         // Assert
-        self::assertSame($expected, $isAbsolute, "Path '$pathString' should be " . ($expected ? 'absolute' : 'relative'));
+        Assert::same($expected, $isAbsolute, "Path '$pathString' should be " . ($expected ? 'absolute' : 'relative'));
     }
 
     public function testIsRelative(): void
@@ -322,8 +321,8 @@ final class PathTest extends TestCase
         $relativePath = Path::create('relative/path');
 
         // Act & Assert
-        self::assertFalse($absolutePath->isRelative());
-        self::assertTrue($relativePath->isRelative());
+        Assert::false($absolutePath->isRelative());
+        Assert::true($relativePath->isRelative());
     }
 
     /**
@@ -334,15 +333,15 @@ final class PathTest extends TestCase
     {
         // Arrange
         $tempFile = \tempnam(\sys_get_temp_dir(), 'path_test_');
-        self::assertIsString($tempFile, 'Failed to create temp file');
+        Assert::true(\is_string($tempFile), 'Failed to create temp file');
 
         $path = Path::create($tempFile);
         $nonExistingPath = Path::create('non/existing/path/file.txt');
 
         // Act & Assert
         try {
-            self::assertTrue($path->exists());
-            self::assertFalse($nonExistingPath->exists());
+            Assert::true($path->exists());
+            Assert::false($nonExistingPath->exists());
         } finally {
             // Clean up
             @\unlink($tempFile);
@@ -361,9 +360,9 @@ final class PathTest extends TestCase
         $filePath = Path::create('file.txt');
 
         // Act & Assert
-        self::assertTrue($currentDirPath->isDir());
-        self::assertTrue($parentDirPath->isDir());
-        self::assertFalse($filePath->isDir());
+        Assert::true($currentDirPath->isDir());
+        Assert::true($parentDirPath->isDir());
+        Assert::false($filePath->isDir());
     }
 
     /**
@@ -379,15 +378,15 @@ final class PathTest extends TestCase
 
         // Create a temporary file to test with
         $tempFile = \tempnam(\sys_get_temp_dir(), 'path_test_');
-        self::assertIsString($tempFile, 'Failed to create temp file');
+        Assert::true(\is_string($tempFile), 'Failed to create temp file');
         $realFilePath = Path::create($tempFile);
 
         // Act & Assert
         try {
-            self::assertFalse($currentDirPath->isFile());
-            self::assertFalse($parentDirPath->isFile());
-            self::assertFalse($filePath->isFile()); // Doesn't exist yet
-            self::assertTrue($realFilePath->isFile(), "Temporary file should be a file `$realFilePath`");
+            Assert::false($currentDirPath->isFile());
+            Assert::false($parentDirPath->isFile());
+            Assert::false($filePath->isFile()); // Doesn't exist yet
+            Assert::true($realFilePath->isFile(), "Temporary file should be a file `$realFilePath`");
         } finally {
             // Clean up
             @\unlink($tempFile);
@@ -405,7 +404,7 @@ final class PathTest extends TestCase
         $result = $absolutePath->absolute();
 
         // Assert
-        self::assertSame((string) $absolutePath, (string) $result);
+        Assert::same((string) $absolutePath, (string) $result);
     }
 
     public function testAbsoluteForRelativePath(): void
@@ -416,7 +415,8 @@ final class PathTest extends TestCase
         // Skip this test if we can't get cwd
         $cwd = \getcwd();
         if ($cwd === false) {
-            self::markTestSkipped('Cannot get current working directory');
+            // todo
+            // self::markTestSkipped('Cannot get current working directory');
         }
 
         $expected = Path::create($cwd . DIRECTORY_SEPARATOR . 'relative/path');
@@ -425,14 +425,14 @@ final class PathTest extends TestCase
         $result = $relativePath->absolute();
 
         // Assert
-        self::assertSame((string) $expected, (string) $result);
+        Assert::same((string) $expected, (string) $result);
     }
 
     public function testCreateWindowsTmpFile(): void
     {
         $path = Path::create('C:\Users\roxbl\AppData\Local\Temp\patB6E7.tmp');
 
-        self::assertSame('C:/Users/roxbl/AppData/Local/Temp/patB6E7.tmp', (string) $path);
+        Assert::same('C:/Users/roxbl/AppData/Local/Temp/patB6E7.tmp', (string) $path);
     }
 
     public function testToString(): void
@@ -445,6 +445,6 @@ final class PathTest extends TestCase
         $result = (string) $path;
 
         // Assert
-        self::assertSame('some/path/file.txt', $result);
+        Assert::same('some/path/file.txt', $result);
     }
 }

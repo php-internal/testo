@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Testo;
+namespace Tests\Testo\Self;
 
 use Testo\Assert;
 use Testo\Attribute\Test;
