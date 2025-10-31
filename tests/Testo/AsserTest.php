@@ -28,6 +28,8 @@ final class AsserTest
         Assert::instanceOf(\Exception::class, new \RuntimeException());
         Assert::equals(1, '1');
         Assert::notEquals(42, 43);
+        Assert::greaterThan(1, 2);
+        Assert::greaterThanOrEqual(1, 2);
     }
 
     #[Test]
