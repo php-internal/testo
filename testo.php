@@ -6,13 +6,15 @@ use Testo\Config\ApplicationConfig;
 use Testo\Config\SuiteConfig;
 
 return new ApplicationConfig(
-    suites: [
-        new SuiteConfig(
-            name: 'default',
-            location: new \Testo\Config\FinderConfig(
-                include: ['tests/Testo'],
-                exclude: ['tests/Testo/Assert/Stub'],
+    suites: \array_merge(
+        [
+            new SuiteConfig(
+                name: 'default',
+                location: new \Testo\Config\FinderConfig(
+                    include: ['tests/Testo'],
+                ),
             ),
-        ),
-    ],
+        ],
+        include 'tests/Assert/suites.php',
+    ),
 );

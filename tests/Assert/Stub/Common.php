@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Testo\Assert\Stub;
+namespace Tests\Assert\Stub;
 
 use Testo\Attribute\Test;
 

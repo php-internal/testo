@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Testo\Assert;
+namespace Tests\Assert;
 
 use InvalidArgumentException as InvalidArgument;
 use Testo\Application;
@@ -14,7 +14,7 @@ use Testo\Render\StdoutRenderer;
 use Testo\Render\TerminalInterceptor;
 use Testo\Test\Dto\TestResult;
 
-final class Helper
+final class StubRunner
 {
     /**
      * Run a specific test function and return its result.
