@@ -92,6 +92,48 @@ final class Assert
     }
 
     /**
+     * Asserts that actual value is less than the defined maximum.
+     *
+     * @param mixed $maximum The defined maximum value.
+     * @param mixed $actual The actual value to compare against the maximum value.
+     * @param string $message Short description about what exactly is being asserted.
+     * @throws AssertException when the assertion fails.
+     */
+    public static function lessThan(mixed $maximum, mixed $actual, string $message = ''): void
+    {
+        $actual < $maximum
+            ? StaticState::log('Assert `' . Support::stringify($actual) . '` is less than: `' . Support::stringify($maximum) . '`', $message)
+            : StaticState::fail(AssertException::compare(
+                $maximum,
+                $actual,
+                $message,
+                pattern: 'Failed asserting that `%2s` is less than `%1s`',
+                showDiff: false,
+            ));
+    }
+
+    /**
+     * Asserts that actual value is less than or equal to the defined maximum.
+     *
+     * @param mixed $maximum The defined maximum value.
+     * @param mixed $actual The actual value to compare against the maximum value.
+     * @param string $message Short description about what exactly is being asserted.
+     * @throws AssertException when the assertion fails.
+     */
+    public static function lessThanOrEqual(mixed $maximum, mixed $actual, string $message = ''): void
+    {
+        $actual <= $maximum
+            ? StaticState::log('Assert `' . Support::stringify($actual) . '` is less than or equal to: `' . Support::stringify($maximum) . '`', $message)
+            : StaticState::fail(AssertException::compare(
+                $maximum,
+                $actual,
+                $message,
+                pattern: 'Failed asserting that `%2s` is less than or equal to `%1s`',
+                showDiff: false,
+            ));
+    }
+
+    /**
      * Asserts that the condition is true.
      *
      * @param bool $condition The condition asserting to be true.
